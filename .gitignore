@@ -1,0 +1,80 @@
+﻿# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build results
+bin/
+obj/
+Debug/
+Release/
+
+# Rider
+.idea/
+
+# VS Code
+.vscode/
+
+# NuGet
+packages/
+*.nupkg
+# NuGet transform files
+*.transform
+
+# Dotnet user secrets
+secrets.json
+secrets/
+**/secrets.json
+
+# ASP.NET / publish
+publish/
+wwwroot/
+
+# Logs
+*.log
+
+# Database files
+*.mdf
+*.ldf
+*.sqlite
+*.db
+
+# EF Core Migrations (optional)
+**/Migrations/
+
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# JetBrains Rider local history
+.idea/
+
+# Test output
+TestResults/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Package directories
+node_modules/
+
+# OneDrive / cloud sync files
+~$*
+~*.tmp
+
+# Generated files
+*.generated.cs
+
+# Secrets and config overrides (local)
+appsettings.Development.json
+appsettings.*.Local.json
+
+# Optional: exclude publish folder
+**/publish/
+
+# Optional: exclude deployment manager artifacts (if present)
+DeploymentManagerAutoinitializer.*
