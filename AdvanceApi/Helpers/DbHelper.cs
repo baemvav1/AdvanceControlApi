@@ -41,7 +41,7 @@ namespace AdvanceApi.Helpers
                 await connection.OpenAsync();
                 return connection;
             }
-            catch
+            catch (Exception)
             {
                 connection.Dispose();
                 throw;
