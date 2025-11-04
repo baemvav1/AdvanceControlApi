@@ -36,8 +36,16 @@ namespace AdvanceApi.Helpers
         public async Task<SqlConnection> GetOpenConnectionAsync()
         {
             var connection = new SqlConnection(_connectionString);
-            await connection.OpenAsync();
-            return connection;
+            try
+            {
+                await connection.OpenAsync();
+                return connection;
+            }
+            catch
+            {
+                connection.Dispose();
+                throw;
+            }
         }
 
         // Convenience wrapper methods for the refresh-token stored procedures used by AuthController.
