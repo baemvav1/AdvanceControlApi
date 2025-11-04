@@ -56,7 +56,7 @@ namespace AdvanceApi.Controllers
                     success = true,
                     message = "Log registrado correctamente",
                     logId,
-                    alertId = alertId.HasValue ? alertId.Value : (long?)null
+                    alertId
                 };
 
                 return Ok(response);

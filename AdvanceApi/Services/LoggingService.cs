@@ -55,7 +55,7 @@ namespace AdvanceApi.Services
 
                 // El SP devuelve LogId y AlertId en un SELECT
                 long? alertId = null;
-                using var reader = await command.ExecuteReaderAsync();
+                await using var reader = await command.ExecuteReaderAsync();
                 
                 if (await reader.ReadAsync())
                 {
