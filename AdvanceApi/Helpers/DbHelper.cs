@@ -30,6 +30,24 @@ namespace AdvanceApi.Helpers
             return new SqlConnection(_connectionString);
         }
 
+        /// <summary>
+        /// Creates a new SqlConnection and opens it asynchronously.
+        /// </summary>
+        public async Task<SqlConnection> GetOpenConnectionAsync()
+        {
+            var connection = new SqlConnection(_connectionString);
+            try
+            {
+                await connection.OpenAsync();
+                return connection;
+            }
+            catch (Exception)
+            {
+                connection.Dispose();
+                throw;
+            }
+        }
+
         // Convenience wrapper methods for the refresh-token stored procedures used by AuthController.
         // These methods open their own connection, call the SP and return results.
         // The controller implementation provided earlier also uses direct SqlCommand with a connection,
