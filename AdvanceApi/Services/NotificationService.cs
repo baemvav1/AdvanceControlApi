@@ -29,10 +29,14 @@ namespace AdvanceApi.Services
         {
             try
             {
+                // Sanitizar valores para prevenir log forging
+                var sanitizedChangeType = SanitizeForLogging(changeType);
+                var sanitizedTableName = SanitizeForLogging(tableName);
+
                 var notification = new
                 {
-                    changeType,
-                    tableName,
+                    changeType = sanitizedChangeType,
+                    tableName = sanitizedTableName,
                     timestamp = DateTime.UtcNow,
                     data
                 };
@@ -40,7 +44,8 @@ namespace AdvanceApi.Services
                 // Enviar la notificación a todos los clientes conectados
                 await _hubContext.Clients.All.SendAsync("DatabaseChanged", notification);
 
-                _logger.LogInformation("Notificación enviada: {ChangeType} en tabla {TableName}", changeType, tableName);
+                // Los valores sanitizados previenen log forging al eliminar caracteres de control
+                _logger.LogInformation("Notificación enviada: {ChangeType} en tabla {TableName}", sanitizedChangeType, sanitizedTableName);
             }
             catch (Exception ex)
             {
@@ -59,9 +64,12 @@ namespace AdvanceApi.Services
         {
             try
             {
+                // Sanitizar mensaje para prevenir log forging
+                var sanitizedMessage = SanitizeForLogging(message);
+
                 var payload = new
                 {
-                    message,
+                    message = sanitizedMessage,
                     timestamp = DateTime.UtcNow,
                     data
                 };
@@ -69,13 +77,26 @@ namespace AdvanceApi.Services
                 // Enviar el mensaje a todos los clientes conectados
                 await _hubContext.Clients.All.SendAsync("ReceiveMessage", payload);
 
-                _logger.LogInformation("Mensaje enviado a todos los clientes: {Message}", message);
+                // El mensaje sanitizado previene log forging al eliminar caracteres de control
+                _logger.LogInformation("Mensaje enviado a todos los clientes: {Message}", sanitizedMessage);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error al enviar mensaje a los clientes");
                 throw;
             }
+        }
+
+        /// <summary>
+        /// Sanitiza una cadena para prevenir log forging eliminando caracteres de control.
+        /// </summary>
+        private static string SanitizeForLogging(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return input;
+
+            // Eliminar caracteres de control que podrían usarse para log forging
+            return new string(input.Where(c => !char.IsControl(c) || c == ' ').ToArray());
         }
     }
 }
