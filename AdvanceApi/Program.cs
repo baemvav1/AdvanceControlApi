@@ -8,6 +8,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<AdvanceApi.Helpers.DbHelper>();
 builder.Services.AddScoped<AdvanceApi.Services.ILoggingService, AdvanceApi.Services.LoggingService>();
+builder.Services.AddScoped<AdvanceApi.Services.INotificationService, AdvanceApi.Services.NotificationService>();
+
+// Configurar SignalR para notificaciones en tiempo real
+builder.Services.AddSignalR();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -22,5 +26,8 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Mapear el hub de SignalR
+app.MapHub<AdvanceApi.Hubs.NotificationHub>("/notificationHub");
 
 app.Run();

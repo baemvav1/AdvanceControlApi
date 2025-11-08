@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cliente de Notificaciones en Tiempo Real</title>
+    <script src="https://cdn.jsdelivr.net/npm/@microsoft/signalr@latest/dist/browser/signalr.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #007bff;
+            padding-bottom: 10px;
+        }
+        .status {
+            padding: 10px;
+            margin: 20px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .status.connected {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.disconnected {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status.connecting {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .notifications {
+            margin-top: 20px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .notification {
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #007bff;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            animation: slideIn 0.3s ease-out;
+        }
+        .notification.insert {
+            border-left-color: #28a745;
+        }
+        .notification.update {
+            border-left-color: #ffc107;
+        }
+        .notification.delete {
+            border-left-color: #dc3545;
+        }
+        .notification strong {
+            color: #333;
+        }
+        .notification .timestamp {
+            font-size: 0.85em;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        .notification pre {
+            background-color: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-top: 10px;
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .controls {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        button.connect {
+            background-color: #28a745;
+            color: white;
+        }
+        button.disconnect {
+            background-color: #dc3545;
+            color: white;
+        }
+        button.clear {
+            background-color: #6c757d;
+            color: white;
+        }
+        button:hover {
+            opacity: 0.8;
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        input {
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            width: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔔 Cliente de Notificaciones en Tiempo Real</h1>
+        
+        <div class="controls">
+            <h3>Configuración de Conexión</h3>
+            <div>
+                <label>URL del Hub:</label><br>
+                <input type="text" id="hubUrl" value="https://localhost:7000/notificationHub" placeholder="URL del SignalR Hub">
+            </div>
+            <div style="margin-top: 10px;">
+                <button class="connect" id="connectBtn" onclick="conectar()">Conectar</button>
+                <button class="disconnect" id="disconnectBtn" onclick="desconectar()" disabled>Desconectar</button>
+                <button class="clear" onclick="limpiarNotificaciones()">Limpiar Notificaciones</button>
+            </div>
+        </div>
+
+        <div id="status" class="status disconnected">
+            ❌ Desconectado
+        </div>
+
+        <h2>Notificaciones Recibidas</h2>
+        <div id="notifications" class="notifications">
+            <p style="color: #6c757d; text-align: center; padding: 20px;">
+                No hay notificaciones aún. Conéctate al hub para empezar a recibir notificaciones en tiempo real.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        let connection = null;
+        let notificationCount = 0;
+
+        function actualizarEstado(estado, mensaje) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = `status ${estado}`;
+            statusDiv.innerHTML = mensaje;
+        }
+
+        function agregarNotificacion(tipo, contenido, clase = '') {
+            notificationCount++;
+            const notificationsDiv = document.getElementById('notifications');
+            
+            // Limpiar mensaje inicial
+            if (notificationCount === 1) {
+                notificationsDiv.innerHTML = '';
+            }
+
+            const notificationDiv = document.createElement('div');
+            notificationDiv.className = `notification ${clase}`;
+            notificationDiv.innerHTML = contenido;
+            
+            // Insertar al principio
+            notificationsDiv.insertBefore(notificationDiv, notificationsDiv.firstChild);
+        }
+
+        function conectar() {
+            const hubUrl = document.getElementById('hubUrl').value;
+            
+            if (!hubUrl) {
+                alert('Por favor ingresa la URL del hub');
+                return;
+            }
+
+            actualizarEstado('connecting', '⏳ Conectando...');
+            document.getElementById('connectBtn').disabled = true;
+
+            // Crear conexión
+            connection = new signalR.HubConnectionBuilder()
+                .withUrl(hubUrl)
+                .withAutomaticReconnect()
+                .configureLogging(signalR.LogLevel.Information)
+                .build();
+
+            // Escuchar evento "DatabaseChanged"
+            connection.on("DatabaseChanged", (notification) => {
+                console.log('Notificación recibida:', notification);
+                
+                const changeTypeClass = notification.changeType.toLowerCase();
+                const contenido = `
+                    <strong>${notification.changeType}</strong> en tabla <em>${notification.tableName}</em>
+                    <div class="timestamp">📅 ${new Date(notification.timestamp).toLocaleString('es-ES')}</div>
+                    ${notification.data ? `<pre>${JSON.stringify(notification.data, null, 2)}</pre>` : ''}
+                `;
+                
+                agregarNotificacion('database', contenido, changeTypeClass);
+            });
+
+            // Escuchar evento "ReceiveMessage"
+            connection.on("ReceiveMessage", (message) => {
+                console.log('Mensaje recibido:', message);
+                
+                const contenido = `
+                    <strong>💬 Mensaje:</strong> ${message.message}
+                    <div class="timestamp">📅 ${new Date(message.timestamp).toLocaleString('es-ES')}</div>
+                    ${message.data ? `<pre>${JSON.stringify(message.data, null, 2)}</pre>` : ''}
+                `;
+                
+                agregarNotificacion('message', contenido);
+            });
+
+            // Manejar reconexión
+            connection.onreconnecting((error) => {
+                console.log('Reconectando...', error);
+                actualizarEstado('connecting', '⏳ Reconectando...');
+            });
+
+            connection.onreconnected((connectionId) => {
+                console.log('Reconectado:', connectionId);
+                actualizarEstado('connected', `✅ Conectado (ID: ${connectionId})`);
+            });
+
+            // Manejar cierre de conexión
+            connection.onclose((error) => {
+                console.log('Conexión cerrada', error);
+                actualizarEstado('disconnected', '❌ Desconectado');
+                document.getElementById('connectBtn').disabled = false;
+                document.getElementById('disconnectBtn').disabled = true;
+            });
+
+            // Iniciar conexión
+            connection.start()
+                .then(() => {
+                    console.log('Conectado exitosamente');
+                    actualizarEstado('connected', `✅ Conectado (ID: ${connection.connectionId})`);
+                    document.getElementById('connectBtn').disabled = true;
+                    document.getElementById('disconnectBtn').disabled = false;
+                    
+                    agregarNotificacion('system', 
+                        `<strong>🎉 Conexión establecida</strong><br>ID de conexión: ${connection.connectionId}`,
+                        ''
+                    );
+                })
+                .catch(err => {
+                    console.error('Error al conectar:', err);
+                    actualizarEstado('disconnected', `❌ Error al conectar: ${err.message}`);
+                    document.getElementById('connectBtn').disabled = false;
+                    alert('Error al conectar al hub: ' + err.message);
+                });
+        }
+
+        function desconectar() {
+            if (connection) {
+                connection.stop()
+                    .then(() => {
+                        console.log('Desconectado');
+                        actualizarEstado('disconnected', '❌ Desconectado manualmente');
+                        document.getElementById('connectBtn').disabled = false;
+                        document.getElementById('disconnectBtn').disabled = true;
+                        
+                        agregarNotificacion('system', 
+                            '<strong>👋 Desconectado del hub</strong>',
+                            ''
+                        );
+                    })
+                    .catch(err => {
+                        console.error('Error al desconectar:', err);
+                    });
+            }
+        }
+
+        function limpiarNotificaciones() {
+            document.getElementById('notifications').innerHTML = 
+                '<p style="color: #6c757d; text-align: center; padding: 20px;">No hay notificaciones.</p>';
+            notificationCount = 0;
+        }
+
+        // Conectar automáticamente al cargar la página (opcional)
+        // window.onload = conectar;
+    </script>
+</body>
+</html>
