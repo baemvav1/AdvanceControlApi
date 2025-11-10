@@ -4,3 +4,9 @@ GET {{AdvanceApi_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###
+
+# Sessions API - Obtener conteo de sesiones activas
+GET {{AdvanceApi_HostAddress}}/api/Sessions/active-count/testuser
+Accept: application/json
+
+###
