@@ -49,7 +49,9 @@ namespace AdvanceApi.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error al obtener el conteo de sesiones activas para el usuario {Username}", username);
+                // Sanitize username for logging to prevent log forging
+                var sanitizedUsername = username.Replace("\n", "").Replace("\r", "");
+                _logger.LogError(ex, "Error al obtener el conteo de sesiones activas para el usuario {Username}", sanitizedUsername);
                 return StatusCode(500, new { success = false, message = "Error al obtener el conteo de sesiones activas." });
             }
         }
