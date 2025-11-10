@@ -8,6 +8,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<AdvanceApi.Helpers.DbHelper>();
 builder.Services.AddScoped<AdvanceApi.Services.ILoggingService, AdvanceApi.Services.LoggingService>();
+builder.Services.AddScoped<AdvanceApi.Services.IClienteService, AdvanceApi.Services.ClienteService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
