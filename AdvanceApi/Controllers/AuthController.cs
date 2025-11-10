@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.IdentityModel.Tokens;
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -35,21 +36,22 @@ namespace AdvanceApi.Controllers
             _refreshSecret = configuration["RefreshToken:Secret"] ?? throw new Exception("No se encontró RefreshToken:Secret en la configuración.");
         }
 
-        // Modelo esperado (ajusta a tu clase real si tiene otro nombre/propiedades)
-        // public class usuario { public string Usuario { get; set; } = string.Empty; public string Pass { get; set; } = string.Empty; }
-
-        // -----------------------
-        // LOGIN
-        // POST /api/Auth/login
-        // Respuesta: { accessToken, refreshToken, expiresIn, tokenType, user }
-        // -----------------------
+        /// <summary>
+        /// Inicia sesión con credenciales de usuario y genera tokens de acceso y refresco
+        /// </summary>
+        /// <param name="request">Credenciales del usuario</param>
+        /// <returns>Tokens de acceso y refresco junto con información de expiración</returns>
+        /// <response code="200">Login exitoso, retorna tokens</response>
+        /// <response code="400">Datos de entrada inválidos</response>
+        /// <response code="401">Credenciales incorrectas</response>
+        /// <response code="500">Error interno del servidor</response>
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] usuario request)
+        public async Task<IActionResult> Login([FromBody] Usuario request)
         {
             if (request == null)
                 return BadRequest(new { message = "Request body es requerido." });
 
-            if (string.IsNullOrWhiteSpace(request.Usuario) || string.IsNullOrWhiteSpace(request.Pass))
+            if (string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.Password))
                 return BadRequest(new { message = "Usuario y contraseña son requeridos." });
 
             try
@@ -62,8 +64,8 @@ namespace AdvanceApi.Controllers
                     CommandType = CommandType.StoredProcedure
                 };
 
-                cmd.Parameters.Add(new SqlParameter("@usuario", SqlDbType.NVarChar, 150) { Value = request.Usuario });
-                cmd.Parameters.Add(new SqlParameter("@contraseña", SqlDbType.NVarChar, 100) { Value = request.Pass });
+                cmd.Parameters.Add(new SqlParameter("@usuario", SqlDbType.NVarChar, 150) { Value = request.Username });
+                cmd.Parameters.Add(new SqlParameter("@contraseña", SqlDbType.NVarChar, 100) { Value = request.Password });
 
                 var scalar = await cmd.ExecuteScalarAsync();
 
@@ -81,7 +83,7 @@ namespace AdvanceApi.Controllers
                     return Unauthorized(new { message = "Credenciales inválidas." });
 
                 // Generar access token
-                var accessToken = GenerateJwtToken(request.Usuario, out DateTime accessExpiry);
+                var accessToken = GenerateJwtToken(request.Username, out DateTime accessExpiry);
                 var expiresIn = (int)(accessExpiry - DateTime.UtcNow).TotalSeconds;
 
                 // Generar refresh token (plano), hashearlo con HMAC, guardar hash en DB via DbHelper.InsertRefreshTokenAsync
@@ -90,7 +92,7 @@ namespace AdvanceApi.Controllers
                 var refreshExpiry = DateTime.UtcNow.AddDays(_refreshTokenDays);
 
                 // Use DbHelper wrapper (opens its own connection)
-                await _dbHelper.InsertRefreshTokenAsync(request.Usuario, refreshHash, refreshExpiry, Request.HttpContext.Connection.RemoteIpAddress?.ToString(), Request.Headers["User-Agent"].ToString());
+                await _dbHelper.InsertRefreshTokenAsync(request.Username, refreshHash, refreshExpiry, Request.HttpContext.Connection.RemoteIpAddress?.ToString(), Request.Headers["User-Agent"].ToString());
 
                 return Ok(new
                 {
@@ -98,7 +100,7 @@ namespace AdvanceApi.Controllers
                     refreshToken = refreshPlain,
                     expiresIn,
                     tokenType = "Bearer",
-                    user = new { username = request.Usuario }
+                    user = new { username = request.Username }
                 });
             }
             catch (SqlException sqlEx)
@@ -119,14 +121,28 @@ namespace AdvanceApi.Controllers
             }
         }
 
-        // -----------------------
-        // REFRESH
-        // POST /api/Auth/refresh
-        // Body: { refreshToken }
-        // Respuesta: similar a login (nuevo access token y refresh token rotado)
-        // -----------------------
-        public class RefreshRequest { public string RefreshToken { get; set; } = string.Empty; }
+        /// <summary>
+        /// Modelo para solicitudes de refresh token
+        /// </summary>
+        public class RefreshRequest 
+        { 
+            /// <summary>
+            /// Token de refresco previamente emitido
+            /// </summary>
+            [Required(ErrorMessage = "El refresh token es requerido")]
+            public string RefreshToken { get; set; } = string.Empty; 
+        }
 
+        /// <summary>
+        /// Renueva el token de acceso usando un refresh token válido
+        /// Implementa rotación de tokens: el refresh token antiguo se revoca y se emite uno nuevo
+        /// </summary>
+        /// <param name="body">Objeto con el refresh token actual</param>
+        /// <returns>Nuevos tokens de acceso y refresco</returns>
+        /// <response code="200">Tokens renovados exitosamente</response>
+        /// <response code="400">Datos de entrada inválidos</response>
+        /// <response code="401">Token inválido, expirado o revocado</response>
+        /// <response code="500">Error interno del servidor</response>
         [HttpPost("refresh")]
         public async Task<IActionResult> Refresh([FromBody] RefreshRequest body)
         {
@@ -192,14 +208,26 @@ namespace AdvanceApi.Controllers
             }
         }
 
-        // -----------------------
-        // VALIDATE
-        // POST /api/Auth/validate
-        // Body optional: { token } - if omitted, will try Authorization header
-        // Returns 200 with claims if valid, 401 if invalid
-        // -----------------------
-        public class TokenValidateRequest { public string? Token { get; set; } }
+        /// <summary>
+        /// Modelo para validación de token
+        /// </summary>
+        public class TokenValidateRequest 
+        { 
+            /// <summary>
+            /// Token JWT a validar (opcional si se envía en el header Authorization)
+            /// </summary>
+            public string? Token { get; set; } 
+        }
 
+        /// <summary>
+        /// Valida un token JWT y retorna sus claims si es válido
+        /// </summary>
+        /// <param name="body">Objeto con el token a validar (opcional si se usa el header Authorization)</param>
+        /// <returns>Claims del token si es válido</returns>
+        /// <response code="200">Token válido, retorna los claims</response>
+        /// <response code="400">Token no proporcionado</response>
+        /// <response code="401">Token inválido o expirado</response>
+        /// <response code="500">Error interno del servidor</response>
         [HttpPost("validate")]
         public IActionResult ValidateToken([FromBody] TokenValidateRequest? body)
         {
@@ -237,11 +265,15 @@ namespace AdvanceApi.Controllers
             }
         }
 
-        // -----------------------
-        // LOGOUT
-        // POST /api/Auth/logout
-        // Body: { refreshToken } -> revoca ese refresh token (idempotente)
-        // -----------------------
+        /// <summary>
+        /// Cierra la sesión revocando el refresh token
+        /// Esta operación es idempotente
+        /// </summary>
+        /// <param name="body">Objeto con el refresh token a revocar</param>
+        /// <returns>204 No Content si la operación fue exitosa</returns>
+        /// <response code="204">Sesión cerrada exitosamente</response>
+        /// <response code="400">Datos de entrada inválidos</response>
+        /// <response code="500">Error interno del servidor</response>
         [HttpPost("logout")]
         public async Task<IActionResult> Logout([FromBody] RefreshRequest body)
         {
