@@ -52,7 +52,7 @@ namespace AdvanceApi.Services
                     var cliente = new Cliente
                     {
                         IdCliente = reader.GetInt32(reader.GetOrdinal("id_cliente")),
-                        TipoPersona = reader.IsDBNull(reader.GetOrdinal("tipo_persona")) ? null : reader.GetString(reader.GetOrdinal("tipo_persona")),
+                        TipoPersona = reader.IsDBNull(reader.GetOrdinal("tipo_persona")) ? null : reader.GetInt32(reader.GetOrdinal("tipo_persona")),
                         Rfc = reader.IsDBNull(reader.GetOrdinal("rfc")) ? null : reader.GetString(reader.GetOrdinal("rfc")),
                         RazonSocial = reader.IsDBNull(reader.GetOrdinal("razon_social")) ? null : reader.GetString(reader.GetOrdinal("razon_social")),
                         NombreComercial = reader.IsDBNull(reader.GetOrdinal("nombre_comercial")) ? null : reader.GetString(reader.GetOrdinal("nombre_comercial")),
@@ -62,7 +62,7 @@ namespace AdvanceApi.Services
                         DiasCredito = reader.IsDBNull(reader.GetOrdinal("dias_credito")) ? null : reader.GetInt32(reader.GetOrdinal("dias_credito")),
                         LimiteCredito = reader.IsDBNull(reader.GetOrdinal("limite_credito")) ? null : reader.GetDecimal(reader.GetOrdinal("limite_credito")),
                         Prioridad = reader.IsDBNull(reader.GetOrdinal("prioridad")) ? null : reader.GetInt16(reader.GetOrdinal("prioridad")),
-                        Estatus = reader.IsDBNull(reader.GetOrdinal("estatus")) ? null : reader.GetString(reader.GetOrdinal("estatus")),
+                        Estatus = reader.IsDBNull(reader.GetOrdinal("estatus")) ? null : reader.GetBoolean(reader.GetOrdinal("estatus")),
                         CredencialId = reader.IsDBNull(reader.GetOrdinal("credencial_id")) ? null : reader.GetInt32(reader.GetOrdinal("credencial_id")),
                         Notas = reader.IsDBNull(reader.GetOrdinal("notas")) ? null : reader.GetString(reader.GetOrdinal("notas")),
                         CreadoEn = reader.IsDBNull(reader.GetOrdinal("creado_en")) ? null : reader.GetDateTime(reader.GetOrdinal("creado_en")),

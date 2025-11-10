@@ -5,7 +5,7 @@ namespace Clases
     public class Cliente
     {
         public int IdCliente { get; set; }
-        public string? TipoPersona { get; set; }
+        public int? TipoPersona { get; set; }
         public string? Rfc { get; set; }
         public string? RazonSocial { get; set; }
         public string? NombreComercial { get; set; }
@@ -14,8 +14,8 @@ namespace Clases
         public string? UsoCfdi { get; set; }
         public int? DiasCredito { get; set; }
         public decimal? LimiteCredito { get; set; }
-        public short? Prioridad { get; set; }
-        public string? Estatus { get; set; }
+        public int? Prioridad { get; set; }
+        public bool? Estatus { get; set; }
         public int? CredencialId { get; set; }
         public string? Notas { get; set; }
         public DateTime? CreadoEn { get; set; }

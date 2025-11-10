@@ -28,6 +28,6 @@ namespace AdvanceApi.DTOs
         /// <summary>
         /// Coincidencia exacta de prioridad
         /// </summary>
-        public short? Prioridad { get; set; }
+        public int? Prioridad { get; set; }
     }
 }
