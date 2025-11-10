@@ -61,7 +61,7 @@ namespace AdvanceApi.Services
                         UsoCfdi = reader.IsDBNull(reader.GetOrdinal("uso_cfdi")) ? null : reader.GetString(reader.GetOrdinal("uso_cfdi")),
                         DiasCredito = reader.IsDBNull(reader.GetOrdinal("dias_credito")) ? null : reader.GetInt32(reader.GetOrdinal("dias_credito")),
                         LimiteCredito = reader.IsDBNull(reader.GetOrdinal("limite_credito")) ? null : reader.GetDecimal(reader.GetOrdinal("limite_credito")),
-                        Prioridad = reader.IsDBNull(reader.GetOrdinal("prioridad")) ? null : reader.GetInt16(reader.GetOrdinal("prioridad")),
+                        Prioridad = reader.IsDBNull(reader.GetOrdinal("prioridad")) ? null : reader.GetInt32(reader.GetOrdinal("prioridad")),
                         Estatus = reader.IsDBNull(reader.GetOrdinal("estatus")) ? null : reader.GetBoolean(reader.GetOrdinal("estatus")),
                         CredencialId = reader.IsDBNull(reader.GetOrdinal("credencial_id")) ? null : reader.GetInt32(reader.GetOrdinal("credencial_id")),
                         Notas = reader.IsDBNull(reader.GetOrdinal("notas")) ? null : reader.GetString(reader.GetOrdinal("notas")),
