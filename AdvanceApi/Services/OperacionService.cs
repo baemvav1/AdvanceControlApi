@@ -56,7 +56,10 @@ namespace AdvanceApi.Services
                         Abono = reader.IsDBNull(reader.GetOrdinal("abono")) ? null : reader.GetDecimal(reader.GetOrdinal("abono")),
                         Restante = reader.IsDBNull(reader.GetOrdinal("restante")) ? null : reader.GetDecimal(reader.GetOrdinal("restante")),
                         Nota = reader.IsDBNull(reader.GetOrdinal("nota")) ? null : reader.GetString(reader.GetOrdinal("nota")),
-                        Estatus = reader.IsDBNull(reader.GetOrdinal("estatus")) ? null : reader.GetBoolean(reader.GetOrdinal("estatus"))
+                        Estatus = reader.IsDBNull(reader.GetOrdinal("estatus")) ? null : reader.GetBoolean(reader.GetOrdinal("estatus")),
+                        FechaInicio = reader.IsDBNull(reader.GetOrdinal("fechaInicio")) ? null : reader.GetDateTime(reader.GetOrdinal("fechaInicio")),
+                        FechaFinal = reader.IsDBNull(reader.GetOrdinal("fechaFinal")) ? null : reader.GetDateTime(reader.GetOrdinal("fechaFinal")),
+                        Finalizado = reader.IsDBNull(reader.GetOrdinal("finalizado")) ? null : reader.GetBoolean(reader.GetOrdinal("finalizado"))
                     };
 
                     operaciones.Add(operacion);
