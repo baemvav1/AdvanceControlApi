@@ -12,5 +12,8 @@ namespace Clases
         public decimal? Restante { get; set; }
         public string? Nota { get; set; }
         public bool? Estatus { get; set; }
+        public DateTime? FechaInicio { get; set; }
+        public DateTime? FechaFinal { get; set; }
+        public bool? Finalizado { get; set; }
     }
 }
