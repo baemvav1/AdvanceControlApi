@@ -40,6 +40,7 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddScoped<AdvanceApi.Helpers.DbHelper>();
 builder.Services.AddScoped<AdvanceApi.Services.ILoggingService, AdvanceApi.Services.LoggingService>();
 builder.Services.AddScoped<AdvanceApi.Services.IClienteService, AdvanceApi.Services.ClienteService>();
+builder.Services.AddScoped<AdvanceApi.Services.IOperacionService, AdvanceApi.Services.OperacionService>();
 
 // Configure JWT Authentication
 var jwtKey = builder.Configuration["Jwt:Key"] ?? throw new Exception("No se encontró Jwt:Key en la configuración.");
