@@ -56,7 +56,6 @@ namespace AdvanceApi.Services
                         Rfc = reader.IsDBNull(reader.GetOrdinal("rfc")) ? null : reader.GetString(reader.GetOrdinal("rfc")),
                         RazonSocial = reader.IsDBNull(reader.GetOrdinal("razon_social")) ? null : reader.GetString(reader.GetOrdinal("razon_social")),
                         NombreComercial = reader.IsDBNull(reader.GetOrdinal("nombre_comercial")) ? null : reader.GetString(reader.GetOrdinal("nombre_comercial")),
-                        Curp = reader.IsDBNull(reader.GetOrdinal("curp")) ? null : reader.GetString(reader.GetOrdinal("curp")),
                         RegimenFiscal = reader.IsDBNull(reader.GetOrdinal("regimen_fiscal")) ? null : reader.GetString(reader.GetOrdinal("regimen_fiscal")),
                         UsoCfdi = reader.IsDBNull(reader.GetOrdinal("uso_cfdi")) ? null : reader.GetString(reader.GetOrdinal("uso_cfdi")),
                         DiasCredito = reader.IsDBNull(reader.GetOrdinal("dias_credito")) ? null : reader.GetInt32(reader.GetOrdinal("dias_credito")),

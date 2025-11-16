@@ -9,7 +9,6 @@ namespace Clases
         public string? Rfc { get; set; }
         public string? RazonSocial { get; set; }
         public string? NombreComercial { get; set; }
-        public string? Curp { get; set; }
         public string? RegimenFiscal { get; set; }
         public string? UsoCfdi { get; set; }
         public int? DiasCredito { get; set; }
