@@ -316,48 +316,76 @@ namespace AdvanceApi.Controllers
         // -----------------------
         // Helpers: JWT generation, refresh token generation & hashing
         // -----------------------
+        
+        /// <summary>
+        /// Genera un token JWT con el nombre de usuario y metadatos de autenticación.
+        /// El token contiene los siguientes claims:
+        /// - sub (subject): Nombre de usuario
+        /// - jti (JWT ID): Identificador único del token (GUID)
+        /// - iss (issuer): Emisor del token (de configuración)
+        /// - aud (audience): Audiencia del token (de configuración)
+        /// - iat (issued at): Fecha/hora de emisión (automático)
+        /// - exp (expiration): Fecha/hora de expiración
+        /// </summary>
+        /// <param name="subject">Nombre de usuario que será incluido en el claim 'sub' del token</param>
+        /// <returns>Token JWT firmado en formato string</returns>
         private string GenerateJwtToken(string subject)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
+            // Claims incluidos en el token JWT:
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, subject),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim(JwtRegisteredClaimNames.Sub, subject),      // Username del usuario
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())  // ID único del token
             };
 
             var token = new JwtSecurityToken(
-                issuer: _issuer,
-                audience: _audience,
-                claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(_accessTokenMinutes),
-                signingCredentials: creds
+                issuer: _issuer,           // Emisor: "AdvanceApi"
+                audience: _audience,       // Audiencia: "AdvanceApiUsuarios"
+                claims: claims,            // Claims: sub (username) y jti (ID único)
+                expires: DateTime.UtcNow.AddMinutes(_accessTokenMinutes),  // Expiración (default: 60 min)
+                signingCredentials: creds  // Firma HMAC-SHA256
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        // overload that returns expiry
+        /// <summary>
+        /// Genera un token JWT con el nombre de usuario y metadatos de autenticación.
+        /// Sobrecarga que retorna la fecha de expiración.
+        /// El token contiene los siguientes claims:
+        /// - sub (subject): Nombre de usuario
+        /// - jti (JWT ID): Identificador único del token (GUID)
+        /// - iss (issuer): Emisor del token (de configuración)
+        /// - aud (audience): Audiencia del token (de configuración)
+        /// - iat (issued at): Fecha/hora de emisión (automático)
+        /// - exp (expiration): Fecha/hora de expiración
+        /// </summary>
+        /// <param name="subject">Nombre de usuario que será incluido en el claim 'sub' del token</param>
+        /// <param name="expiresAt">Fecha/hora UTC de expiración del token</param>
+        /// <returns>Token JWT firmado en formato string</returns>
         private string GenerateJwtToken(string subject, out DateTime expiresAt)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
+            // Claims incluidos en el token JWT:
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, subject),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim(JwtRegisteredClaimNames.Sub, subject),      // Username del usuario
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())  // ID único del token
             };
 
             expiresAt = DateTime.UtcNow.AddMinutes(_accessTokenMinutes);
 
             var token = new JwtSecurityToken(
-                issuer: _issuer,
-                audience: _audience,
-                claims: claims,
-                expires: expiresAt,
-                signingCredentials: creds
+                issuer: _issuer,           // Emisor: "AdvanceApi"
+                audience: _audience,       // Audiencia: "AdvanceApiUsuarios"
+                claims: claims,            // Claims: sub (username) y jti (ID único)
+                expires: expiresAt,        // Expiración (default: 60 min)
+                signingCredentials: creds  // Firma HMAC-SHA256
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);

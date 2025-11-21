@@ -21,6 +21,116 @@ El sistema de autenticación implementa un flujo completo de JWT (JSON Web Token
    - Modelo de datos para credenciales de login
    - Incluye validaciones integradas
 
+## Estructura del Token JWT (Access Token)
+
+### ¿Qué contiene el token JWT?
+
+**Respuesta corta:** Sí, el token JWT **contiene el nombre de usuario** junto con otra información de autenticación.
+
+El Access Token es un JWT (JSON Web Token) que contiene los siguientes **claims** (datos):
+
+| Claim | Nombre Completo | Descripción | Ejemplo |
+|-------|----------------|-------------|---------|
+| `sub` | Subject | **Nombre de usuario** del usuario autenticado | `"usuario_ejemplo"` |
+| `jti` | JWT ID | Identificador único del token (GUID) | `"a1b2c3d4-e5f6-7890-abcd-ef1234567890"` |
+| `iss` | Issuer | Emisor del token | `"AdvanceApi"` |
+| `aud` | Audience | Audiencia/destinatario del token | `"AdvanceApiUsuarios"` |
+| `iat` | Issued At | Fecha/hora de emisión (timestamp UTC) | `1699564800` |
+| `exp` | Expiration | Fecha/hora de expiración (timestamp UTC) | `1699568400` |
+
+### Estructura Visual del Token
+
+Un token JWT tiene tres partes separadas por puntos:
+
+```
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c3VhcmlvX2VqZW1wbG8iLCJqdGkiOiJhMWIyYzNkNC1lNWY2LTc4OTAtYWJjZC1lZjEyMzQ1Njc4OTAiLCJpc3MiOiJBZHZhbmNlQXBpIiwiYXVkIjoiQWR2YW5jZUFwaVVzdWFyaW9zIiwiaWF0IjoxNjk5NTY0ODAwLCJleHAiOjE2OTk1Njg0MDB9.firma_hmac_sha256
+│                                  │                                                                                                                                                                              │
+│         Header (Base64)          │                                                          Payload (Base64)                                                                                                     │     Signature
+```
+
+1. **Header**: Algoritmo y tipo de token
+   ```json
+   {
+     "alg": "HS256",
+     "typ": "JWT"
+   }
+   ```
+
+2. **Payload**: Los claims mencionados arriba
+   ```json
+   {
+     "sub": "usuario_ejemplo",
+     "jti": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+     "iss": "AdvanceApi",
+     "aud": "AdvanceApiUsuarios",
+     "iat": 1699564800,
+     "exp": 1699568400
+   }
+   ```
+
+3. **Signature**: Firma HMAC-SHA256 para verificar autenticidad
+
+### ¿Cómo extraer el nombre de usuario del token?
+
+#### Desde el Cliente (JavaScript)
+
+```javascript
+// Decodificar el token (sin verificar - solo lectura)
+function decodeJwt(token) {
+  const base64Url = token.split('.')[1];
+  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
+  
+  return JSON.parse(jsonPayload);
+}
+
+const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...";
+const payload = decodeJwt(token);
+console.log(payload.sub); // "usuario_ejemplo" ← Aquí está el nombre de usuario
+console.log(payload.jti); // ID único del token
+console.log(payload.exp); // Timestamp de expiración
+```
+
+#### Desde el Backend (C#)
+
+El sistema puede extraer el username automáticamente de los endpoints protegidos:
+
+```csharp
+[Authorize]
+[HttpGet("mi-perfil")]
+public IActionResult GetMiPerfil()
+{
+    // El username viene en el claim "sub" del token validado
+    var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value 
+                ?? User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+    
+    // O también se puede obtener de User.Identity.Name
+    var username2 = User.Identity.Name;
+    
+    return Ok(new { username });
+}
+```
+
+### Importante: Seguridad
+
+- ✅ **El token está firmado**: No se puede modificar sin invalidar la firma
+- ✅ **El token tiene expiración**: Válido por 60 minutos por defecto
+- ⚠️ **El token NO está encriptado**: Cualquiera puede leer su contenido
+  - No incluir información sensible (contraseñas, números de tarjeta, etc.)
+  - Solo incluir información necesaria para identificar al usuario
+- ✅ **Usar siempre HTTPS**: Para evitar que intercepten el token
+
+### ¿Por qué incluir el username en el token?
+
+1. **Stateless Authentication**: El servidor no necesita consultar la base de datos en cada petición para saber quién es el usuario
+2. **Performance**: Validar el token es mucho más rápido que consultar la base de datos
+3. **Escalabilidad**: Los tokens pueden validarse en múltiples servidores sin compartir estado
+4. **Auditoría**: Cada petición puede registrarse con el username del claim sin consultas adicionales
+
+---
+
 ## Flujo de Autenticación
 
 ### 1. Login (Inicio de Sesión)
