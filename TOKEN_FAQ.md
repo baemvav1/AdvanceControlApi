@@ -63,8 +63,17 @@ function decodificarToken(token) {
   const partes = token.split('.');
   
   // Decodificar la parte del payload (segunda parte)
-  const payloadBase64 = partes[1];
-  const payloadJson = atob(payloadBase64.replace(/-/g, '+').replace(/_/g, '/'));
+  let payloadBase64 = partes[1];
+  
+  // Base64URL a Base64: reemplazar caracteres y agregar padding si es necesario
+  payloadBase64 = payloadBase64.replace(/-/g, '+').replace(/_/g, '/');
+  
+  // Agregar padding '=' si es necesario para que la longitud sea múltiplo de 4
+  while (payloadBase64.length % 4 !== 0) {
+    payloadBase64 += '=';
+  }
+  
+  const payloadJson = atob(payloadBase64);
   const payload = JSON.parse(payloadJson);
   
   console.log("Username:", payload.sub);  // ← El nombre de usuario
@@ -85,7 +94,7 @@ console.log("El usuario es:", datos.sub);
 Puedes llamar al endpoint `/api/Auth/validate` que retorna todos los claims:
 
 ```bash
-curl -X POST http://localhost:5000/api/Auth/validate \
+curl -X POST https://YOUR_API_URL/api/Auth/validate \
   -H "Content-Type: application/json" \
   -d '{"token":"tu_token_aqui"}'
 ```
@@ -155,15 +164,18 @@ Solo contiene lo mínimo necesario para identificar al usuario (`sub`) y validar
 Si un endpoint está protegido con `[Authorize]`, puedes extraer el username así:
 
 ```csharp
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+
 [Authorize]
 [HttpGet("mi-perfil")]
 public IActionResult GetMiPerfil()
 {
-    // Opción 1: Desde el claim "sub"
-    var username = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value 
-                ?? User.FindFirst(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub)?.Value;
+    // Opción 1: Desde el claim "sub" (recomendado para JWT)
+    var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value 
+                ?? User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
     
-    // Opción 2: Desde User.Identity.Name
+    // Opción 2: Desde User.Identity.Name (alternativa)
     var username2 = User.Identity?.Name;
     
     return Ok(new { 

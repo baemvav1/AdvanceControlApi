@@ -103,11 +103,12 @@ El sistema puede extraer el username automáticamente de los endpoints protegido
 public IActionResult GetMiPerfil()
 {
     // El username viene en el claim "sub" del token validado
+    // Se intenta primero con ClaimTypes.NameIdentifier, luego con JwtRegisteredClaimNames.Sub
     var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value 
                 ?? User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
     
-    // O también se puede obtener de User.Identity.Name
-    var username2 = User.Identity.Name;
+    // Alternativa: User.Identity.Name (puede no estar configurado en todos los casos)
+    // var username = User.Identity?.Name;
     
     return Ok(new { username });
 }
