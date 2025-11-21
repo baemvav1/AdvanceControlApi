@@ -41,22 +41,32 @@ namespace AdvanceApi.Services
 
                 if (await reader.ReadAsync())
                 {
+                    // Store ordinals to improve performance
+                    var credencialIdOrdinal = reader.GetOrdinal("credencial_id");
+                    var nombreCompletoOrdinal = reader.GetOrdinal("nombreCompleto");
+                    var correoOrdinal = reader.GetOrdinal("correo");
+                    var telefonoOrdinal = reader.GetOrdinal("telefono");
+                    var nivelOrdinal = reader.GetOrdinal("nivel");
+                    var tipoUsuarioOrdinal = reader.GetOrdinal("tipoUsuario");
+
                     var contactoUsuario = new ContactoUsuarioDto
                     {
-                        CredencialId = reader.GetInt32(reader.GetOrdinal("credencial_id")),
-                        NombreCompleto = reader.IsDBNull(reader.GetOrdinal("nombreCompleto")) 
+                        CredencialId = reader.GetInt32(credencialIdOrdinal),
+                        NombreCompleto = reader.IsDBNull(nombreCompletoOrdinal) 
                             ? string.Empty 
-                            : reader.GetString(reader.GetOrdinal("nombreCompleto")),
-                        Correo = reader.IsDBNull(reader.GetOrdinal("correo")) 
+                            : reader.GetString(nombreCompletoOrdinal),
+                        Correo = reader.IsDBNull(correoOrdinal) 
                             ? string.Empty 
-                            : reader.GetString(reader.GetOrdinal("correo")),
-                        Telefono = reader.IsDBNull(reader.GetOrdinal("telefono")) 
+                            : reader.GetString(correoOrdinal),
+                        Telefono = reader.IsDBNull(telefonoOrdinal) 
                             ? string.Empty 
-                            : reader.GetString(reader.GetOrdinal("telefono")),
-                        Nivel = reader.GetInt32(reader.GetOrdinal("nivel")),
-                        TipoUsuario = reader.IsDBNull(reader.GetOrdinal("tipoUsuario")) 
+                            : reader.GetString(telefonoOrdinal),
+                        Nivel = reader.IsDBNull(nivelOrdinal) 
+                            ? 0 
+                            : reader.GetInt32(nivelOrdinal),
+                        TipoUsuario = reader.IsDBNull(tipoUsuarioOrdinal) 
                             ? string.Empty 
-                            : reader.GetString(reader.GetOrdinal("tipoUsuario"))
+                            : reader.GetString(tipoUsuarioOrdinal)
                     };
 
                     _logger.LogDebug("Se obtuvo información del usuario {Usuario}", usuario);
