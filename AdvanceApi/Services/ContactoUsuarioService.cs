@@ -35,7 +35,7 @@ namespace AdvanceApi.Services
                 command.CommandType = CommandType.StoredProcedure;
 
                 // Configurar parámetro del procedimiento almacenado
-                command.Parameters.Add(new SqlParameter("@usuario", SqlDbType.NVarChar, 100) { Value = usuario });
+                command.Parameters.AddWithValue("@usuario", usuario);
 
                 await using var reader = await command.ExecuteReaderAsync();
 
@@ -51,7 +51,7 @@ namespace AdvanceApi.Services
 
                     var contactoUsuario = new ContactoUsuarioDto
                     {
-                        CredencialId = reader.GetInt32(credencialIdOrdinal),
+                        CredencialId = (int)reader.GetInt64(credencialIdOrdinal),
                         NombreCompleto = reader.IsDBNull(nombreCompletoOrdinal) 
                             ? string.Empty 
                             : reader.GetString(nombreCompletoOrdinal),
