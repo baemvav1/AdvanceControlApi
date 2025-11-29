@@ -184,5 +184,65 @@ namespace AdvanceApi.Services
                 throw;
             }
         }
+
+        /// <summary>
+        /// Crea un nuevo equipo usando el procedimiento almacenado sp_equipo_create
+        /// </summary>
+        public async Task<object> CreateEquipoAsync(EquipoQueryDto query)
+        {
+            if (query == null)
+                throw new ArgumentNullException(nameof(query));
+
+            try
+            {
+                await using var connection = await _dbHelper.GetOpenConnectionAsync();
+                await using var command = new SqlCommand("sp_equipo_create", connection);
+                command.CommandType = CommandType.StoredProcedure;
+
+                command.Parameters.AddWithValue("@marca", (object?)query.Marca ?? DBNull.Value);
+                command.Parameters.AddWithValue("@creado", (object?)query.Creado ?? DBNull.Value);
+                command.Parameters.AddWithValue("@descripcion", (object?)query.Descripcion ?? DBNull.Value);
+                command.Parameters.AddWithValue("@identificador", (object?)query.Identificador ?? DBNull.Value);
+                command.Parameters.AddWithValue("@estatus", query.Estatus);
+
+                await using var reader = await command.ExecuteReaderAsync();
+
+                int? newId = null;
+                Equipo? createdEquipo = null;
+
+                // Primer result set: idEquipo
+                if (await reader.ReadAsync())
+                {
+                    newId = reader.GetInt32(reader.GetOrdinal("idEquipo"));
+                }
+
+                // Segundo result set: fila creada
+                if (await reader.NextResultAsync() && await reader.ReadAsync())
+                {
+                    createdEquipo = new Equipo
+                    {
+                        IdEquipo = reader.GetInt32(reader.GetOrdinal("idEquipo")),
+                        Marca = reader.IsDBNull(reader.GetOrdinal("marca")) ? null : reader.GetString(reader.GetOrdinal("marca")),
+                        Creado = reader.IsDBNull(reader.GetOrdinal("creado")) ? null : reader.GetInt32(reader.GetOrdinal("creado")),
+                        Descripcion = reader.IsDBNull(reader.GetOrdinal("descripcion")) ? null : reader.GetString(reader.GetOrdinal("descripcion")),
+                        Identificador = reader.IsDBNull(reader.GetOrdinal("identificador")) ? null : reader.GetString(reader.GetOrdinal("identificador")),
+                        Estatus = reader.IsDBNull(reader.GetOrdinal("estatus")) ? null : reader.GetBoolean(reader.GetOrdinal("estatus"))
+                    };
+                }
+
+                _logger.LogDebug("Equipo creado con ID {IdEquipo}", newId);
+                return new { success = true, message = "Equipo creado correctamente", idEquipo = newId, equipo = createdEquipo };
+            }
+            catch (SqlException sqlEx)
+            {
+                _logger.LogError(sqlEx, "Error SQL al crear equipo. SqlError: {Message}", sqlEx.Message);
+                throw new InvalidOperationException("Error al crear equipo en la base de datos", sqlEx);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error inesperado al crear equipo");
+                throw;
+            }
+        }
     }
 }

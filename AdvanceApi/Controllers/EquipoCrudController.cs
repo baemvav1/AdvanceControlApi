@@ -171,5 +171,68 @@ namespace AdvanceApi.Controllers
 #endif
             }
         }
+
+        /// <summary>
+        /// Crea un nuevo equipo
+        /// POST /api/equipo_crud
+        /// </summary>
+        /// <param name="marca">Marca del equipo (obligatorio)</param>
+        /// <param name="creado">Año de creación (obligatorio)</param>
+        /// <param name="descripcion">Descripción del equipo (opcional)</param>
+        /// <param name="identificador">Identificador único del equipo (obligatorio)</param>
+        /// <param name="estatus">Estatus del equipo (opcional, default true)</param>
+        /// <returns>Resultado de la operación con el equipo creado</returns>
+        [HttpPost]
+        public async Task<IActionResult> CreateEquipo(
+            [FromQuery] string marca,
+            [FromQuery] int creado,
+            [FromQuery] string? descripcion = null,
+            [FromQuery] string identificador = "",
+            [FromQuery] bool estatus = true)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(marca))
+                {
+                    return BadRequest(new { message = "El campo 'marca' es obligatorio." });
+                }
+
+                if (string.IsNullOrWhiteSpace(identificador))
+                {
+                    return BadRequest(new { message = "El campo 'identificador' es obligatorio." });
+                }
+
+                var query = new EquipoQueryDto
+                {
+                    Marca = marca,
+                    Creado = creado,
+                    Descripcion = descripcion,
+                    Identificador = identificador,
+                    Estatus = estatus
+                };
+
+                var result = await _equipoService.CreateEquipoAsync(query);
+
+                return Ok(result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogError(ex, "Error al crear equipo");
+#if DEBUG
+                return StatusCode(500, new { message = ex.Message, innerMessage = ex.InnerException?.Message });
+#else
+                return StatusCode(500, new { message = "Error al acceder a la base de datos." });
+#endif
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error inesperado al crear equipo");
+#if DEBUG
+                return StatusCode(500, new { message = ex.Message });
+#else
+                return StatusCode(500, new { message = "Error interno del servidor." });
+#endif
+            }
+        }
     }
 }
