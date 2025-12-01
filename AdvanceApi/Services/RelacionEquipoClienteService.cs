@@ -53,7 +53,8 @@ namespace AdvanceApi.Services
                         IdRelacion = reader.IsDBNull(reader.GetOrdinal("idRelacion")) ? null : reader.GetInt32(reader.GetOrdinal("idRelacion")),
                         IdCliente = reader.IsDBNull(reader.GetOrdinal("id_cliente")) ? null : reader.GetInt32(reader.GetOrdinal("id_cliente")),
                         RazonSocial = reader.IsDBNull(reader.GetOrdinal("razon_social")) ? null : reader.GetString(reader.GetOrdinal("razon_social")),
-                        NombreComercial = reader.IsDBNull(reader.GetOrdinal("nombre_comercial")) ? null : reader.GetString(reader.GetOrdinal("nombre_comercial"))
+                        NombreComercial = reader.IsDBNull(reader.GetOrdinal("nombre_comercial")) ? null : reader.GetString(reader.GetOrdinal("nombre_comercial")),
+                        Nota = reader.IsDBNull(reader.GetOrdinal("nota")) ? null : reader.GetString(reader.GetOrdinal("nota"))
                     };
 
                     relaciones.Add(relacion);

@@ -24,5 +24,10 @@ namespace Clases
         /// Nombre comercial del cliente
         /// </summary>
         public string? NombreComercial { get; set; }
+
+        /// <summary>
+        /// Nota asociada a la relación
+        /// </summary>
+        public string? Nota { get; set; }
     }
 }
