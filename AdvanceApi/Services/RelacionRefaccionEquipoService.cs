@@ -142,7 +142,7 @@ namespace AdvanceApi.Services
 
                 command.Parameters.AddWithValue("@operacion", "delete");
                 command.Parameters.AddWithValue("@idRelacionRefaccion", idRelacionRefaccion);
-                command.Parameters.AddWithValue("@idRefaccion", 0);
+                command.Parameters.AddWithValue("@idRefaccion", DBNull.Value);
                 command.Parameters.AddWithValue("@nota", DBNull.Value);
                 command.Parameters.AddWithValue("@idEquipo", DBNull.Value);
 
@@ -194,7 +194,7 @@ namespace AdvanceApi.Services
 
                 command.Parameters.AddWithValue("@operacion", "update_nota");
                 command.Parameters.AddWithValue("@idRelacionRefaccion", query.IdRelacionRefaccion);
-                command.Parameters.AddWithValue("@idRefaccion", query.IdRefaccion);
+                command.Parameters.AddWithValue("@idRefaccion", DBNull.Value);
                 command.Parameters.AddWithValue("@nota", (object?)query.Nota ?? DBNull.Value);
                 command.Parameters.AddWithValue("@idEquipo", DBNull.Value);
 
