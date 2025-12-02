@@ -20,33 +20,28 @@ namespace AdvanceApi.Controllers
         }
 
         /// <summary>
-        /// Obtiene relaciones refacción-equipo según los criterios de búsqueda proporcionados
-        /// GET /api/RelacionesRefaccionEquipo
+        /// Obtiene las refacciones asociadas a un equipo
+        /// GET /api/RelacionesRefaccionEquipo/refacciones?idEquipo={idEquipo}
         /// </summary>
-        /// <param name="idRefaccion">Filtro exacto por ID de refacción (0 para no filtrar)</param>
-        /// <param name="idEquipo">Filtro exacto por ID de equipo (0 para no filtrar)</param>
-        /// <returns>Lista de relaciones que cumplen con los criterios</returns>
-        [HttpGet]
-        public async Task<IActionResult> GetRelaciones(
-            [FromQuery] int idRefaccion = 0,
-            [FromQuery] int idEquipo = 0)
+        /// <param name="idEquipo">ID del equipo (obligatorio, mayor que 0)</param>
+        /// <returns>Lista de refacciones asociadas al equipo</returns>
+        [HttpGet("refacciones")]
+        public async Task<IActionResult> GetRefaccionesByEquipo([FromQuery] int idEquipo)
         {
             try
             {
-                var query = new RelacionRefaccionEquipoQueryDto
+                if (idEquipo <= 0)
                 {
-                    Operacion = "select",
-                    IdRefaccion = idRefaccion,
-                    IdEquipo = idEquipo
-                };
+                    return BadRequest(new { message = "El campo 'idEquipo' debe ser mayor que 0." });
+                }
 
-                var relaciones = await _relacionService.GetRelacionesAsync(query);
+                var refacciones = await _relacionService.GetRefaccionesByEquipoAsync(idEquipo);
 
-                return Ok(relaciones);
+                return Ok(refacciones);
             }
             catch (InvalidOperationException ex)
             {
-                _logger.LogError(ex, "Error al obtener relaciones refacción-equipo");
+                _logger.LogError(ex, "Error al obtener refacciones por equipo");
 #if DEBUG
                 return StatusCode(500, new { message = ex.Message, innerMessage = ex.InnerException?.Message });
 #else
@@ -55,7 +50,47 @@ namespace AdvanceApi.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error inesperado al obtener relaciones refacción-equipo");
+                _logger.LogError(ex, "Error inesperado al obtener refacciones por equipo");
+#if DEBUG
+                return StatusCode(500, new { message = ex.Message });
+#else
+                return StatusCode(500, new { message = "Error interno del servidor." });
+#endif
+            }
+        }
+
+        /// <summary>
+        /// Obtiene los equipos asociados a una refacción
+        /// GET /api/RelacionesRefaccionEquipo/equipos?idRefaccion={idRefaccion}
+        /// </summary>
+        /// <param name="idRefaccion">ID de la refacción (obligatorio, mayor que 0)</param>
+        /// <returns>Lista de equipos asociados a la refacción</returns>
+        [HttpGet("equipos")]
+        public async Task<IActionResult> GetEquiposByRefaccion([FromQuery] int idRefaccion)
+        {
+            try
+            {
+                if (idRefaccion <= 0)
+                {
+                    return BadRequest(new { message = "El campo 'idRefaccion' debe ser mayor que 0." });
+                }
+
+                var equipos = await _relacionService.GetEquiposByRefaccionAsync(idRefaccion);
+
+                return Ok(equipos);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogError(ex, "Error al obtener equipos por refacción");
+#if DEBUG
+                return StatusCode(500, new { message = ex.Message, innerMessage = ex.InnerException?.Message });
+#else
+                return StatusCode(500, new { message = "Error al acceder a la base de datos." });
+#endif
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error inesperado al obtener equipos por refacción");
 #if DEBUG
                 return StatusCode(500, new { message = ex.Message });
 #else

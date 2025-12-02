@@ -23,14 +23,11 @@ namespace AdvanceApi.Services
         }
 
         /// <summary>
-        /// Obtiene relaciones refacción-equipo usando el procedimiento almacenado sp_relacionRefaccionEquipo_edit
+        /// Obtiene refacciones asociadas a un equipo usando la operación select_refacciones
         /// </summary>
-        public async Task<List<RelacionRefaccionEquipo>> GetRelacionesAsync(RelacionRefaccionEquipoQueryDto query)
+        public async Task<List<RelacionRefaccionEquipo>> GetRefaccionesByEquipoAsync(int idEquipo)
         {
-            if (query == null)
-                throw new ArgumentNullException(nameof(query));
-
-            var relaciones = new List<RelacionRefaccionEquipo>();
+            var refacciones = new List<RelacionRefaccionEquipo>();
 
             try
             {
@@ -39,17 +36,17 @@ namespace AdvanceApi.Services
                 command.CommandType = CommandType.StoredProcedure;
 
                 // Configurar parámetros del procedimiento almacenado
-                command.Parameters.AddWithValue("@operacion", "select");
+                command.Parameters.AddWithValue("@operacion", "select_refacciones");
                 command.Parameters.AddWithValue("@idRelacionRefaccion", DBNull.Value);
-                command.Parameters.AddWithValue("@idRefaccion", query.IdRefaccion);
+                command.Parameters.AddWithValue("@idRefaccion", DBNull.Value);
                 command.Parameters.AddWithValue("@nota", DBNull.Value);
-                command.Parameters.AddWithValue("@idEquipo", query.IdEquipo);
+                command.Parameters.AddWithValue("@idEquipo", idEquipo);
 
                 await using var reader = await command.ExecuteReaderAsync();
 
                 while (await reader.ReadAsync())
                 {
-                    var relacion = new RelacionRefaccionEquipo
+                    var refaccion = new RelacionRefaccionEquipo
                     {
                         IdRefaccion = reader.IsDBNull(reader.GetOrdinal("idRefaccion")) ? null : reader.GetInt32(reader.GetOrdinal("idRefaccion")),
                         Marca = reader.IsDBNull(reader.GetOrdinal("marca")) ? null : reader.GetString(reader.GetOrdinal("marca")),
@@ -58,21 +55,72 @@ namespace AdvanceApi.Services
                         Descripcion = reader.IsDBNull(reader.GetOrdinal("descripcion")) ? null : reader.GetString(reader.GetOrdinal("descripcion"))
                     };
 
-                    relaciones.Add(relacion);
+                    refacciones.Add(refaccion);
                 }
 
-                _logger.LogDebug("Se obtuvieron {Count} relaciones refacción-equipo", relaciones.Count);
+                _logger.LogDebug("Se obtuvieron {Count} refacciones para el equipo {IdEquipo}", refacciones.Count, idEquipo);
 
-                return relaciones;
+                return refacciones;
             }
             catch (SqlException sqlEx)
             {
-                _logger.LogError(sqlEx, "Error SQL al obtener relaciones refacción-equipo. SqlError: {Message}", sqlEx.Message);
-                throw new InvalidOperationException("Error al obtener relaciones refacción-equipo de la base de datos", sqlEx);
+                _logger.LogError(sqlEx, "Error SQL al obtener refacciones por equipo. SqlError: {Message}", sqlEx.Message);
+                throw new InvalidOperationException("Error al obtener refacciones por equipo de la base de datos", sqlEx);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error inesperado al obtener relaciones refacción-equipo");
+                _logger.LogError(ex, "Error inesperado al obtener refacciones por equipo");
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Obtiene equipos asociados a una refacción usando la operación select_equipos
+        /// </summary>
+        public async Task<List<EquipoRelacionDto>> GetEquiposByRefaccionAsync(int idRefaccion)
+        {
+            var equipos = new List<EquipoRelacionDto>();
+
+            try
+            {
+                await using var connection = await _dbHelper.GetOpenConnectionAsync();
+                await using var command = new SqlCommand("sp_relacionRefaccionEquipo_edit", connection);
+                command.CommandType = CommandType.StoredProcedure;
+
+                // Configurar parámetros del procedimiento almacenado
+                command.Parameters.AddWithValue("@operacion", "select_equipos");
+                command.Parameters.AddWithValue("@idRelacionRefaccion", DBNull.Value);
+                command.Parameters.AddWithValue("@idRefaccion", idRefaccion);
+                command.Parameters.AddWithValue("@nota", DBNull.Value);
+                command.Parameters.AddWithValue("@idEquipo", DBNull.Value);
+
+                await using var reader = await command.ExecuteReaderAsync();
+
+                while (await reader.ReadAsync())
+                {
+                    var equipo = new EquipoRelacionDto
+                    {
+                        IdEquipo = reader.IsDBNull(reader.GetOrdinal("idEquipo")) ? null : reader.GetInt32(reader.GetOrdinal("idEquipo")),
+                        Marca = reader.IsDBNull(reader.GetOrdinal("marca")) ? null : reader.GetString(reader.GetOrdinal("marca")),
+                        Identificador = reader.IsDBNull(reader.GetOrdinal("identificador")) ? null : reader.GetString(reader.GetOrdinal("identificador")),
+                        Creado = reader.IsDBNull(reader.GetOrdinal("creado")) ? null : reader.GetInt32(reader.GetOrdinal("creado"))
+                    };
+
+                    equipos.Add(equipo);
+                }
+
+                _logger.LogDebug("Se obtuvieron {Count} equipos para la refacción {IdRefaccion}", equipos.Count, idRefaccion);
+
+                return equipos;
+            }
+            catch (SqlException sqlEx)
+            {
+                _logger.LogError(sqlEx, "Error SQL al obtener equipos por refacción. SqlError: {Message}", sqlEx.Message);
+                throw new InvalidOperationException("Error al obtener equipos por refacción de la base de datos", sqlEx);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error inesperado al obtener equipos por refacción");
                 throw;
             }
         }
