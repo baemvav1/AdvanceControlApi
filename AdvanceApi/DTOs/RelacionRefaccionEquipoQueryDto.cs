@@ -6,7 +6,7 @@ namespace AdvanceApi.DTOs
     public class RelacionRefaccionEquipoQueryDto
     {
         /// <summary>
-        /// Tipo de operación: 'select', 'delete', 'put', 'update_nota'
+        /// Tipo de operación: 'select_refacciones', 'select_equipos', 'delete', 'put', 'update_nota'
         /// </summary>
         public string Operacion { get; set; } = string.Empty;
 

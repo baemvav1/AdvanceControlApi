@@ -11,11 +11,18 @@ namespace AdvanceApi.Services
     public interface IRelacionRefaccionEquipoService
     {
         /// <summary>
-        /// Obtiene relaciones refacción-equipo usando el procedimiento almacenado sp_relacionRefaccionEquipo_edit
+        /// Obtiene refacciones asociadas a un equipo usando la operación select_refacciones
         /// </summary>
-        /// <param name="query">Parámetros de búsqueda</param>
-        /// <returns>Lista de relaciones que cumplen con los criterios de búsqueda</returns>
-        Task<List<RelacionRefaccionEquipo>> GetRelacionesAsync(RelacionRefaccionEquipoQueryDto query);
+        /// <param name="idEquipo">ID del equipo</param>
+        /// <returns>Lista de refacciones asociadas al equipo</returns>
+        Task<List<RelacionRefaccionEquipo>> GetRefaccionesByEquipoAsync(int idEquipo);
+
+        /// <summary>
+        /// Obtiene equipos asociados a una refacción usando la operación select_equipos
+        /// </summary>
+        /// <param name="idRefaccion">ID de la refacción</param>
+        /// <returns>Lista de equipos asociados a la refacción</returns>
+        Task<List<EquipoRelacionDto>> GetEquiposByRefaccionAsync(int idRefaccion);
 
         /// <summary>
         /// Crea una nueva relación refacción-equipo
