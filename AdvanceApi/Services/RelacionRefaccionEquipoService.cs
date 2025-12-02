@@ -142,6 +142,7 @@ namespace AdvanceApi.Services
 
                 command.Parameters.AddWithValue("@operacion", "delete");
                 command.Parameters.AddWithValue("@idRelacionRefaccion", idRelacionRefaccion);
+                // idRefaccion not used for delete operation, set to default value
                 command.Parameters.AddWithValue("@idRefaccion", 0);
                 command.Parameters.AddWithValue("@nota", DBNull.Value);
                 command.Parameters.AddWithValue("@idEquipo", DBNull.Value);
@@ -194,6 +195,7 @@ namespace AdvanceApi.Services
 
                 command.Parameters.AddWithValue("@operacion", "update_nota");
                 command.Parameters.AddWithValue("@idRelacionRefaccion", (object?)query.IdRelacionRefaccion ?? DBNull.Value);
+                // idRefaccion is required by stored procedure for update_nota validation
                 command.Parameters.AddWithValue("@idRefaccion", query.IdRefaccion);
                 command.Parameters.AddWithValue("@nota", (object?)query.Nota ?? DBNull.Value);
                 command.Parameters.AddWithValue("@idEquipo", DBNull.Value);
