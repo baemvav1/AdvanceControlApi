@@ -55,15 +55,15 @@ namespace AdvanceApi.Services
                 {
                     var operacion = new OperacionDetalle
                     {
-                        IdTipo = reader.IsDBNull(0) ? null : reader.GetInt32(0),
-                        RazonSocial = reader.IsDBNull(1) ? null : reader.GetString(1),
-                        Identificador = reader.IsDBNull(2) ? null : reader.GetString(2),
-                        Atiende = reader.IsDBNull(3) ? null : reader.GetString(3),
-                        Monto = reader.IsDBNull(4) ? null : reader.GetDouble(4),
-                        Nota = reader.IsDBNull(5) ? null : reader.GetString(5),
-                        FechaInicio = reader.IsDBNull(6) ? null : reader.GetDateTime(6),
-                        FechaFinal = reader.IsDBNull(7) ? null : reader.GetDateTime(7),
-                        Finalizado = reader.IsDBNull(8) ? null : reader.GetBoolean(8)
+                        IdTipo = reader.IsDBNull(reader.GetOrdinal("idTipo")) ? null : reader.GetInt32(reader.GetOrdinal("idTipo")),
+                        RazonSocial = reader.IsDBNull(reader.GetOrdinal("razon_social")) ? null : reader.GetString(reader.GetOrdinal("razon_social")),
+                        Identificador = reader.IsDBNull(reader.GetOrdinal("identificador")) ? null : reader.GetString(reader.GetOrdinal("identificador")),
+                        Atiende = reader.IsDBNull(reader.GetOrdinal("Atiende")) ? null : reader.GetString(reader.GetOrdinal("Atiende")),
+                        Monto = reader.IsDBNull(reader.GetOrdinal("monto")) ? null : reader.GetDouble(reader.GetOrdinal("monto")),
+                        Nota = reader.IsDBNull(reader.GetOrdinal("nota")) ? null : reader.GetString(reader.GetOrdinal("nota")),
+                        FechaInicio = reader.IsDBNull(reader.GetOrdinal("fechaInicio")) ? null : reader.GetDateTime(reader.GetOrdinal("fechaInicio")),
+                        FechaFinal = reader.IsDBNull(reader.GetOrdinal("fechaFinal")) ? null : reader.GetDateTime(reader.GetOrdinal("fechaFinal")),
+                        Finalizado = reader.IsDBNull(reader.GetOrdinal("finalizado")) ? null : reader.GetBoolean(reader.GetOrdinal("finalizado"))
                     };
 
                     operaciones.Add(operacion);
