@@ -145,6 +145,7 @@ The API uses **16 stored procedures** distributed across the following categorie
 
 ### 5.1 sp_MatenimientoEdit
 - **File**: `AdvanceApi/Services/MantenimientoService.cs` (lines 38, 97, 149)
+- **Note**: The procedure name has a typo ("Matenimiento" instead of "Mantenimiento") in the actual codebase
 - **Purpose**: Executes CRUD operations on maintenance records
 - **Parameters**:
   - `@operacion`: Operation type ('select', 'put', 'delete')

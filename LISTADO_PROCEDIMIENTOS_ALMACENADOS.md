@@ -145,6 +145,7 @@ El API utiliza **16 procedimientos almacenados** distribuidos en las siguientes 
 
 ### 5.1 sp_MatenimientoEdit
 - **Archivo**: `AdvanceApi/Services/MantenimientoService.cs` (líneas 38, 97, 149)
+- **Nota**: El nombre del procedimiento tiene un error tipográfico ("Matenimiento" en lugar de "Mantenimiento") en el código actual
 - **Propósito**: Ejecuta operaciones CRUD sobre mantenimientos
 - **Parámetros**:
   - `@operacion`: Tipo de operación ('select', 'put', 'delete')

@@ -14,7 +14,7 @@
 | 8 | `sp_equipo_edit` | Equipos / Equipment | EquipoService.cs | Select, Update, Delete |
 | 9 | `sp_equipo_create` | Equipos / Equipment | EquipoService.cs | Create equipment |
 | 10 | `sp_refaccion_edit` | Refacciones / Parts | RefaccionService.cs | Select, Update, Delete, Create |
-| 11 | `sp_MatenimientoEdit` | Mantenimientos / Maintenance | MantenimientoService.cs | Select, Create, Delete |
+| 11 | `sp_MatenimientoEdit` * | Mantenimientos / Maintenance | MantenimientoService.cs | Select, Create, Delete |
 | 12 | `sp_operacion_select` | Operaciones / Operations | OperacionService.cs | Select operations |
 | 13 | `sp_relacionEquipoCliente_edit` | Relaciones / Relations | RelacionEquipoClienteService.cs | Select, Create, Delete, Update Note |
 | 14 | `sp_relacionRefaccionEquipo_edit` | Relaciones / Relations | RelacionRefaccionEquipoService.cs | Select Parts/Equipment, Create, Delete, Update Note |
@@ -86,6 +86,16 @@ For detailed information about each stored procedure, including parameters, data
 ---
 
 **Total de Procedimientos Almacenados / Total Stored Procedures**: 16
+
+---
+
+## Notas / Notes
+
+\* `sp_MatenimientoEdit` y `@descricpion`: Estos nombres tienen errores tipográficos en el código actual del API. Se documentan tal como están implementados.
+
+\* `sp_MatenimientoEdit` and `@descricpion`: These names have typos in the actual API code. They are documented as implemented.
+
+---
 
 **Documento generado / Document generated**: 2025-12-14  
 **Versión del API / API Version**: AdvanceControlApi
