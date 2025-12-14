@@ -41,7 +41,6 @@ namespace AdvanceApi.Services
                 // Configurar parámetros del procedimiento almacenado
                 command.Parameters.AddWithValue("@search", (object?)query.Search ?? DBNull.Value);
                 command.Parameters.AddWithValue("@rfc", (object?)query.Rfc ?? DBNull.Value);
-                command.Parameters.AddWithValue("@curp", (object?)query.Curp ?? DBNull.Value);
                 command.Parameters.AddWithValue("@notas", (object?)query.Notas ?? DBNull.Value);
                 command.Parameters.AddWithValue("@prioridad", (object?)query.Prioridad ?? DBNull.Value);
 

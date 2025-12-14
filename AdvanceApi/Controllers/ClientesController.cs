@@ -25,7 +25,6 @@ namespace AdvanceApi.Controllers
         /// </summary>
         /// <param name="search">Búsqueda en razon_social o nombre_comercial</param>
         /// <param name="rfc">Búsqueda parcial por RFC</param>
-        /// <param name="curp">Búsqueda parcial por CURP</param>
         /// <param name="notas">Búsqueda parcial en notas</param>
         /// <param name="prioridad">Coincidencia exacta de prioridad</param>
         /// <returns>Lista de clientes que cumplen con los criterios</returns>
@@ -33,7 +32,6 @@ namespace AdvanceApi.Controllers
         public async Task<IActionResult> GetClientes(
             [FromQuery] string? search = null,
             [FromQuery] string? rfc = null,
-            [FromQuery] string? curp = null,
             [FromQuery] string? notas = null,
             [FromQuery] short? prioridad = null)
         {
@@ -43,7 +41,6 @@ namespace AdvanceApi.Controllers
                 {
                     Search = search,
                     Rfc = rfc,
-                    Curp = curp,
                     Notas = notas,
                     Prioridad = prioridad
                 };
