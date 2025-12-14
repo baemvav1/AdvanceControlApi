@@ -184,5 +184,58 @@ namespace AdvanceApi.Services
                 throw;
             }
         }
+
+        /// <summary>
+        /// Actualiza el estado de atendido de un mantenimiento
+        /// </summary>
+        public async Task<object> UpdateAtendidoAsync(int idMantenimiento, int idAtendio)
+        {
+            try
+            {
+                await using var connection = await _dbHelper.GetOpenConnectionAsync();
+                await using var command = new SqlCommand("sp_MatenimientoEdit", connection);
+                command.CommandType = CommandType.StoredProcedure;
+
+                command.Parameters.AddWithValue("@operacion", "update_atendido");
+                command.Parameters.AddWithValue("@identificador", DBNull.Value);
+                command.Parameters.AddWithValue("@idCliente", 0);
+                command.Parameters.AddWithValue("@nota", DBNull.Value);
+                command.Parameters.AddWithValue("@idMantenimiento", idMantenimiento);
+                command.Parameters.AddWithValue("@idEquipo", DBNull.Value);
+                command.Parameters.AddWithValue("@idTipoMantenimiento", DBNull.Value);
+                command.Parameters.AddWithValue("@atendido", DBNull.Value);
+                command.Parameters.AddWithValue("@idAtendio", idAtendio);
+
+                await using var reader = await command.ExecuteReaderAsync();
+
+                // Si hay un resultado, puede ser un mensaje de error
+                if (await reader.ReadAsync())
+                {
+                    try
+                    {
+                        var result = reader.GetString(reader.GetOrdinal("Result"));
+                        _logger.LogWarning("Update atendido de mantenimiento devolvió: {Result}", result);
+                        return new { success = false, message = result };
+                    }
+                    catch
+                    {
+                        // No es un mensaje de resultado, operación exitosa
+                    }
+                }
+
+                _logger.LogDebug("Mantenimiento {IdMantenimiento} marcado como atendido por usuario {IdAtendio}", idMantenimiento, idAtendio);
+                return new { success = true, message = "Mantenimiento marcado como atendido correctamente" };
+            }
+            catch (SqlException sqlEx)
+            {
+                _logger.LogError(sqlEx, "Error SQL al actualizar estado atendido de mantenimiento. SqlError: {Message}", sqlEx.Message);
+                throw new InvalidOperationException("Error al actualizar estado atendido de mantenimiento en la base de datos", sqlEx);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error inesperado al actualizar estado atendido de mantenimiento");
+                throw;
+            }
+        }
     }
 }
