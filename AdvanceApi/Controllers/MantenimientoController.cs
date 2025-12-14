@@ -71,7 +71,6 @@ namespace AdvanceApi.Controllers
         /// <param name="idTipoMantenimiento">ID del tipo de mantenimiento (obligatorio)</param>
         /// <param name="idCliente">ID del cliente (obligatorio, mayor que 0)</param>
         /// <param name="idEquipo">ID del equipo (obligatorio, mayor que 0)</param>
-        /// <param name="costo">Costo del mantenimiento (obligatorio, mayor que 0)</param>
         /// <param name="nota">Nota asociada al mantenimiento (opcional)</param>
         /// <returns>Resultado de la operación</returns>
         [HttpPost]
@@ -79,7 +78,6 @@ namespace AdvanceApi.Controllers
             [FromQuery] int idTipoMantenimiento,
             [FromQuery] int idCliente,
             [FromQuery] int idEquipo,
-            [FromQuery] double costo,
             [FromQuery] string? nota = null)
         {
             try
@@ -99,18 +97,12 @@ namespace AdvanceApi.Controllers
                     return BadRequest(new { message = "El campo 'idEquipo' debe ser mayor que 0." });
                 }
 
-                if (costo <= 0)
-                {
-                    return BadRequest(new { message = "El campo 'costo' debe ser mayor que 0." });
-                }
-
                 var query = new MantenimientoQueryDto
                 {
                     Operacion = "put",
                     IdTipoMantenimiento = idTipoMantenimiento,
                     IdCliente = idCliente,
                     IdEquipo = idEquipo,
-                    Costo = costo,
                     Nota = nota
                 };
 

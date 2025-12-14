@@ -36,11 +36,6 @@ namespace AdvanceApi.DTOs
         public int? IdEquipo { get; set; }
 
         /// <summary>
-        /// Costo del mantenimiento (usado en operación put)
-        /// </summary>
-        public double? Costo { get; set; }
-
-        /// <summary>
         /// ID del tipo de mantenimiento (usado en operación put)
         /// </summary>
         public int? IdTipoMantenimiento { get; set; }

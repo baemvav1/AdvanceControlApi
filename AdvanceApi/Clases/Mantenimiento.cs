@@ -34,15 +34,5 @@ namespace Clases
         /// Identificador del equipo
         /// </summary>
         public string? Identificador { get; set; }
-
-        /// <summary>
-        /// Costo del mantenimiento
-        /// </summary>
-        public double? Costo { get; set; }
-
-        /// <summary>
-        /// Costo total del mantenimiento
-        /// </summary>
-        public double? CostoTotal { get; set; }
     }
 }
