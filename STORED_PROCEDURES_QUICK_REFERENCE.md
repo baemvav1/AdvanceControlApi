@@ -91,9 +91,17 @@ For detailed information about each stored procedure, including parameters, data
 
 ## Notas / Notes
 
-\* `sp_MatenimientoEdit` y `@descricpion`: Estos nombres tienen errores tipográficos en el código actual del API. Se documentan tal como están implementados.
+**Errores Tipográficos en el Código Actual / Typos in Current Code:**
 
-\* `sp_MatenimientoEdit` and `@descricpion`: These names have typos in the actual API code. They are documented as implemented.
+\* `sp_MatenimientoEdit`: El nombre del procedimiento tiene un error tipográfico (le falta una 'n', debería ser "Mantenimiento"). Se documenta tal como está implementado.
+
+\* `@descricpion` (en sp_equipo_edit): El nombre del parámetro tiene un error tipográfico (le falta una 'p', debería ser "descripcion"). Se documenta tal como está implementado.
+
+---
+
+\* `sp_MatenimientoEdit`: The procedure name has a typo (missing 'n', should be "Mantenimiento"). It is documented as implemented.
+
+\* `@descricpion` (in sp_equipo_edit): The parameter name has a typo (missing 'p', should be "descripcion"). It is documented as implemented.
 
 ---
 

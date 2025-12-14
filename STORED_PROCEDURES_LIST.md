@@ -103,7 +103,7 @@ The API uses **16 stored procedures** distributed across the following categorie
   - `@idEquipo`: Equipment ID
   - `@marca`: Equipment brand (optional)
   - `@creado`: Creator user ID (optional)
-  - `@descricpion`: Equipment description (optional, note: parameter name has typo in actual SP)
+  - `@descricpion`: Equipment description (optional, note: parameter name has typo in actual SP, should be @descripcion)
   - `@identificador`: Unique equipment identifier (optional)
   - `@estatus`: Equipment status (active/inactive)
 - **Returns**: Depends on operation - list of equipment or result message

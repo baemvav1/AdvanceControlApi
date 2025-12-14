@@ -103,7 +103,7 @@ El API utiliza **16 procedimientos almacenados** distribuidos en las siguientes 
   - `@idEquipo`: ID del equipo
   - `@marca`: Marca del equipo (opcional)
   - `@creado`: ID del usuario creador (opcional)
-  - `@descricpion`: Descripción del equipo (opcional, note: parameter name has typo in actual SP)
+  - `@descricpion`: Descripción del equipo (opcional, nota: el nombre del parámetro tiene un error tipográfico en el SP actual, debería ser @descripcion)
   - `@identificador`: Identificador único del equipo (opcional)
   - `@estatus`: Estado del equipo (activo/inactivo)
 - **Retorna**: Depende de la operación - lista de equipos o mensaje de resultado
