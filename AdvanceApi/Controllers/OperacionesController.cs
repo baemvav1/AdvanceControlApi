@@ -23,15 +23,19 @@ namespace AdvanceApi.Controllers
         /// Obtiene operaciones según los criterios de búsqueda proporcionados
         /// GET /api/Operaciones
         /// </summary>
-        /// <param name="idTipo">Filtro exacto por idTipo</param>
-        /// <param name="idCliente">Filtro exacto por idCliente</param>
-        /// <param name="estatus">Filtro exacto por estatus</param>
+        /// <param name="idTipo">Filtro exacto por idTipo (0 para no filtrar)</param>
+        /// <param name="idCliente">Filtro exacto por idCliente (0 para no filtrar)</param>
+        /// <param name="idEquipo">Filtro exacto por idEquipo (0 para no filtrar)</param>
+        /// <param name="idAtiende">Filtro exacto por idAtiende (0 para no filtrar)</param>
+        /// <param name="nota">Búsqueda parcial en nota</param>
         /// <returns>Lista de operaciones que cumplen con los criterios</returns>
         [HttpGet]
         public async Task<IActionResult> GetOperaciones(
-            [FromQuery] int? idTipo = null,
-            [FromQuery] int? idCliente = null,
-            [FromQuery] bool? estatus = null)
+            [FromQuery] int idTipo = 0,
+            [FromQuery] int idCliente = 0,
+            [FromQuery] int idEquipo = 0,
+            [FromQuery] int idAtiende = 0,
+            [FromQuery] string? nota = null)
         {
             try
             {
@@ -39,7 +43,9 @@ namespace AdvanceApi.Controllers
                 {
                     IdTipo = idTipo,
                     IdCliente = idCliente,
-                    Estatus = estatus
+                    IdEquipo = idEquipo,
+                    IdAtiende = idAtiende,
+                    Nota = nota
                 };
 
                 var operaciones = await _operacionService.GetOperacionesAsync(query);
@@ -58,6 +64,47 @@ namespace AdvanceApi.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error inesperado al obtener operaciones");
+#if DEBUG
+                return StatusCode(500, new { message = ex.Message });
+#else
+                return StatusCode(500, new { message = "Error interno del servidor." });
+#endif
+            }
+        }
+
+        /// <summary>
+        /// Elimina (soft delete) una operación
+        /// DELETE /api/Operaciones
+        /// </summary>
+        /// <param name="idOperacion">ID de la operación (obligatorio)</param>
+        /// <returns>Resultado de la operación</returns>
+        [HttpDelete]
+        public async Task<IActionResult> DeleteOperacion(
+            [FromQuery] int idOperacion)
+        {
+            try
+            {
+                if (idOperacion <= 0)
+                {
+                    return BadRequest(new { message = "El campo 'idOperacion' debe ser mayor que 0." });
+                }
+
+                var result = await _operacionService.DeleteOperacionAsync(idOperacion);
+
+                return Ok(result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogError(ex, "Error al eliminar operación");
+#if DEBUG
+                return StatusCode(500, new { message = ex.Message, innerMessage = ex.InnerException?.Message });
+#else
+                return StatusCode(500, new { message = "Error al acceder a la base de datos." });
+#endif
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error inesperado al eliminar operación");
 #if DEBUG
                 return StatusCode(500, new { message = ex.Message });
 #else
