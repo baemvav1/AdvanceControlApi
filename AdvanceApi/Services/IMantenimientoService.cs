@@ -30,5 +30,13 @@ namespace AdvanceApi.Services
         /// <param name="idMantenimiento">ID del mantenimiento</param>
         /// <returns>Resultado de la operación</returns>
         Task<object> DeleteMantenimientoAsync(int idMantenimiento);
+
+        /// <summary>
+        /// Actualiza el estado de atendido de un mantenimiento
+        /// </summary>
+        /// <param name="idMantenimiento">ID del mantenimiento</param>
+        /// <param name="idAtendio">ID del usuario que atendió</param>
+        /// <returns>Resultado de la operación</returns>
+        Task<object> UpdateAtendidoAsync(int idMantenimiento, int idAtendio);
     }
 }

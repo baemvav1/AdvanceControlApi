@@ -67,7 +67,42 @@ POST /api/Mantenimiento?idTipoMantenimiento=1&idCliente=10&idEquipo=5&nota=ejemp
 - No se realizaron cambios en este endpoint
 - Sigue funcionando con el parámetro `idMantenimiento`
 
+### 4. PATCH /api/Mantenimiento/atendido (NUEVO)
+**Archivo:** `AdvanceApi/Controllers/MantenimientoController.cs`
+
+**Descripción:**
+- Nuevo endpoint para marcar un mantenimiento como atendido
+- Utiliza la operación `update_atendido` del procedimiento almacenado `sp_MatenimientoEdit`
+- Establece `estatus = 0`, `atendido = 1` y registra el usuario que atendió
+
+**Parámetros:**
+- `idMantenimiento` (int, obligatorio, > 0): ID del mantenimiento a actualizar
+- `idAtendio` (int, obligatorio, > 0): ID del usuario que atendió el mantenimiento
+
+**Ejemplo de uso:**
+```http
+PATCH /api/Mantenimiento/atendido?idMantenimiento=5&idAtendio=3
+```
+
+**Respuesta exitosa:**
+```json
+{
+  "success": true,
+  "message": "Mantenimiento marcado como atendido correctamente"
+}
+```
+
+**Respuesta de error (ID inválido):**
+```json
+{
+  "success": false,
+  "message": "Id Invalido invalido"
+}
+```
+
 ## Archivos Modificados
+
+### Cambios anteriores (eliminación de costo)
 
 1. **AdvanceApi/Controllers/MantenimientoController.cs**
    - Eliminado parámetro `costo` del método `CreateMantenimiento`
@@ -83,16 +118,35 @@ POST /api/Mantenimiento?idTipoMantenimiento=1&idCliente=10&idEquipo=5&nota=ejemp
 4. **AdvanceApi/Clases/Mantenimiento.cs**
    - Eliminadas propiedades `Costo` y `CostoTotal`
 
+### Cambios nuevos (operación update_atendido)
+
+1. **AdvanceApi/Controllers/MantenimientoController.cs**
+   - Agregado nuevo endpoint `UpdateAtendido` (PATCH /api/Mantenimiento/atendido)
+   - Validaciones para `idMantenimiento` e `idAtendio`
+
+2. **AdvanceApi/Services/MantenimientoService.cs**
+   - Agregado método `UpdateAtendidoAsync` que llama al SP con operación `update_atendido`
+   - Incluye parámetros `@atendido` (true) y `@idAtendio`
+
+3. **AdvanceApi/Services/IMantenimientoService.cs**
+   - Agregada definición de interfaz para `UpdateAtendidoAsync`
+
+4. **AdvanceApi/DTOs/MantenimientoQueryDto.cs**
+   - Agregadas propiedades `Atendido` (bool?) e `IdAtendio` (int)
+   - Actualizada documentación de `Operacion` para incluir 'update_atendido'
+
 ## Impacto en Clientes
 
 Los clientes que consumen la API de Mantenimiento deben actualizar su código:
 
 1. **Al crear mantenimientos (POST):** Ya no enviar el parámetro `costo`
 2. **Al obtener mantenimientos (GET):** Ya no esperar los campos `costo` y `costoTotal` en la respuesta
+3. **Para marcar mantenimientos como atendidos (PATCH):** Nuevo endpoint disponible en `/api/Mantenimiento/atendido`
 
 ## Compatibilidad con Stored Procedure
 
-Estos cambios son compatibles con el nuevo procedimiento almacenado `sp_MantenimientoEdit` que:
+Estos cambios son compatibles con el procedimiento almacenado `sp_MantenimientoEdit` que:
 - En operación `select`: Retorna 6 columnas (sin costo ni costoTotal)
 - En operación `put`: No requiere el parámetro `@costo`
 - En operación `delete`: No se vio afectada
+- En operación `update_atendido` (NUEVA): Actualiza `estatus = 0`, `atendido = 1` y `idAtendio` del mantenimiento especificado

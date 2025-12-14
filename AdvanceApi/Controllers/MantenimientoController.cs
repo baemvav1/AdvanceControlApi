@@ -170,5 +170,53 @@ namespace AdvanceApi.Controllers
 #endif
             }
         }
+
+        /// <summary>
+        /// Actualiza el estado de atendido de un mantenimiento
+        /// PATCH /api/Mantenimiento/atendido
+        /// </summary>
+        /// <param name="idMantenimiento">ID del mantenimiento (obligatorio)</param>
+        /// <param name="idAtendio">ID del usuario que atendió (obligatorio)</param>
+        /// <returns>Resultado de la operación</returns>
+        [HttpPatch("atendido")]
+        public async Task<IActionResult> UpdateAtendido(
+            [FromQuery] int idMantenimiento,
+            [FromQuery] int idAtendio)
+        {
+            try
+            {
+                if (idMantenimiento <= 0)
+                {
+                    return BadRequest(new { message = "El campo 'idMantenimiento' debe ser mayor que 0." });
+                }
+
+                if (idAtendio <= 0)
+                {
+                    return BadRequest(new { message = "El campo 'idAtendio' debe ser mayor que 0." });
+                }
+
+                var result = await _mantenimientoService.UpdateAtendidoAsync(idMantenimiento, idAtendio);
+
+                return Ok(result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogError(ex, "Error al actualizar estado atendido de mantenimiento");
+#if DEBUG
+                return StatusCode(500, new { message = ex.Message, innerMessage = ex.InnerException?.Message });
+#else
+                return StatusCode(500, new { message = "Error al acceder a la base de datos." });
+#endif
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error inesperado al actualizar estado atendido de mantenimiento");
+#if DEBUG
+                return StatusCode(500, new { message = ex.Message });
+#else
+                return StatusCode(500, new { message = "Error interno del servidor." });
+#endif
+            }
+        }
     }
 }
