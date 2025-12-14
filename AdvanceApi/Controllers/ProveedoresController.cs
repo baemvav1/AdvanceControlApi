@@ -23,12 +23,14 @@ namespace AdvanceApi.Controllers
         /// Obtiene proveedores según los criterios de búsqueda proporcionados
         /// GET /api/proveedores
         /// </summary>
+        /// <param name="rfc">Búsqueda parcial por RFC</param>
         /// <param name="razonSocial">Búsqueda parcial por razón social</param>
         /// <param name="nombreComercial">Búsqueda parcial por nombre comercial</param>
         /// <param name="nota">Búsqueda parcial en nota</param>
         /// <returns>Lista de proveedores que cumplen con los criterios</returns>
         [HttpGet]
         public async Task<IActionResult> GetProveedores(
+            [FromQuery] string? rfc = null,
             [FromQuery] string? razonSocial = null,
             [FromQuery] string? nombreComercial = null,
             [FromQuery] string? nota = null)
@@ -39,6 +41,7 @@ namespace AdvanceApi.Controllers
                 {
                     Operacion = "select",
                     IdProveedor = 0,
+                    Rfc = rfc,
                     RazonSocial = razonSocial,
                     NombreComercial = nombreComercial,
                     Nota = nota,
