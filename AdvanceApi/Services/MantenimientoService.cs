@@ -203,7 +203,7 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@idMantenimiento", idMantenimiento);
                 command.Parameters.AddWithValue("@idEquipo", DBNull.Value);
                 command.Parameters.AddWithValue("@idTipoMantenimiento", DBNull.Value);
-                command.Parameters.AddWithValue("@atendido", DBNull.Value);
+                command.Parameters.AddWithValue("@atendido", true);
                 command.Parameters.AddWithValue("@idAtendio", idAtendio);
 
                 await using var reader = await command.ExecuteReaderAsync();
