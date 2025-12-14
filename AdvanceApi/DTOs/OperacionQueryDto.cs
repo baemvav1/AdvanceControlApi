@@ -1,23 +1,33 @@
 namespace AdvanceApi.DTOs
 {
     /// <summary>
-    /// DTO para los parámetros de búsqueda del procedimiento almacenado sp_operacion_select
+    /// DTO para los parámetros de búsqueda del procedimiento almacenado sp_OperacionEdit
     /// </summary>
     public class OperacionQueryDto
     {
         /// <summary>
-        /// Filtro exacto por idTipo
+        /// Filtro exacto por idTipo (0 para no filtrar)
         /// </summary>
-        public int? IdTipo { get; set; }
+        public int IdTipo { get; set; }
 
         /// <summary>
-        /// Filtro exacto por idCliente
+        /// Filtro exacto por idCliente (0 para no filtrar)
         /// </summary>
-        public int? IdCliente { get; set; }
+        public int IdCliente { get; set; }
 
         /// <summary>
-        /// Filtro exacto por estatus
+        /// Filtro exacto por idEquipo (0 para no filtrar)
         /// </summary>
-        public bool? Estatus { get; set; }
+        public int IdEquipo { get; set; }
+
+        /// <summary>
+        /// Filtro exacto por idAtiende (0 para no filtrar)
+        /// </summary>
+        public int IdAtiende { get; set; }
+
+        /// <summary>
+        /// Búsqueda parcial en nota (permite búsqueda por texto)
+        /// </summary>
+        public string? Nota { get; set; }
     }
 }
