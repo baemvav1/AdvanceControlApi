@@ -16,11 +16,6 @@ namespace AdvanceApi.DTOs
         public string? Rfc { get; set; }
 
         /// <summary>
-        /// Búsqueda parcial por CURP (LIKE)
-        /// </summary>
-        public string? Curp { get; set; }
-
-        /// <summary>
         /// Búsqueda parcial en notas (LIKE)
         /// </summary>
         public string? Notas { get; set; }
