@@ -207,7 +207,22 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@estatus", true);
                 command.Parameters.AddWithValue("@nota", (object?)query.Nota ?? DBNull.Value);
 
-                await command.ExecuteNonQueryAsync();
+                await using var reader = await command.ExecuteReaderAsync();
+
+                // Check if there's any result or error message
+                if (await reader.ReadAsync())
+                {
+                    try
+                    {
+                        var result = reader.GetString(reader.GetOrdinal("Result"));
+                        _logger.LogWarning("Create de proveedor devolvió: {Result}", result);
+                        return new { success = false, message = result };
+                    }
+                    catch
+                    {
+                        // No es un mensaje de resultado, operación exitosa
+                    }
+                }
 
                 _logger.LogDebug("Proveedor creado correctamente");
                 return new { success = true, message = "Proveedor creado correctamente" };
