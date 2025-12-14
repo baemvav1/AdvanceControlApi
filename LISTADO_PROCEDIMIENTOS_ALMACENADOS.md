@@ -4,9 +4,9 @@ Este documento contiene el listado completo de todos los procedimientos almacena
 
 ## Resumen
 
-El API utiliza **15 procedimientos almacenados** distribuidos en las siguientes categorías:
+El API utiliza **16 procedimientos almacenados** distribuidos en las siguientes categorías:
 
-- **Autenticación y Seguridad**: 5 procedimientos
+- **Autenticación y Seguridad**: 6 procedimientos
 - **Gestión de Clientes**: 1 procedimiento
 - **Gestión de Equipos**: 2 procedimientos
 - **Gestión de Refacciones**: 1 procedimiento
@@ -267,7 +267,7 @@ El API utiliza **15 procedimientos almacenados** distribuidos en las siguientes 
 
 ## Estadísticas
 
-- **Total de Procedimientos Almacenados**: 15
+- **Total de Procedimientos Almacenados**: 16
 - **Servicios que utilizan SPs**: 9
 - **Controllers que utilizan SPs**: 1 (AuthController)
 - **Helpers que utilizan SPs**: 1 (DbHelper)

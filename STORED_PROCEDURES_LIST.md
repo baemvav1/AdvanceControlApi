@@ -4,9 +4,9 @@ This document contains a complete list of all stored procedures used in the Adva
 
 ## Summary
 
-The API uses **15 stored procedures** distributed across the following categories:
+The API uses **16 stored procedures** distributed across the following categories:
 
-- **Authentication and Security**: 5 procedures
+- **Authentication and Security**: 6 procedures
 - **Client Management**: 1 procedure
 - **Equipment Management**: 2 procedures
 - **Parts Management**: 1 procedure
@@ -267,7 +267,7 @@ The API uses **15 stored procedures** distributed across the following categorie
 
 ## Statistics
 
-- **Total Stored Procedures**: 15
+- **Total Stored Procedures**: 16
 - **Services using SPs**: 9
 - **Controllers using SPs**: 1 (AuthController)
 - **Helpers using SPs**: 1 (DbHelper)
