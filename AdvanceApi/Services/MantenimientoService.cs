@@ -45,7 +45,6 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@nota", DBNull.Value);
                 command.Parameters.AddWithValue("@idMantenimiento", DBNull.Value);
                 command.Parameters.AddWithValue("@idEquipo", DBNull.Value);
-                command.Parameters.AddWithValue("@costo", DBNull.Value);
                 command.Parameters.AddWithValue("@idTipoMantenimiento", DBNull.Value);
 
                 await using var reader = await command.ExecuteReaderAsync();
@@ -59,9 +58,7 @@ namespace AdvanceApi.Services
                         NombreComercial = reader.IsDBNull(2) ? null : reader.GetString(2),
                         RazonSocial = reader.IsDBNull(3) ? null : reader.GetString(3),
                         Nota = reader.IsDBNull(4) ? null : reader.GetString(4),
-                        Identificador = reader.IsDBNull(5) ? null : reader.GetString(5),
-                        Costo = reader.IsDBNull(6) ? null : reader.GetDouble(6),
-                        CostoTotal = reader.IsDBNull(7) ? null : reader.GetDouble(7)
+                        Identificador = reader.IsDBNull(5) ? null : reader.GetString(5)
                     };
 
                     mantenimientos.Add(mantenimiento);
@@ -103,7 +100,6 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@nota", (object?)query.Nota ?? DBNull.Value);
                 command.Parameters.AddWithValue("@idMantenimiento", DBNull.Value);
                 command.Parameters.AddWithValue("@idEquipo", (object?)query.IdEquipo ?? DBNull.Value);
-                command.Parameters.AddWithValue("@costo", (object?)query.Costo ?? DBNull.Value);
                 command.Parameters.AddWithValue("@idTipoMantenimiento", (object?)query.IdTipoMantenimiento ?? DBNull.Value);
 
                 await using var reader = await command.ExecuteReaderAsync();
@@ -155,7 +151,6 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@nota", DBNull.Value);
                 command.Parameters.AddWithValue("@idMantenimiento", idMantenimiento);
                 command.Parameters.AddWithValue("@idEquipo", DBNull.Value);
-                command.Parameters.AddWithValue("@costo", DBNull.Value);
                 command.Parameters.AddWithValue("@idTipoMantenimiento", DBNull.Value);
 
                 await using var reader = await command.ExecuteReaderAsync();
