@@ -35,8 +35,8 @@ BEGIN
                 @idRefaccion = 0
                 OR ISNULL(rpr.idRefaccion, 0) = @idRefaccion
               )
-       
-        and rpr.nota = ISNULL(@nota,rpr.nota) and rpr.estatus = 1
+        AND (@nota IS NULL OR rpr.nota = @nota) 
+        AND rpr.estatus = 1
               
     END
 
@@ -58,7 +58,7 @@ BEGIN
     IF @operacion = 'put' 
     BEGIN
         -- Fixed: Use proper int comparison instead of string comparison
-        IF ISNULL(@idProveedor,0) != 0 AND ISNULL(@idRefaccion,0) <> 0 And ISNULL(@precio,0.0) <> 0
+        IF ISNULL(@idProveedor,0) != 0 AND ISNULL(@idRefaccion,0) <> 0 AND ISNULL(@precio,0.0) <> 0
         BEGIN
             IF NOT EXISTS (SELECT * FROM relacionProveedorRefaccion WHERE idProveedor = @idProveedor AND idRefaccion = @idRefaccion) 
             BEGIN
