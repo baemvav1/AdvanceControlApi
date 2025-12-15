@@ -2,6 +2,8 @@ using AdvanceApi.DTOs;
 using AdvanceApi.Helpers;
 using Clases;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
