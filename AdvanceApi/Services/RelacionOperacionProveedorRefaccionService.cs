@@ -45,7 +45,7 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@idRelacionOperacion_ProveedorRefaccion", 0);
                 command.Parameters.AddWithValue("@idOperacion", query.IdOperacion);
                 command.Parameters.AddWithValue("@idProveedorRefaccion", 0);
-                command.Parameters.AddWithValue("@precio", 0.0);
+                command.Parameters.AddWithValue("@precio", 0.0f);
                 command.Parameters.AddWithValue("@nota", DBNull.Value);
 
                 await using var reader = await command.ExecuteReaderAsync();
@@ -55,8 +55,10 @@ namespace AdvanceApi.Services
                     var relacion = new RelacionOperacionProveedorRefaccion
                     {
                         IdRelacionOperacionProveedorRefaccion = reader.IsDBNull(reader.GetOrdinal("idRelacionOperacion_ProveedorRefaccion")) ? null : reader.GetInt32(reader.GetOrdinal("idRelacionOperacion_ProveedorRefaccion")),
-                        IdProveedorRefaccion = reader.IsDBNull(reader.GetOrdinal("idProveedorRefaccion")) ? null : reader.GetInt32(reader.GetOrdinal("idProveedorRefaccion")),
-                        Precio = reader.IsDBNull(reader.GetOrdinal("precio")) ? null : reader.GetDouble(reader.GetOrdinal("precio")),
+                        Descripcion = reader.IsDBNull(reader.GetOrdinal("descripcion")) ? null : reader.GetString(reader.GetOrdinal("descripcion")),
+                        Marca = reader.IsDBNull(reader.GetOrdinal("marca")) ? null : reader.GetString(reader.GetOrdinal("marca")),
+                        Serie = reader.IsDBNull(reader.GetOrdinal("serie")) ? null : reader.GetString(reader.GetOrdinal("serie")),
+                        Precio = reader.IsDBNull(reader.GetOrdinal("precio")) ? null : reader.GetFloat(reader.GetOrdinal("precio")),
                         Nota = reader.IsDBNull(reader.GetOrdinal("nota")) ? null : reader.GetString(reader.GetOrdinal("nota"))
                     };
 
@@ -147,7 +149,7 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@idRelacionOperacion_ProveedorRefaccion", idRelacionOperacionProveedorRefaccion);
                 command.Parameters.AddWithValue("@idOperacion", 0);
                 command.Parameters.AddWithValue("@idProveedorRefaccion", 0);
-                command.Parameters.AddWithValue("@precio", 0.0);
+                command.Parameters.AddWithValue("@precio", 0.0f);
                 command.Parameters.AddWithValue("@nota", DBNull.Value);
 
                 await using var reader = await command.ExecuteReaderAsync();
@@ -200,7 +202,7 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@idRelacionOperacion_ProveedorRefaccion", query.IdRelacionOperacionProveedorRefaccion);
                 command.Parameters.AddWithValue("@idOperacion", 0);
                 command.Parameters.AddWithValue("@idProveedorRefaccion", 0);
-                command.Parameters.AddWithValue("@precio", 0.0);
+                command.Parameters.AddWithValue("@precio", 0.0f);
                 command.Parameters.AddWithValue("@nota", (object?)query.Nota ?? DBNull.Value);
 
                 await using var reader = await command.ExecuteReaderAsync();

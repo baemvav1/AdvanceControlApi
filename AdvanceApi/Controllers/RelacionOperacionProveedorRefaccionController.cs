@@ -80,7 +80,7 @@ namespace AdvanceApi.Controllers
         public async Task<IActionResult> CreateRelacion(
             [FromQuery] int idOperacion,
             [FromQuery] int idProveedorRefaccion,
-            [FromQuery] double precio,
+            [FromQuery] float precio,
             [FromQuery] string? nota = null)
         {
             try

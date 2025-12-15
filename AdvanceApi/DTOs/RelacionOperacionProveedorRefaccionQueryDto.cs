@@ -28,7 +28,7 @@ namespace AdvanceApi.DTOs
         /// <summary>
         /// Precio de la refacción por el proveedor en la operación
         /// </summary>
-        public double Precio { get; set; } = 0.0;
+        public float Precio { get; set; } = 0.0f;
 
         /// <summary>
         /// Nota asociada a la relación
