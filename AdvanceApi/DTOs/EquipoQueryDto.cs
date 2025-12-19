@@ -26,6 +26,21 @@ namespace AdvanceApi.DTOs
         public int? Creado { get; set; }
 
         /// <summary>
+        /// Número de paradas del equipo
+        /// </summary>
+        public int? Paradas { get; set; }
+
+        /// <summary>
+        /// Capacidad en kilogramos del equipo
+        /// </summary>
+        public int? Kilogramos { get; set; }
+
+        /// <summary>
+        /// Capacidad de personas del equipo
+        /// </summary>
+        public int? Personas { get; set; }
+
+        /// <summary>
         /// Descripción del equipo (búsqueda parcial en select, actualización en update)
         /// </summary>
         public string? Descripcion { get; set; }
