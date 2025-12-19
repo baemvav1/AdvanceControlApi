@@ -43,6 +43,9 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@idEquipo", query.IdEquipo);
                 command.Parameters.AddWithValue("@marca", (object?)query.Marca ?? DBNull.Value);
                 command.Parameters.AddWithValue("@creado", (object?)query.Creado ?? DBNull.Value);
+                command.Parameters.AddWithValue("@paradas", (object?)query.Paradas ?? DBNull.Value);
+                command.Parameters.AddWithValue("@kilogramos", (object?)query.Kilogramos ?? DBNull.Value);
+                command.Parameters.AddWithValue("@personas", (object?)query.Personas ?? DBNull.Value);
                 command.Parameters.AddWithValue("@descricpion", (object?)query.Descripcion ?? DBNull.Value);
                 command.Parameters.AddWithValue("@identificador", (object?)query.Identificador ?? DBNull.Value);
                 command.Parameters.AddWithValue("@estatus", query.Estatus);
@@ -56,6 +59,9 @@ namespace AdvanceApi.Services
                         IdEquipo = reader.GetInt32(reader.GetOrdinal("idEquipo")),
                         Marca = reader.IsDBNull(reader.GetOrdinal("marca")) ? null : reader.GetString(reader.GetOrdinal("marca")),
                         Creado = reader.IsDBNull(reader.GetOrdinal("creado")) ? null : reader.GetInt32(reader.GetOrdinal("creado")),
+                        Paradas = reader.IsDBNull(reader.GetOrdinal("paradas")) ? null : reader.GetInt32(reader.GetOrdinal("paradas")),
+                        Kilogramos = reader.IsDBNull(reader.GetOrdinal("kilogramos")) ? null : reader.GetInt32(reader.GetOrdinal("kilogramos")),
+                        Personas = reader.IsDBNull(reader.GetOrdinal("personas")) ? null : reader.GetInt32(reader.GetOrdinal("personas")),
                         Descripcion = reader.IsDBNull(reader.GetOrdinal("descripcion")) ? null : reader.GetString(reader.GetOrdinal("descripcion")),
                         Identificador = reader.IsDBNull(reader.GetOrdinal("identificador")) ? null : reader.GetString(reader.GetOrdinal("identificador")),
                         Estatus = reader.IsDBNull(reader.GetOrdinal("estatus")) ? null : reader.GetBoolean(reader.GetOrdinal("estatus"))
@@ -95,6 +101,9 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@idEquipo", idEquipo);
                 command.Parameters.AddWithValue("@marca", DBNull.Value);
                 command.Parameters.AddWithValue("@creado", DBNull.Value);
+                command.Parameters.AddWithValue("@paradas", DBNull.Value);
+                command.Parameters.AddWithValue("@kilogramos", DBNull.Value);
+                command.Parameters.AddWithValue("@personas", DBNull.Value);
                 command.Parameters.AddWithValue("@descricpion", DBNull.Value);
                 command.Parameters.AddWithValue("@identificador", DBNull.Value);
                 command.Parameters.AddWithValue("@estatus", true);
@@ -149,6 +158,9 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@idEquipo", query.IdEquipo);
                 command.Parameters.AddWithValue("@marca", (object?)query.Marca ?? DBNull.Value);
                 command.Parameters.AddWithValue("@creado", (object?)query.Creado ?? DBNull.Value);
+                command.Parameters.AddWithValue("@paradas", (object?)query.Paradas ?? DBNull.Value);
+                command.Parameters.AddWithValue("@kilogramos", (object?)query.Kilogramos ?? DBNull.Value);
+                command.Parameters.AddWithValue("@personas", (object?)query.Personas ?? DBNull.Value);
                 command.Parameters.AddWithValue("@descricpion", (object?)query.Descripcion ?? DBNull.Value);
                 command.Parameters.AddWithValue("@identificador", (object?)query.Identificador ?? DBNull.Value);
                 command.Parameters.AddWithValue("@estatus", query.Estatus);
@@ -201,6 +213,9 @@ namespace AdvanceApi.Services
 
                 command.Parameters.AddWithValue("@marca", (object?)query.Marca ?? DBNull.Value);
                 command.Parameters.AddWithValue("@creado", (object?)query.Creado ?? DBNull.Value);
+                command.Parameters.AddWithValue("@paradas", (object?)query.Paradas ?? DBNull.Value);
+                command.Parameters.AddWithValue("@kilogramos", (object?)query.Kilogramos ?? DBNull.Value);
+                command.Parameters.AddWithValue("@personas", (object?)query.Personas ?? DBNull.Value);
                 command.Parameters.AddWithValue("@descripcion", (object?)query.Descripcion ?? DBNull.Value);
                 command.Parameters.AddWithValue("@identificador", (object?)query.Identificador ?? DBNull.Value);
                 command.Parameters.AddWithValue("@estatus", query.Estatus);
@@ -224,6 +239,9 @@ namespace AdvanceApi.Services
                         IdEquipo = reader.GetInt32(reader.GetOrdinal("idEquipo")),
                         Marca = reader.IsDBNull(reader.GetOrdinal("marca")) ? null : reader.GetString(reader.GetOrdinal("marca")),
                         Creado = reader.IsDBNull(reader.GetOrdinal("creado")) ? null : reader.GetInt32(reader.GetOrdinal("creado")),
+                        Paradas = reader.IsDBNull(reader.GetOrdinal("paradas")) ? null : reader.GetInt32(reader.GetOrdinal("paradas")),
+                        Kilogramos = reader.IsDBNull(reader.GetOrdinal("kilogramos")) ? null : reader.GetInt32(reader.GetOrdinal("kilogramos")),
+                        Personas = reader.IsDBNull(reader.GetOrdinal("personas")) ? null : reader.GetInt32(reader.GetOrdinal("personas")),
                         Descripcion = reader.IsDBNull(reader.GetOrdinal("descripcion")) ? null : reader.GetString(reader.GetOrdinal("descripcion")),
                         Identificador = reader.IsDBNull(reader.GetOrdinal("identificador")) ? null : reader.GetString(reader.GetOrdinal("identificador")),
                         Estatus = reader.IsDBNull(reader.GetOrdinal("estatus")) ? null : reader.GetBoolean(reader.GetOrdinal("estatus"))

@@ -25,6 +25,9 @@ namespace AdvanceApi.Controllers
         /// </summary>
         /// <param name="marca">Búsqueda parcial por marca</param>
         /// <param name="creado">Filtro exacto por año de creación</param>
+        /// <param name="paradas">Filtro exacto por número de paradas</param>
+        /// <param name="kilogramos">Filtro exacto por capacidad en kilogramos</param>
+        /// <param name="personas">Filtro exacto por capacidad de personas</param>
         /// <param name="descripcion">Búsqueda parcial en descripción</param>
         /// <param name="identificador">Búsqueda parcial por identificador</param>
         /// <returns>Lista de equipos que cumplen con los criterios</returns>
@@ -32,6 +35,9 @@ namespace AdvanceApi.Controllers
         public async Task<IActionResult> GetEquipos(
             [FromQuery] string? marca = null,
             [FromQuery] int? creado = null,
+            [FromQuery] int? paradas = null,
+            [FromQuery] int? kilogramos = null,
+            [FromQuery] int? personas = null,
             [FromQuery] string? descripcion = null,
             [FromQuery] string? identificador = null)
         {
@@ -43,6 +49,9 @@ namespace AdvanceApi.Controllers
                     IdEquipo = 0,
                     Marca = marca,
                     Creado = creado,
+                    Paradas = paradas,
+                    Kilogramos = kilogramos,
+                    Personas = personas,
                     Descripcion = descripcion,
                     Identificador = identificador,
                     Estatus = true
@@ -119,6 +128,9 @@ namespace AdvanceApi.Controllers
         /// <param name="id">ID del equipo a actualizar</param>
         /// <param name="marca">Nueva marca del equipo</param>
         /// <param name="creado">Nuevo año de creación</param>
+        /// <param name="paradas">Nuevo número de paradas</param>
+        /// <param name="kilogramos">Nueva capacidad en kilogramos</param>
+        /// <param name="personas">Nueva capacidad de personas</param>
         /// <param name="descripcion">Nueva descripción</param>
         /// <param name="identificador">Nuevo identificador</param>
         /// <returns>Resultado de la operación</returns>
@@ -127,6 +139,9 @@ namespace AdvanceApi.Controllers
             int id,
             [FromQuery] string? marca = null,
             [FromQuery] int? creado = null,
+            [FromQuery] int? paradas = null,
+            [FromQuery] int? kilogramos = null,
+            [FromQuery] int? personas = null,
             [FromQuery] string? descripcion = null,
             [FromQuery] string? identificador = null)
         {
@@ -143,6 +158,9 @@ namespace AdvanceApi.Controllers
                     IdEquipo = id,
                     Marca = marca,
                     Creado = creado,
+                    Paradas = paradas,
+                    Kilogramos = kilogramos,
+                    Personas = personas,
                     Descripcion = descripcion,
                     Identificador = identificador,
                     Estatus = true
@@ -177,7 +195,10 @@ namespace AdvanceApi.Controllers
         /// POST /api/equipo_crud
         /// </summary>
         /// <param name="marca">Marca del equipo (obligatorio)</param>
-        /// <param name="creado">Año de creación (obligatorio)</param>
+        /// <param name="creado">Año de creación (opcional, default 0)</param>
+        /// <param name="paradas">Número de paradas (opcional, default 0)</param>
+        /// <param name="kilogramos">Capacidad en kilogramos (opcional, default 0)</param>
+        /// <param name="personas">Capacidad de personas (opcional, default 0)</param>
         /// <param name="descripcion">Descripción del equipo (opcional)</param>
         /// <param name="identificador">Identificador único del equipo (obligatorio)</param>
         /// <param name="estatus">Estatus del equipo (opcional, default true)</param>
@@ -185,7 +206,10 @@ namespace AdvanceApi.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateEquipo(
             [FromQuery] string marca,
-            [FromQuery] int creado,
+            [FromQuery] int creado = 0,
+            [FromQuery] int paradas = 0,
+            [FromQuery] int kilogramos = 0,
+            [FromQuery] int personas = 0,
             [FromQuery] string? descripcion = null,
             [FromQuery] string identificador = "",
             [FromQuery] bool estatus = true)
@@ -206,6 +230,9 @@ namespace AdvanceApi.Controllers
                 {
                     Marca = marca,
                     Creado = creado,
+                    Paradas = paradas,
+                    Kilogramos = kilogramos,
+                    Personas = personas,
                     Descripcion = descripcion,
                     Identificador = identificador,
                     Estatus = estatus
