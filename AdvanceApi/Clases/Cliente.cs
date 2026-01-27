@@ -5,7 +5,6 @@ namespace Clases
     public class Cliente
     {
         public int IdCliente { get; set; }
-        public int? TipoPersona { get; set; }
         public string? Rfc { get; set; }
         public string? RazonSocial { get; set; }
         public string? NombreComercial { get; set; }

@@ -51,7 +51,6 @@ namespace AdvanceApi.Services
                     var cliente = new Cliente
                     {
                         IdCliente = reader.GetInt32(reader.GetOrdinal("id_cliente")),
-                        TipoPersona = reader.IsDBNull(reader.GetOrdinal("tipo_persona")) ? null : reader.GetInt32(reader.GetOrdinal("tipo_persona")),
                         Rfc = reader.IsDBNull(reader.GetOrdinal("rfc")) ? null : reader.GetString(reader.GetOrdinal("rfc")),
                         RazonSocial = reader.IsDBNull(reader.GetOrdinal("razon_social")) ? null : reader.GetString(reader.GetOrdinal("razon_social")),
                         NombreComercial = reader.IsDBNull(reader.GetOrdinal("nombre_comercial")) ? null : reader.GetString(reader.GetOrdinal("nombre_comercial")),
