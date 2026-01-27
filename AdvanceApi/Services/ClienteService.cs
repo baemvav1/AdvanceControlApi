@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace AdvanceApi.Services
 {
     /// <summary>
-    /// Implementación del servicio de clientes que usa el procedimiento almacenado sp_cliente_select
+    /// Implementación del servicio de clientes que usa el procedimiento almacenado sp_cliente_edit
     /// </summary>
     public class ClienteService : IClienteService
     {
@@ -23,9 +23,9 @@ namespace AdvanceApi.Services
         }
 
         /// <summary>
-        /// Obtiene clientes usando el procedimiento almacenado sp_cliente_select
+        /// Obtiene clientes usando el procedimiento almacenado sp_cliente_edit
         /// </summary>
-        public async Task<List<Cliente>> GetClientesAsync(ClienteQueryDto query)
+        public async Task<List<Cliente>> GetClientesAsync(ClienteEditDto query)
         {
             if (query == null)
                 throw new ArgumentNullException(nameof(query));
@@ -35,14 +35,24 @@ namespace AdvanceApi.Services
             try
             {
                 await using var connection = await _dbHelper.GetOpenConnectionAsync();
-                await using var command = new SqlCommand("sp_cliente_select", connection);
+                await using var command = new SqlCommand("sp_cliente_edit", connection);
                 command.CommandType = CommandType.StoredProcedure;
 
                 // Configurar parámetros del procedimiento almacenado
-                command.Parameters.AddWithValue("@search", (object?)query.Search ?? DBNull.Value);
+                command.Parameters.AddWithValue("@operacion", "select");
+                command.Parameters.AddWithValue("@id_cliente", 0);
                 command.Parameters.AddWithValue("@rfc", (object?)query.Rfc ?? DBNull.Value);
-                command.Parameters.AddWithValue("@notas", (object?)query.Notas ?? DBNull.Value);
+                command.Parameters.AddWithValue("@razon_social", (object?)query.RazonSocial ?? DBNull.Value);
+                command.Parameters.AddWithValue("@nombre_comercial", (object?)query.NombreComercial ?? DBNull.Value);
+                command.Parameters.AddWithValue("@regimen_fiscal", (object?)query.RegimenFiscal ?? DBNull.Value);
+                command.Parameters.AddWithValue("@uso_cfdi", (object?)query.UsoCfdi ?? DBNull.Value);
+                command.Parameters.AddWithValue("@dias_credito", (object?)query.DiasCredito ?? DBNull.Value);
+                command.Parameters.AddWithValue("@limite_credito", (object?)query.LimiteCredito ?? DBNull.Value);
                 command.Parameters.AddWithValue("@prioridad", (object?)query.Prioridad ?? DBNull.Value);
+                command.Parameters.AddWithValue("@estatus", query.Estatus);
+                command.Parameters.AddWithValue("@credencial_id", (object?)query.CredencialId ?? DBNull.Value);
+                command.Parameters.AddWithValue("@notas", (object?)query.Notas ?? DBNull.Value);
+                command.Parameters.AddWithValue("@id_usuario", (object?)query.IdUsuario ?? DBNull.Value);
 
                 await using var reader = await command.ExecuteReaderAsync();
 
@@ -83,6 +93,191 @@ namespace AdvanceApi.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error inesperado al obtener clientes");
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Crea un nuevo cliente usando el procedimiento almacenado sp_cliente_edit
+        /// </summary>
+        public async Task<object> CreateClienteAsync(ClienteEditDto query)
+        {
+            if (query == null)
+                throw new ArgumentNullException(nameof(query));
+
+            try
+            {
+                await using var connection = await _dbHelper.GetOpenConnectionAsync();
+                await using var command = new SqlCommand("sp_cliente_edit", connection);
+                command.CommandType = CommandType.StoredProcedure;
+
+                command.Parameters.AddWithValue("@operacion", "create");
+                command.Parameters.AddWithValue("@id_cliente", 0);
+                command.Parameters.AddWithValue("@rfc", (object?)query.Rfc ?? DBNull.Value);
+                command.Parameters.AddWithValue("@razon_social", (object?)query.RazonSocial ?? DBNull.Value);
+                command.Parameters.AddWithValue("@nombre_comercial", (object?)query.NombreComercial ?? DBNull.Value);
+                command.Parameters.AddWithValue("@regimen_fiscal", (object?)query.RegimenFiscal ?? DBNull.Value);
+                command.Parameters.AddWithValue("@uso_cfdi", (object?)query.UsoCfdi ?? DBNull.Value);
+                command.Parameters.AddWithValue("@dias_credito", (object?)query.DiasCredito ?? DBNull.Value);
+                command.Parameters.AddWithValue("@limite_credito", (object?)query.LimiteCredito ?? DBNull.Value);
+                command.Parameters.AddWithValue("@prioridad", (object?)query.Prioridad ?? 1);
+                command.Parameters.AddWithValue("@estatus", true);
+                command.Parameters.AddWithValue("@credencial_id", (object?)query.CredencialId ?? DBNull.Value);
+                command.Parameters.AddWithValue("@notas", (object?)query.Notas ?? DBNull.Value);
+                command.Parameters.AddWithValue("@id_usuario", (object?)query.IdUsuario ?? DBNull.Value);
+
+                await using var reader = await command.ExecuteReaderAsync();
+
+                if (await reader.ReadAsync())
+                {
+                    try
+                    {
+                        var result = reader.GetString(reader.GetOrdinal("Result"));
+                        var idCliente = reader.IsDBNull(reader.GetOrdinal("id_cliente")) ? 0 : reader.GetInt32(reader.GetOrdinal("id_cliente"));
+                        _logger.LogDebug("Create de cliente devolvió: {Result}, id_cliente: {IdCliente}", result, idCliente);
+                        return new { success = true, message = result, id_cliente = idCliente };
+                    }
+                    catch
+                    {
+                        // No es un mensaje de resultado, operación exitosa
+                    }
+                }
+
+                _logger.LogDebug("Cliente creado correctamente");
+                return new { success = true, message = "Cliente creado correctamente" };
+            }
+            catch (SqlException sqlEx)
+            {
+                _logger.LogError(sqlEx, "Error SQL al crear cliente. SqlError: {Message}", sqlEx.Message);
+                throw new InvalidOperationException("Error al crear cliente en la base de datos", sqlEx);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error inesperado al crear cliente");
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Actualiza un cliente por su ID
+        /// </summary>
+        public async Task<object> UpdateClienteAsync(ClienteEditDto query)
+        {
+            if (query == null)
+                throw new ArgumentNullException(nameof(query));
+
+            try
+            {
+                await using var connection = await _dbHelper.GetOpenConnectionAsync();
+                await using var command = new SqlCommand("sp_cliente_edit", connection);
+                command.CommandType = CommandType.StoredProcedure;
+
+                command.Parameters.AddWithValue("@operacion", "update");
+                command.Parameters.AddWithValue("@id_cliente", query.IdCliente);
+                command.Parameters.AddWithValue("@rfc", (object?)query.Rfc ?? DBNull.Value);
+                command.Parameters.AddWithValue("@razon_social", (object?)query.RazonSocial ?? DBNull.Value);
+                command.Parameters.AddWithValue("@nombre_comercial", (object?)query.NombreComercial ?? DBNull.Value);
+                command.Parameters.AddWithValue("@regimen_fiscal", (object?)query.RegimenFiscal ?? DBNull.Value);
+                command.Parameters.AddWithValue("@uso_cfdi", (object?)query.UsoCfdi ?? DBNull.Value);
+                command.Parameters.AddWithValue("@dias_credito", (object?)query.DiasCredito ?? DBNull.Value);
+                command.Parameters.AddWithValue("@limite_credito", (object?)query.LimiteCredito ?? DBNull.Value);
+                command.Parameters.AddWithValue("@prioridad", (object?)query.Prioridad ?? DBNull.Value);
+                command.Parameters.AddWithValue("@estatus", query.Estatus);
+                command.Parameters.AddWithValue("@credencial_id", (object?)query.CredencialId ?? DBNull.Value);
+                command.Parameters.AddWithValue("@notas", (object?)query.Notas ?? DBNull.Value);
+                command.Parameters.AddWithValue("@id_usuario", (object?)query.IdUsuario ?? DBNull.Value);
+
+                await using var reader = await command.ExecuteReaderAsync();
+
+                if (await reader.ReadAsync())
+                {
+                    try
+                    {
+                        var result = reader.GetString(reader.GetOrdinal("Result"));
+                        _logger.LogWarning("Update de cliente devolvió: {Result}", result);
+                        return new { success = false, message = result };
+                    }
+                    catch
+                    {
+                        // No es un mensaje de resultado, operación exitosa
+                    }
+                }
+
+                _logger.LogDebug("Cliente {IdCliente} actualizado", query.IdCliente);
+                return new { success = true, message = "Cliente actualizado exitosamente" };
+            }
+            catch (SqlException sqlEx)
+            {
+                _logger.LogError(sqlEx, "Error SQL al actualizar cliente. SqlError: {Message}", sqlEx.Message);
+                throw new InvalidOperationException("Error al actualizar cliente en la base de datos", sqlEx);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error inesperado al actualizar cliente");
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Elimina (soft delete) un cliente por su ID
+        /// </summary>
+        public async Task<object> DeleteClienteAsync(int idCliente, int? idUsuario)
+        {
+            try
+            {
+                await using var connection = await _dbHelper.GetOpenConnectionAsync();
+                await using var command = new SqlCommand("sp_cliente_edit", connection);
+                command.CommandType = CommandType.StoredProcedure;
+
+                command.Parameters.AddWithValue("@operacion", "delete");
+                command.Parameters.AddWithValue("@id_cliente", idCliente);
+                command.Parameters.AddWithValue("@rfc", DBNull.Value);
+                command.Parameters.AddWithValue("@razon_social", DBNull.Value);
+                command.Parameters.AddWithValue("@nombre_comercial", DBNull.Value);
+                command.Parameters.AddWithValue("@regimen_fiscal", DBNull.Value);
+                command.Parameters.AddWithValue("@uso_cfdi", DBNull.Value);
+                command.Parameters.AddWithValue("@dias_credito", DBNull.Value);
+                command.Parameters.AddWithValue("@limite_credito", DBNull.Value);
+                command.Parameters.AddWithValue("@prioridad", DBNull.Value);
+                command.Parameters.AddWithValue("@estatus", true);
+                command.Parameters.AddWithValue("@credencial_id", DBNull.Value);
+                command.Parameters.AddWithValue("@notas", DBNull.Value);
+                command.Parameters.AddWithValue("@id_usuario", (object?)idUsuario ?? DBNull.Value);
+
+                await using var reader = await command.ExecuteReaderAsync();
+
+                if (await reader.ReadAsync())
+                {
+                    try
+                    {
+                        var result = reader.GetString(reader.GetOrdinal("Result"));
+                        _logger.LogWarning("Delete de cliente devolvió: {Result}", result);
+                        
+                        // Check if it's an error message
+                        if (result.Contains("Invalido"))
+                        {
+                            return new { success = false, message = result };
+                        }
+                        
+                        return new { success = true, message = result };
+                    }
+                    catch
+                    {
+                        // No es un mensaje de resultado, operación exitosa
+                    }
+                }
+
+                _logger.LogDebug("Cliente {IdCliente} eliminado (soft delete)", idCliente);
+                return new { success = true, message = "Cliente eliminado exitosamente" };
+            }
+            catch (SqlException sqlEx)
+            {
+                _logger.LogError(sqlEx, "Error SQL al eliminar cliente. SqlError: {Message}", sqlEx.Message);
+                throw new InvalidOperationException("Error al eliminar cliente en la base de datos", sqlEx);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error inesperado al eliminar cliente");
                 throw;
             }
         }
