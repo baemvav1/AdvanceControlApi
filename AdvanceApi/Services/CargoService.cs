@@ -42,6 +42,7 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@operacion", "select");
                 command.Parameters.AddWithValue("@idCargo", query.IdCargo);
                 command.Parameters.AddWithValue("@idTipoCargo", (object?)query.IdTipoCargo ?? DBNull.Value);
+                command.Parameters.AddWithValue("@idOperacion", (object?)query.IdOperacion ?? DBNull.Value);
                 command.Parameters.AddWithValue("@idRelacionCargo", (object?)query.IdRelacionCargo ?? DBNull.Value);
                 command.Parameters.AddWithValue("@monto", (object?)query.Monto ?? DBNull.Value);
                 command.Parameters.AddWithValue("@nota", (object?)query.Nota ?? DBNull.Value);
@@ -54,6 +55,7 @@ namespace AdvanceApi.Services
                     {
                         IdCargo = reader.GetInt32(reader.GetOrdinal("idCargo")),
                         IdTipoCargo = reader.IsDBNull(reader.GetOrdinal("idTipoCargo")) ? null : reader.GetInt32(reader.GetOrdinal("idTipoCargo")),
+                        IdOperacion = reader.IsDBNull(reader.GetOrdinal("idOperacion")) ? null : reader.GetInt32(reader.GetOrdinal("idOperacion")),
                         IdRelacionCargo = reader.IsDBNull(reader.GetOrdinal("idRelacionCargo")) ? null : reader.GetInt32(reader.GetOrdinal("idRelacionCargo")),
                         Monto = reader.IsDBNull(reader.GetOrdinal("monto")) ? null : reader.GetDouble(reader.GetOrdinal("monto")),
                         Nota = reader.IsDBNull(reader.GetOrdinal("nota")) ? null : reader.GetString(reader.GetOrdinal("nota"))
@@ -95,6 +97,7 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@operacion", "create");
                 command.Parameters.AddWithValue("@idCargo", 0);
                 command.Parameters.AddWithValue("@idTipoCargo", (object?)query.IdTipoCargo ?? DBNull.Value);
+                command.Parameters.AddWithValue("@idOperacion", (object?)query.IdOperacion ?? DBNull.Value);
                 command.Parameters.AddWithValue("@idRelacionCargo", (object?)query.IdRelacionCargo ?? DBNull.Value);
                 command.Parameters.AddWithValue("@monto", (object?)query.Monto ?? DBNull.Value);
                 command.Parameters.AddWithValue("@nota", (object?)query.Nota ?? DBNull.Value);
@@ -156,6 +159,7 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@operacion", "update");
                 command.Parameters.AddWithValue("@idCargo", query.IdCargo);
                 command.Parameters.AddWithValue("@idTipoCargo", (object?)query.IdTipoCargo ?? DBNull.Value);
+                command.Parameters.AddWithValue("@idOperacion", DBNull.Value);
                 command.Parameters.AddWithValue("@idRelacionCargo", (object?)query.IdRelacionCargo ?? DBNull.Value);
                 command.Parameters.AddWithValue("@monto", (object?)query.Monto ?? DBNull.Value);
                 command.Parameters.AddWithValue("@nota", (object?)query.Nota ?? DBNull.Value);
@@ -212,6 +216,7 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@operacion", "delete");
                 command.Parameters.AddWithValue("@idCargo", idCargo);
                 command.Parameters.AddWithValue("@idTipoCargo", DBNull.Value);
+                command.Parameters.AddWithValue("@idOperacion", DBNull.Value);
                 command.Parameters.AddWithValue("@idRelacionCargo", DBNull.Value);
                 command.Parameters.AddWithValue("@monto", DBNull.Value);
                 command.Parameters.AddWithValue("@nota", DBNull.Value);

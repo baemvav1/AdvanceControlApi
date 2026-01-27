@@ -25,6 +25,7 @@ namespace AdvanceApi.Controllers
         /// </summary>
         /// <param name="idCargo">Búsqueda por ID de cargo específico</param>
         /// <param name="idTipoCargo">Filtro por tipo de cargo</param>
+        /// <param name="idOperacion">Filtro por ID de operación</param>
         /// <param name="idRelacionCargo">Filtro por relación de cargo</param>
         /// <param name="monto">Filtro por monto exacto</param>
         /// <param name="nota">Búsqueda parcial en notas</param>
@@ -33,6 +34,7 @@ namespace AdvanceApi.Controllers
         public async Task<IActionResult> GetCargos(
             [FromQuery] int? idCargo = null,
             [FromQuery] int? idTipoCargo = null,
+            [FromQuery] int? idOperacion = null,
             [FromQuery] int? idRelacionCargo = null,
             [FromQuery] double? monto = null,
             [FromQuery] string? nota = null)
@@ -43,6 +45,7 @@ namespace AdvanceApi.Controllers
                 {
                     IdCargo = idCargo ?? 0,
                     IdTipoCargo = idTipoCargo,
+                    IdOperacion = idOperacion,
                     IdRelacionCargo = idRelacionCargo,
                     Monto = monto,
                     Nota = nota
@@ -77,6 +80,7 @@ namespace AdvanceApi.Controllers
         /// POST /api/Cargos
         /// </summary>
         /// <param name="idTipoCargo">ID del tipo de cargo (obligatorio)</param>
+        /// <param name="idOperacion">ID de la operación (obligatorio)</param>
         /// <param name="idRelacionCargo">ID de la relación del cargo (obligatorio)</param>
         /// <param name="monto">Monto del cargo (obligatorio)</param>
         /// <param name="nota">Nota del cargo (opcional)</param>
@@ -84,6 +88,7 @@ namespace AdvanceApi.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCargo(
             [FromQuery] int idTipoCargo,
+            [FromQuery] int idOperacion,
             [FromQuery] int idRelacionCargo,
             [FromQuery] double monto,
             [FromQuery] string? nota = null)
@@ -93,6 +98,7 @@ namespace AdvanceApi.Controllers
                 var query = new CargoEditDto
                 {
                     IdTipoCargo = idTipoCargo,
+                    IdOperacion = idOperacion,
                     IdRelacionCargo = idRelacionCargo,
                     Monto = monto,
                     Nota = nota
