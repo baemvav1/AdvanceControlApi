@@ -7,6 +7,7 @@ namespace Clases
     /// </summary>
     public class OperacionDetalle
     {
+        public int IdOperacion { get; set; }
         public int? IdTipo { get; set; }
         public string? RazonSocial { get; set; }
         public string? Identificador { get; set; }
