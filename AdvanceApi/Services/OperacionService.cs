@@ -55,6 +55,7 @@ namespace AdvanceApi.Services
                 {
                     var operacion = new OperacionDetalle
                     {
+                        IdOperacion = reader.GetInt32(reader.GetOrdinal("idOperacion")),
                         IdTipo = reader.IsDBNull(reader.GetOrdinal("idTipo")) ? null : reader.GetInt32(reader.GetOrdinal("idTipo")),
                         RazonSocial = reader.IsDBNull(reader.GetOrdinal("razon_social")) ? null : reader.GetString(reader.GetOrdinal("razon_social")),
                         Identificador = reader.IsDBNull(reader.GetOrdinal("identificador")) ? null : reader.GetString(reader.GetOrdinal("identificador")),
