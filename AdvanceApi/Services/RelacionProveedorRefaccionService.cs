@@ -286,5 +286,56 @@ namespace AdvanceApi.Services
                 throw;
             }
         }
+
+        /// <summary>
+        /// Obtiene proveedores que tienen una refacción específica con sus precios
+        /// </summary>
+        public async Task<List<ProveedorPorRefaccion>> GetProveedoresByRefaccionAsync(int idRefaccion)
+        {
+            var proveedores = new List<ProveedorPorRefaccion>();
+
+            try
+            {
+                await using var connection = await _dbHelper.GetOpenConnectionAsync();
+                await using var command = new SqlCommand("sp_relacionProveedorRefaccion_edit", connection);
+                command.CommandType = CommandType.StoredProcedure;
+
+                // Configurar parámetros del procedimiento almacenado
+                command.Parameters.AddWithValue("@operacion", "select_by_refaccion");
+                command.Parameters.AddWithValue("@idRelacionProveedor", 0);
+                command.Parameters.AddWithValue("@idProveedor", 0);
+                command.Parameters.AddWithValue("@idRefaccion", idRefaccion);
+                command.Parameters.AddWithValue("@nota", DBNull.Value);
+                command.Parameters.AddWithValue("@precio", 0.0);
+
+                await using var reader = await command.ExecuteReaderAsync();
+
+                while (await reader.ReadAsync())
+                {
+                    var proveedor = new ProveedorPorRefaccion
+                    {
+                        IdProveedor = reader.IsDBNull(reader.GetOrdinal("idProveedor")) ? null : reader.GetInt32(reader.GetOrdinal("idProveedor")),
+                        NombreComercial = reader.IsDBNull(reader.GetOrdinal("nombre_comercial")) ? null : reader.GetString(reader.GetOrdinal("nombre_comercial")),
+                        Costo = reader.IsDBNull(reader.GetOrdinal("costo")) ? null : reader.GetDouble(reader.GetOrdinal("costo"))
+                    };
+
+                    proveedores.Add(proveedor);
+                }
+
+                _logger.LogDebug("Se obtuvieron {Count} proveedores para la refacción {IdRefaccion}", proveedores.Count, idRefaccion);
+
+                return proveedores;
+            }
+            catch (SqlException sqlEx)
+            {
+                _logger.LogError(sqlEx, "Error SQL al obtener proveedores por refacción. SqlError: {Message}", sqlEx.Message);
+                throw new InvalidOperationException("Error al obtener proveedores por refacción de la base de datos", sqlEx);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error inesperado al obtener proveedores por refacción");
+                throw;
+            }
+        }
     }
 }

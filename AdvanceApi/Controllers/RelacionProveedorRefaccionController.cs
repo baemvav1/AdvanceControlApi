@@ -278,5 +278,46 @@ namespace AdvanceApi.Controllers
 #endif
             }
         }
+
+        /// <summary>
+        /// Obtiene proveedores que tienen una refacción específica con sus precios
+        /// GET /api/RelacionProveedorRefaccion/proveedores-por-refaccion
+        /// </summary>
+        /// <param name="idRefaccion">ID de la refacción (obligatorio, mayor que 0)</param>
+        /// <returns>Lista de proveedores que tienen la refacción con sus precios</returns>
+        [HttpGet("proveedores-por-refaccion")]
+        public async Task<IActionResult> GetProveedoresByRefaccion(
+            [FromQuery] int idRefaccion)
+        {
+            try
+            {
+                if (idRefaccion <= 0)
+                {
+                    return BadRequest(new { message = "El campo 'idRefaccion' debe ser mayor que 0." });
+                }
+
+                var proveedores = await _relacionService.GetProveedoresByRefaccionAsync(idRefaccion);
+
+                return Ok(proveedores);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogError(ex, "Error al obtener proveedores por refacción");
+#if DEBUG
+                return StatusCode(500, new { message = ex.Message, innerMessage = ex.InnerException?.Message });
+#else
+                return StatusCode(500, new { message = "Error al acceder a la base de datos." });
+#endif
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error inesperado al obtener proveedores por refacción");
+#if DEBUG
+                return StatusCode(500, new { message = ex.Message });
+#else
+                return StatusCode(500, new { message = "Error interno del servidor." });
+#endif
+            }
+        }
     }
 }
