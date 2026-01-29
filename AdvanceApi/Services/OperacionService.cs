@@ -60,6 +60,7 @@ namespace AdvanceApi.Services
                         RazonSocial = reader.IsDBNull(reader.GetOrdinal("razon_social")) ? null : reader.GetString(reader.GetOrdinal("razon_social")),
                         Identificador = reader.IsDBNull(reader.GetOrdinal("identificador")) ? null : reader.GetString(reader.GetOrdinal("identificador")),
                         Atiende = reader.IsDBNull(reader.GetOrdinal("Atiende")) ? null : reader.GetString(reader.GetOrdinal("Atiende")),
+                        IdAtiende =  reader.IsDBNull(reader.GetOrdinal("idAtiende")) ? null : reader.GetInt32(reader.GetOrdinal("idAtiende")),
                         Monto = reader.IsDBNull(reader.GetOrdinal("monto")) ? null : reader.GetDouble(reader.GetOrdinal("monto")),
                         Nota = reader.IsDBNull(reader.GetOrdinal("nota")) ? null : reader.GetString(reader.GetOrdinal("nota")),
                         FechaInicio = reader.IsDBNull(reader.GetOrdinal("fechaInicio")) ? null : reader.GetDateTime(reader.GetOrdinal("fechaInicio")),
