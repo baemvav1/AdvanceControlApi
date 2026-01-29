@@ -54,9 +54,9 @@ namespace AdvanceApi.Services
                     var cargo = new Cargo
                     {
                         IdCargo = reader.GetInt32(reader.GetOrdinal("idCargo")),
-                        IdTipoCargo = reader.IsDBNull(reader.GetOrdinal("idTipoCargo")) ? null : reader.GetInt32(reader.GetOrdinal("idTipoCargo")),
+                        TipoCargo = reader.IsDBNull(reader.GetOrdinal("tipoCargo")) ? null : reader.GetString(reader.GetOrdinal("tipoCargo")),
                         IdOperacion = reader.IsDBNull(reader.GetOrdinal("idOperacion")) ? null : reader.GetInt32(reader.GetOrdinal("idOperacion")),
-                        IdRelacionCargo = reader.IsDBNull(reader.GetOrdinal("idRelacionCargo")) ? null : reader.GetInt32(reader.GetOrdinal("idRelacionCargo")),
+                        DetalleRelacionado = reader.IsDBNull(reader.GetOrdinal("detalleRelacionado")) ? null : reader.GetString(reader.GetOrdinal("detalleRelacionado")),
                         Monto = reader.IsDBNull(reader.GetOrdinal("monto")) ? null : reader.GetDouble(reader.GetOrdinal("monto")),
                         Nota = reader.IsDBNull(reader.GetOrdinal("nota")) ? null : reader.GetString(reader.GetOrdinal("nota"))
                     };
