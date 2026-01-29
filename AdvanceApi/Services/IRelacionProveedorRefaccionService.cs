@@ -44,5 +44,12 @@ namespace AdvanceApi.Services
         /// <param name="query">Datos de la relación a actualizar</param>
         /// <returns>Resultado de la operación</returns>
         Task<object> UpdatePrecioAsync(RelacionProveedorRefaccionQueryDto query);
+
+        /// <summary>
+        /// Obtiene proveedores que tienen una refacción específica con sus precios
+        /// </summary>
+        /// <param name="idRefaccion">ID de la refacción</param>
+        /// <returns>Lista de proveedores con sus precios para la refacción</returns>
+        Task<List<ProveedorPorRefaccion>> GetProveedoresByRefaccionAsync(int idRefaccion);
     }
 }
