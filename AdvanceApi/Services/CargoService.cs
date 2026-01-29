@@ -166,6 +166,7 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@idRelacionCargo", (object?)query.IdRelacionCargo ?? DBNull.Value);
                 command.Parameters.AddWithValue("@monto", (object?)query.Monto ?? DBNull.Value);
                 command.Parameters.AddWithValue("@nota", (object?)query.Nota ?? DBNull.Value);
+                command.Parameters.AddWithValue("@idProveedor", (object?)query.IdProveedor ?? DBNull.Value);
 
                 await using var reader = await command.ExecuteReaderAsync();
 
@@ -223,6 +224,7 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@idRelacionCargo", DBNull.Value);
                 command.Parameters.AddWithValue("@monto", DBNull.Value);
                 command.Parameters.AddWithValue("@nota", DBNull.Value);
+                command.Parameters.AddWithValue("@idProveedor", DBNull.Value);
 
                 await using var reader = await command.ExecuteReaderAsync();
 
