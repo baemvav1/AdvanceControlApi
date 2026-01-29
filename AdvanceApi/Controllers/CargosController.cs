@@ -29,6 +29,7 @@ namespace AdvanceApi.Controllers
         /// <param name="idRelacionCargo">Filtro por relación de cargo</param>
         /// <param name="monto">Filtro por monto exacto</param>
         /// <param name="nota">Búsqueda parcial en notas</param>
+        /// <param name="idProveedor">Filtro por ID de proveedor</param>
         /// <returns>Lista de cargos que cumplen con los criterios</returns>
         [HttpGet]
         public async Task<IActionResult> GetCargos(
@@ -37,7 +38,8 @@ namespace AdvanceApi.Controllers
             [FromQuery] int? idOperacion = null,
             [FromQuery] int? idRelacionCargo = null,
             [FromQuery] double? monto = null,
-            [FromQuery] string? nota = null)
+            [FromQuery] string? nota = null,
+            [FromQuery] int? idProveedor = null)
         {
             try
             {
@@ -48,7 +50,8 @@ namespace AdvanceApi.Controllers
                     IdOperacion = idOperacion,
                     IdRelacionCargo = idRelacionCargo,
                     Monto = monto,
-                    Nota = nota
+                    Nota = nota,
+                    IdProveedor = idProveedor
                 };
 
                 var cargos = await _cargoService.GetCargosAsync(query);
@@ -84,6 +87,7 @@ namespace AdvanceApi.Controllers
         /// <param name="idRelacionCargo">ID de la relación del cargo (obligatorio)</param>
         /// <param name="monto">Monto del cargo (obligatorio)</param>
         /// <param name="nota">Nota del cargo (opcional)</param>
+        /// <param name="idProveedor">ID del proveedor (opcional)</param>
         /// <returns>Resultado de la operación</returns>
         [HttpPost]
         public async Task<IActionResult> CreateCargo(
@@ -91,7 +95,8 @@ namespace AdvanceApi.Controllers
             [FromQuery] int idOperacion,
             [FromQuery] int idRelacionCargo,
             [FromQuery] double monto,
-            [FromQuery] string? nota = null)
+            [FromQuery] string? nota = null,
+            [FromQuery] int? idProveedor = null)
         {
             try
             {
@@ -101,7 +106,8 @@ namespace AdvanceApi.Controllers
                     IdOperacion = idOperacion,
                     IdRelacionCargo = idRelacionCargo,
                     Monto = monto,
-                    Nota = nota
+                    Nota = nota,
+                    IdProveedor = idProveedor
                 };
 
                 var result = await _cargoService.CreateCargoAsync(query);

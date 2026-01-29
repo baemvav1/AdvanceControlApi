@@ -46,6 +46,7 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@idRelacionCargo", (object?)query.IdRelacionCargo ?? DBNull.Value);
                 command.Parameters.AddWithValue("@monto", (object?)query.Monto ?? DBNull.Value);
                 command.Parameters.AddWithValue("@nota", (object?)query.Nota ?? DBNull.Value);
+                command.Parameters.AddWithValue("@idProveedor", (object?)query.IdProveedor ?? DBNull.Value);
 
                 await using var reader = await command.ExecuteReaderAsync();
 
@@ -58,7 +59,8 @@ namespace AdvanceApi.Services
                         IdOperacion = reader.IsDBNull(reader.GetOrdinal("idOperacion")) ? null : reader.GetInt32(reader.GetOrdinal("idOperacion")),
                         DetalleRelacionado = reader.IsDBNull(reader.GetOrdinal("detalleRelacionado")) ? null : reader.GetString(reader.GetOrdinal("detalleRelacionado")),
                         Monto = reader.IsDBNull(reader.GetOrdinal("monto")) ? null : reader.GetDouble(reader.GetOrdinal("monto")),
-                        Nota = reader.IsDBNull(reader.GetOrdinal("nota")) ? null : reader.GetString(reader.GetOrdinal("nota"))
+                        Nota = reader.IsDBNull(reader.GetOrdinal("nota")) ? null : reader.GetString(reader.GetOrdinal("nota")),
+                        Proveedor = reader.IsDBNull(reader.GetOrdinal("proveedor")) ? null : reader.GetString(reader.GetOrdinal("proveedor"))
                     };
 
                     cargos.Add(cargo);
@@ -101,6 +103,7 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@idRelacionCargo", (object?)query.IdRelacionCargo ?? DBNull.Value);
                 command.Parameters.AddWithValue("@monto", (object?)query.Monto ?? DBNull.Value);
                 command.Parameters.AddWithValue("@nota", (object?)query.Nota ?? DBNull.Value);
+                command.Parameters.AddWithValue("@idProveedor", (object?)query.IdProveedor ?? DBNull.Value);
 
                 await using var reader = await command.ExecuteReaderAsync();
 

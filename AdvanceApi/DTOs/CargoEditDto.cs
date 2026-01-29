@@ -39,5 +39,10 @@ namespace AdvanceApi.DTOs
         /// Nota del cargo
         /// </summary>
         public string? Nota { get; set; }
+
+        /// <summary>
+        /// ID del proveedor
+        /// </summary>
+        public int? IdProveedor { get; set; }
     }
 }

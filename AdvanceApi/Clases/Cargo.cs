@@ -12,5 +12,6 @@ namespace Clases
         public string? Nota { get; set; }
         public string? DetalleRelacionado { get; set; }
         public string? TipoCargo { get; set; }
+        public string? Proveedor { get; set; }
     }
 }
