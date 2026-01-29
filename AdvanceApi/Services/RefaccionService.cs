@@ -45,6 +45,7 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@serie", (object?)query.Serie ?? DBNull.Value);
                 command.Parameters.AddWithValue("@costo", (object?)query.Costo ?? DBNull.Value);
                 command.Parameters.AddWithValue("@descripcion", (object?)query.Descripcion ?? DBNull.Value);
+                command.Parameters.AddWithValue("@idProveedor", query.IdProveedor);
                 command.Parameters.AddWithValue("@estatus", query.Estatus);
 
                 await using var reader = await command.ExecuteReaderAsync();
@@ -97,6 +98,7 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@serie", DBNull.Value);
                 command.Parameters.AddWithValue("@costo", DBNull.Value);
                 command.Parameters.AddWithValue("@descripcion", DBNull.Value);
+                command.Parameters.AddWithValue("@idProveedor", 0);
                 command.Parameters.AddWithValue("@estatus", true);
 
                 await using var reader = await command.ExecuteReaderAsync();
@@ -151,6 +153,7 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@serie", (object?)query.Serie ?? DBNull.Value);
                 command.Parameters.AddWithValue("@costo", (object?)query.Costo ?? DBNull.Value);
                 command.Parameters.AddWithValue("@descripcion", (object?)query.Descripcion ?? DBNull.Value);
+                command.Parameters.AddWithValue("@idProveedor", query.IdProveedor);
                 command.Parameters.AddWithValue("@estatus", query.Estatus);
 
                 await using var reader = await command.ExecuteReaderAsync();
@@ -205,6 +208,7 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@serie", (object?)query.Serie ?? DBNull.Value);
                 command.Parameters.AddWithValue("@costo", (object?)query.Costo ?? DBNull.Value);
                 command.Parameters.AddWithValue("@descripcion", (object?)query.Descripcion ?? DBNull.Value);
+                command.Parameters.AddWithValue("@idProveedor", query.IdProveedor);
                 command.Parameters.AddWithValue("@estatus", query.Estatus);
 
                 await using var reader = await command.ExecuteReaderAsync();
@@ -235,6 +239,49 @@ namespace AdvanceApi.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error inesperado al crear refacción");
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Verifica si una refacción tiene proveedores relacionados
+        /// </summary>
+        public async Task<object> CheckProveedorExistsAsync(int idRefaccion)
+        {
+            try
+            {
+                await using var connection = await _dbHelper.GetOpenConnectionAsync();
+                await using var command = new SqlCommand("sp_refaccion_edit", connection);
+                command.CommandType = CommandType.StoredProcedure;
+
+                command.Parameters.AddWithValue("@operacion", "select_exists_proveedor");
+                command.Parameters.AddWithValue("@idRefaccion", idRefaccion);
+                command.Parameters.AddWithValue("@marca", DBNull.Value);
+                command.Parameters.AddWithValue("@serie", DBNull.Value);
+                command.Parameters.AddWithValue("@costo", DBNull.Value);
+                command.Parameters.AddWithValue("@descripcion", DBNull.Value);
+                command.Parameters.AddWithValue("@idProveedor", 0);
+                command.Parameters.AddWithValue("@estatus", true);
+
+                await using var reader = await command.ExecuteReaderAsync();
+
+                if (await reader.ReadAsync())
+                {
+                    var result = reader.GetInt32(reader.GetOrdinal("Result"));
+                    _logger.LogDebug("Check proveedor exists para refacción {IdRefaccion}: {Result}", idRefaccion, result);
+                    return new { exists = result == 1, result = result };
+                }
+
+                return new { exists = false, result = 0 };
+            }
+            catch (SqlException sqlEx)
+            {
+                _logger.LogError(sqlEx, "Error SQL al verificar proveedores de refacción. SqlError: {Message}", sqlEx.Message);
+                throw new InvalidOperationException("Error al verificar proveedores de refacción en la base de datos", sqlEx);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error inesperado al verificar proveedores de refacción");
                 throw;
             }
         }

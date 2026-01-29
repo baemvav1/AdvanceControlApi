@@ -236,5 +236,45 @@ namespace AdvanceApi.Controllers
 #endif
             }
         }
+
+        /// <summary>
+        /// Verifica si una refacción tiene proveedores relacionados
+        /// GET /api/refaccion_crud/{id}/check-proveedor
+        /// </summary>
+        /// <param name="id">ID de la refacción a verificar</param>
+        /// <returns>Resultado indicando si existe relación con proveedores</returns>
+        [HttpGet("{id}/check-proveedor")]
+        public async Task<IActionResult> CheckProveedorExists(int id)
+        {
+            try
+            {
+                if (id <= 0)
+                {
+                    return BadRequest(new { message = "Id Invalido" });
+                }
+
+                var result = await _refaccionService.CheckProveedorExistsAsync(id);
+
+                return Ok(result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogError(ex, "Error al verificar proveedores de refacción");
+#if DEBUG
+                return StatusCode(500, new { message = ex.Message, innerMessage = ex.InnerException?.Message });
+#else
+                return StatusCode(500, new { message = "Error al acceder a la base de datos." });
+#endif
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error inesperado al verificar proveedores de refacción");
+#if DEBUG
+                return StatusCode(500, new { message = ex.Message });
+#else
+                return StatusCode(500, new { message = "Error interno del servidor." });
+#endif
+            }
+        }
     }
 }

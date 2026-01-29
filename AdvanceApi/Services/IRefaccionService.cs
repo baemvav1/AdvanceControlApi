@@ -37,5 +37,12 @@ namespace AdvanceApi.Services
         /// <param name="query">Datos de la refacción a crear</param>
         /// <returns>Resultado de la operación</returns>
         Task<object> CreateRefaccionAsync(RefaccionQueryDto query);
+
+        /// <summary>
+        /// Verifica si una refacción tiene proveedores relacionados
+        /// </summary>
+        /// <param name="idRefaccion">ID de la refacción a verificar</param>
+        /// <returns>Resultado indicando si existe relación con proveedores</returns>
+        Task<object> CheckProveedorExistsAsync(int idRefaccion);
     }
 }
