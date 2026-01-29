@@ -36,6 +36,11 @@ namespace AdvanceApi.DTOs
         public string? Descripcion { get; set; }
 
         /// <summary>
+        /// ID del proveedor
+        /// </summary>
+        public int IdProveedor { get; set; } = 0;
+
+        /// <summary>
         /// Estatus de la refacción (por defecto true)
         /// </summary>
         public bool Estatus { get; set; } = true;
