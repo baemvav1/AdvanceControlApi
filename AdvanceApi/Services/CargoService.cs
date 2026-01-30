@@ -120,7 +120,7 @@ namespace AdvanceApi.Services
                             return new { success = false, message = result };
                         }
                         
-                        var idCargo = reader.IsDBNull(reader.GetOrdinal("idCargo")) ? 0 : reader.GetInt32(reader.GetOrdinal("idCargo"));
+                        decimal idCargo = reader.IsDBNull(reader.GetOrdinal("idCargo")) ? 0 : reader.GetDecimal(reader.GetOrdinal("idCargo"));
                         _logger.LogDebug("Create de cargo devolvió: {Result}, idCargo: {IdCargo}", result, idCargo);
                         return new { success = true, message = result, idCargo = idCargo };
                     }
