@@ -26,19 +26,22 @@ namespace AdvanceApi.Controllers
         /// <param name="marca">Búsqueda parcial por marca</param>
         /// <param name="serie">Búsqueda parcial por serie</param>
         /// <param name="descripcion">Búsqueda parcial en descripción</param>
+        /// <param name="idRefaccion">Búsqueda parcial en descripción</param>
         /// <returns>Lista de refacciones que cumplen con los criterios</returns>
         [HttpGet]
         public async Task<IActionResult> GetRefacciones(
             [FromQuery] string? marca = null,
             [FromQuery] string? serie = null,
-            [FromQuery] string? descripcion = null)
+            [FromQuery] string? descripcion = null,
+            [FromQuery] string? idRefaccion = null)
         {
             try
             {
+                // En el método GetRefacciones, cambia la asignación de IdRefaccion para convertir el string a int (o null si no es convertible)
                 var query = new RefaccionQueryDto
                 {
                     Operacion = "select",
-                    IdRefaccion = 0,
+                    IdRefaccion = int.TryParse(idRefaccion, out var idParsed) ? idParsed : 0,
                     Marca = marca,
                     Serie = serie,
                     Descripcion = descripcion,
