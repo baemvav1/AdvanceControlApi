@@ -60,7 +60,9 @@ namespace AdvanceApi.Services
                         DetalleRelacionado = reader.IsDBNull(reader.GetOrdinal("detalleRelacionado")) ? null : reader.GetString(reader.GetOrdinal("detalleRelacionado")),
                         Monto = reader.IsDBNull(reader.GetOrdinal("monto")) ? null : reader.GetDouble(reader.GetOrdinal("monto")),
                         Nota = reader.IsDBNull(reader.GetOrdinal("nota")) ? null : reader.GetString(reader.GetOrdinal("nota")),
-                        Proveedor = reader.IsDBNull(reader.GetOrdinal("proveedor")) ? null : reader.GetString(reader.GetOrdinal("proveedor"))
+                        Proveedor = reader.IsDBNull(reader.GetOrdinal("proveedor")) ? null : reader.GetString(reader.GetOrdinal("proveedor")),
+                        IdTipoCargo = reader.IsDBNull(reader.GetOrdinal("idTipoCargo")) ? null : reader.GetInt32(reader.GetOrdinal("idTipoCargo")),
+                        IdRelacionCargo = reader.IsDBNull(reader.GetOrdinal("idRelacionCargo")) ? null : reader.GetInt32(reader.GetOrdinal("idRelacionCargo"))
                     };
 
                     cargos.Add(cargo);
