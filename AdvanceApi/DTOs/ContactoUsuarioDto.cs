@@ -40,5 +40,11 @@ namespace AdvanceApi.DTOs
         /// Tipo: nvarchar(100)
         /// </summary>
         public string TipoUsuario { get; set; } = string.Empty;
+
+        /// <summary>
+        /// IdProveedor
+        /// Tipo: nvarchar(100)
+        /// </summary>
+        public int IdProveedor { get; set; } = 0;
     }
 }

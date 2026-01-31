@@ -48,6 +48,7 @@ namespace AdvanceApi.Services
                     var telefonoOrdinal = reader.GetOrdinal("telefono");
                     var nivelOrdinal = reader.GetOrdinal("nivel");
                     var tipoUsuarioOrdinal = reader.GetOrdinal("tipoUsuario");
+                    var idProveedor = reader.GetOrdinal("idProveedor");
 
                     var contactoUsuario = new ContactoUsuarioDto
                     {
@@ -64,9 +65,10 @@ namespace AdvanceApi.Services
                         Nivel = reader.IsDBNull(nivelOrdinal) 
                             ? 0 
                             : reader.GetInt32(nivelOrdinal),
-                        TipoUsuario = reader.IsDBNull(tipoUsuarioOrdinal) 
-                            ? string.Empty 
-                            : reader.GetString(tipoUsuarioOrdinal)
+                        TipoUsuario = reader.IsDBNull(tipoUsuarioOrdinal) ? string.Empty  : reader.GetString(tipoUsuarioOrdinal),
+                        IdProveedor = reader.IsDBNull(idProveedor)
+                            ? 0
+                            : reader.GetInt32(idProveedor),
                     };
 
                     _logger.LogDebug("Se obtuvo información del usuario {Usuario}", usuario);
