@@ -243,7 +243,7 @@ namespace AdvanceApi.Controllers
             {
                 if (id <= 0)
                 {
-                    return BadRequest(new { message = "Id Invalido" });
+                    return BadRequest(new { message = "Id Inválido" });
                 }
 
                 var query = new AreaEditDto
@@ -305,7 +305,7 @@ namespace AdvanceApi.Controllers
             {
                 if (id <= 0)
                 {
-                    return BadRequest(new { message = "Id Invalido" });
+                    return BadRequest(new { message = "Id Inválido" });
                 }
 
                 var result = await _areaService.DeleteAreaAsync(id);
@@ -343,7 +343,7 @@ namespace AdvanceApi.Controllers
             {
                 if (id <= 0)
                 {
-                    return BadRequest(new { message = "Id Invalido" });
+                    return BadRequest(new { message = "Id Inválido" });
                 }
 
                 var result = await _areaService.DeleteAreaPhysicalAsync(id);
@@ -382,9 +382,9 @@ namespace AdvanceApi.Controllers
         {
             try
             {
-                if (latitud == 0 || longitud == 0)
+                if (latitud < -90 || latitud > 90 || longitud < -180 || longitud > 180)
                 {
-                    return BadRequest(new { message = "Se requieren latitud y longitud válidas" });
+                    return BadRequest(new { message = "Las coordenadas están fuera del rango válido (-90/90 para latitud, -180/180 para longitud)" });
                 }
 
                 var result = await _areaService.ValidatePointInPolygonAsync(idArea, latitud, longitud);
