@@ -19,7 +19,10 @@ namespace AdvanceApi.Services
         {
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _httpClient = httpClientFactory?.CreateClient() ?? throw new ArgumentNullException(nameof(httpClientFactory));
+            
+            // Use named HttpClient with configured timeout
+            _httpClient = httpClientFactory?.CreateClient("GooglePlaces") 
+                ?? throw new ArgumentNullException(nameof(httpClientFactory));
 
             _apiKey = _configuration["GoogleMaps:ApiKey"] 
                 ?? throw new InvalidOperationException("Google Maps API Key no configurada");
@@ -40,6 +43,8 @@ namespace AdvanceApi.Services
                 }
 
                 // Construir URL para Places API Text Search
+                // Nota: Google Places API requiere la API key como parámetro de consulta en la URL.
+                // No es posible usar headers para autenticación con esta API.
                 var baseUrl = "https://maps.googleapis.com/maps/api/place/textsearch/json";
                 var url = $"{baseUrl}?query={Uri.EscapeDataString(query)}&key={_apiKey}";
 

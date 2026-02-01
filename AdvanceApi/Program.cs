@@ -55,6 +55,11 @@ builder.Services.AddScoped<AdvanceApi.Services.IServicioService, AdvanceApi.Serv
 builder.Services.AddScoped<AdvanceApi.Services.IAreaService, AdvanceApi.Services.AreaService>();
 builder.Services.AddScoped<AdvanceApi.Services.IUbicacionService, AdvanceApi.Services.UbicacionService>();
 builder.Services.AddHttpClient(); // Required for GooglePlacesService
+builder.Services.AddHttpClient("GooglePlaces", client =>
+{
+    client.Timeout = TimeSpan.FromSeconds(30);
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+});
 builder.Services.AddScoped<AdvanceApi.Services.IGooglePlacesService, AdvanceApi.Services.GooglePlacesService>();
 
 // Configure JWT Authentication
