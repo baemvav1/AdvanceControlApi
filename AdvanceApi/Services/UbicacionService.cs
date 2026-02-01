@@ -23,6 +23,39 @@ namespace AdvanceApi.Services
         }
 
         /// <summary>
+        /// Helper method to map a SqlDataReader to a Ubicacion object
+        /// </summary>
+        private Ubicacion MapReaderToUbicacion(SqlDataReader reader)
+        {
+            return new Ubicacion
+            {
+                IdUbicacion = reader.GetInt32(reader.GetOrdinal("idUbicacion")),
+                Nombre = reader.IsDBNull(reader.GetOrdinal("nombre")) ? null : reader.GetString(reader.GetOrdinal("nombre")),
+                Descripcion = reader.IsDBNull(reader.GetOrdinal("descripcion")) ? null : reader.GetString(reader.GetOrdinal("descripcion")),
+                Latitud = reader.IsDBNull(reader.GetOrdinal("latitud")) ? null : reader.GetDecimal(reader.GetOrdinal("latitud")),
+                Longitud = reader.IsDBNull(reader.GetOrdinal("longitud")) ? null : reader.GetDecimal(reader.GetOrdinal("longitud")),
+                DireccionCompleta = reader.IsDBNull(reader.GetOrdinal("direccionCompleta")) ? null : reader.GetString(reader.GetOrdinal("direccionCompleta")),
+                Ciudad = reader.IsDBNull(reader.GetOrdinal("ciudad")) ? null : reader.GetString(reader.GetOrdinal("ciudad")),
+                Estado = reader.IsDBNull(reader.GetOrdinal("estado")) ? null : reader.GetString(reader.GetOrdinal("estado")),
+                Pais = reader.IsDBNull(reader.GetOrdinal("pais")) ? null : reader.GetString(reader.GetOrdinal("pais")),
+                PlaceId = reader.IsDBNull(reader.GetOrdinal("placeId")) ? null : reader.GetString(reader.GetOrdinal("placeId")),
+                Icono = reader.IsDBNull(reader.GetOrdinal("icono")) ? null : reader.GetString(reader.GetOrdinal("icono")),
+                ColorIcono = reader.IsDBNull(reader.GetOrdinal("colorIcono")) ? null : reader.GetString(reader.GetOrdinal("colorIcono")),
+                NivelZoom = reader.IsDBNull(reader.GetOrdinal("nivelZoom")) ? null : reader.GetInt32(reader.GetOrdinal("nivelZoom")),
+                InfoWindowHTML = reader.IsDBNull(reader.GetOrdinal("infoWindowHTML")) ? null : reader.GetString(reader.GetOrdinal("infoWindowHTML")),
+                Categoria = reader.IsDBNull(reader.GetOrdinal("categoria")) ? null : reader.GetString(reader.GetOrdinal("categoria")),
+                Telefono = reader.IsDBNull(reader.GetOrdinal("telefono")) ? null : reader.GetString(reader.GetOrdinal("telefono")),
+                Email = reader.IsDBNull(reader.GetOrdinal("email")) ? null : reader.GetString(reader.GetOrdinal("email")),
+                MetadataJSON = reader.IsDBNull(reader.GetOrdinal("metadataJSON")) ? null : reader.GetString(reader.GetOrdinal("metadataJSON")),
+                Activo = reader.IsDBNull(reader.GetOrdinal("activo")) ? null : reader.GetBoolean(reader.GetOrdinal("activo")),
+                FechaCreacion = reader.IsDBNull(reader.GetOrdinal("fechaCreacion")) ? null : reader.GetDateTime(reader.GetOrdinal("fechaCreacion")),
+                FechaModificacion = reader.IsDBNull(reader.GetOrdinal("fechaModificacion")) ? null : reader.GetDateTime(reader.GetOrdinal("fechaModificacion")),
+                UsuarioCreacion = reader.IsDBNull(reader.GetOrdinal("usuarioCreacion")) ? null : reader.GetString(reader.GetOrdinal("usuarioCreacion")),
+                UsuarioModificacion = reader.IsDBNull(reader.GetOrdinal("usuarioModificacion")) ? null : reader.GetString(reader.GetOrdinal("usuarioModificacion"))
+            };
+        }
+
+        /// <summary>
         /// Crea una nueva ubicación
         /// </summary>
         public async Task<object> CreateUbicacionAsync(UbicacionDto ubicacion)
@@ -144,38 +177,13 @@ namespace AdvanceApi.Services
                             }
                         }
                     }
-                    catch
+                    catch (IndexOutOfRangeException)
                     {
                         // Column doesn't exist, continue with normal processing
+                        _logger.LogDebug("Column 'exito' not found, proceeding with normal data mapping");
                     }
 
-                    var ubicacion = new Ubicacion
-                    {
-                        IdUbicacion = reader.GetInt32(reader.GetOrdinal("idUbicacion")),
-                        Nombre = reader.IsDBNull(reader.GetOrdinal("nombre")) ? null : reader.GetString(reader.GetOrdinal("nombre")),
-                        Descripcion = reader.IsDBNull(reader.GetOrdinal("descripcion")) ? null : reader.GetString(reader.GetOrdinal("descripcion")),
-                        Latitud = reader.IsDBNull(reader.GetOrdinal("latitud")) ? null : reader.GetDecimal(reader.GetOrdinal("latitud")),
-                        Longitud = reader.IsDBNull(reader.GetOrdinal("longitud")) ? null : reader.GetDecimal(reader.GetOrdinal("longitud")),
-                        DireccionCompleta = reader.IsDBNull(reader.GetOrdinal("direccionCompleta")) ? null : reader.GetString(reader.GetOrdinal("direccionCompleta")),
-                        Ciudad = reader.IsDBNull(reader.GetOrdinal("ciudad")) ? null : reader.GetString(reader.GetOrdinal("ciudad")),
-                        Estado = reader.IsDBNull(reader.GetOrdinal("estado")) ? null : reader.GetString(reader.GetOrdinal("estado")),
-                        Pais = reader.IsDBNull(reader.GetOrdinal("pais")) ? null : reader.GetString(reader.GetOrdinal("pais")),
-                        PlaceId = reader.IsDBNull(reader.GetOrdinal("placeId")) ? null : reader.GetString(reader.GetOrdinal("placeId")),
-                        Icono = reader.IsDBNull(reader.GetOrdinal("icono")) ? null : reader.GetString(reader.GetOrdinal("icono")),
-                        ColorIcono = reader.IsDBNull(reader.GetOrdinal("colorIcono")) ? null : reader.GetString(reader.GetOrdinal("colorIcono")),
-                        NivelZoom = reader.IsDBNull(reader.GetOrdinal("nivelZoom")) ? null : reader.GetInt32(reader.GetOrdinal("nivelZoom")),
-                        InfoWindowHTML = reader.IsDBNull(reader.GetOrdinal("infoWindowHTML")) ? null : reader.GetString(reader.GetOrdinal("infoWindowHTML")),
-                        Categoria = reader.IsDBNull(reader.GetOrdinal("categoria")) ? null : reader.GetString(reader.GetOrdinal("categoria")),
-                        Telefono = reader.IsDBNull(reader.GetOrdinal("telefono")) ? null : reader.GetString(reader.GetOrdinal("telefono")),
-                        Email = reader.IsDBNull(reader.GetOrdinal("email")) ? null : reader.GetString(reader.GetOrdinal("email")),
-                        MetadataJSON = reader.IsDBNull(reader.GetOrdinal("metadataJSON")) ? null : reader.GetString(reader.GetOrdinal("metadataJSON")),
-                        Activo = reader.IsDBNull(reader.GetOrdinal("activo")) ? null : reader.GetBoolean(reader.GetOrdinal("activo")),
-                        FechaCreacion = reader.IsDBNull(reader.GetOrdinal("fechaCreacion")) ? null : reader.GetDateTime(reader.GetOrdinal("fechaCreacion")),
-                        FechaModificacion = reader.IsDBNull(reader.GetOrdinal("fechaModificacion")) ? null : reader.GetDateTime(reader.GetOrdinal("fechaModificacion")),
-                        UsuarioCreacion = reader.IsDBNull(reader.GetOrdinal("usuarioCreacion")) ? null : reader.GetString(reader.GetOrdinal("usuarioCreacion")),
-                        UsuarioModificacion = reader.IsDBNull(reader.GetOrdinal("usuarioModificacion")) ? null : reader.GetString(reader.GetOrdinal("usuarioModificacion"))
-                    };
-
+                    var ubicacion = MapReaderToUbicacion(reader);
                     _logger.LogDebug("Se obtuvo ubicación con ID {IdUbicacion}", ubicacion.IdUbicacion);
                     return ubicacion;
                 }
@@ -246,38 +254,13 @@ namespace AdvanceApi.Services
                             }
                         }
                     }
-                    catch
+                    catch (IndexOutOfRangeException)
                     {
                         // Column doesn't exist, continue with normal processing
+                        _logger.LogDebug("Column 'exito' not found, proceeding with normal data mapping");
                     }
 
-                    var ubicacion = new Ubicacion
-                    {
-                        IdUbicacion = reader.GetInt32(reader.GetOrdinal("idUbicacion")),
-                        Nombre = reader.IsDBNull(reader.GetOrdinal("nombre")) ? null : reader.GetString(reader.GetOrdinal("nombre")),
-                        Descripcion = reader.IsDBNull(reader.GetOrdinal("descripcion")) ? null : reader.GetString(reader.GetOrdinal("descripcion")),
-                        Latitud = reader.IsDBNull(reader.GetOrdinal("latitud")) ? null : reader.GetDecimal(reader.GetOrdinal("latitud")),
-                        Longitud = reader.IsDBNull(reader.GetOrdinal("longitud")) ? null : reader.GetDecimal(reader.GetOrdinal("longitud")),
-                        DireccionCompleta = reader.IsDBNull(reader.GetOrdinal("direccionCompleta")) ? null : reader.GetString(reader.GetOrdinal("direccionCompleta")),
-                        Ciudad = reader.IsDBNull(reader.GetOrdinal("ciudad")) ? null : reader.GetString(reader.GetOrdinal("ciudad")),
-                        Estado = reader.IsDBNull(reader.GetOrdinal("estado")) ? null : reader.GetString(reader.GetOrdinal("estado")),
-                        Pais = reader.IsDBNull(reader.GetOrdinal("pais")) ? null : reader.GetString(reader.GetOrdinal("pais")),
-                        PlaceId = reader.IsDBNull(reader.GetOrdinal("placeId")) ? null : reader.GetString(reader.GetOrdinal("placeId")),
-                        Icono = reader.IsDBNull(reader.GetOrdinal("icono")) ? null : reader.GetString(reader.GetOrdinal("icono")),
-                        ColorIcono = reader.IsDBNull(reader.GetOrdinal("colorIcono")) ? null : reader.GetString(reader.GetOrdinal("colorIcono")),
-                        NivelZoom = reader.IsDBNull(reader.GetOrdinal("nivelZoom")) ? null : reader.GetInt32(reader.GetOrdinal("nivelZoom")),
-                        InfoWindowHTML = reader.IsDBNull(reader.GetOrdinal("infoWindowHTML")) ? null : reader.GetString(reader.GetOrdinal("infoWindowHTML")),
-                        Categoria = reader.IsDBNull(reader.GetOrdinal("categoria")) ? null : reader.GetString(reader.GetOrdinal("categoria")),
-                        Telefono = reader.IsDBNull(reader.GetOrdinal("telefono")) ? null : reader.GetString(reader.GetOrdinal("telefono")),
-                        Email = reader.IsDBNull(reader.GetOrdinal("email")) ? null : reader.GetString(reader.GetOrdinal("email")),
-                        MetadataJSON = reader.IsDBNull(reader.GetOrdinal("metadataJSON")) ? null : reader.GetString(reader.GetOrdinal("metadataJSON")),
-                        Activo = reader.IsDBNull(reader.GetOrdinal("activo")) ? null : reader.GetBoolean(reader.GetOrdinal("activo")),
-                        FechaCreacion = reader.IsDBNull(reader.GetOrdinal("fechaCreacion")) ? null : reader.GetDateTime(reader.GetOrdinal("fechaCreacion")),
-                        FechaModificacion = reader.IsDBNull(reader.GetOrdinal("fechaModificacion")) ? null : reader.GetDateTime(reader.GetOrdinal("fechaModificacion")),
-                        UsuarioCreacion = reader.IsDBNull(reader.GetOrdinal("usuarioCreacion")) ? null : reader.GetString(reader.GetOrdinal("usuarioCreacion")),
-                        UsuarioModificacion = reader.IsDBNull(reader.GetOrdinal("usuarioModificacion")) ? null : reader.GetString(reader.GetOrdinal("usuarioModificacion"))
-                    };
-
+                    var ubicacion = MapReaderToUbicacion(reader);
                     _logger.LogDebug("Se obtuvo ubicación con nombre {Nombre}", ubicacion.Nombre);
                     return ubicacion;
                 }
@@ -336,33 +319,7 @@ namespace AdvanceApi.Services
 
                 while (await reader.ReadAsync())
                 {
-                    var ubicacion = new Ubicacion
-                    {
-                        IdUbicacion = reader.GetInt32(reader.GetOrdinal("idUbicacion")),
-                        Nombre = reader.IsDBNull(reader.GetOrdinal("nombre")) ? null : reader.GetString(reader.GetOrdinal("nombre")),
-                        Descripcion = reader.IsDBNull(reader.GetOrdinal("descripcion")) ? null : reader.GetString(reader.GetOrdinal("descripcion")),
-                        Latitud = reader.IsDBNull(reader.GetOrdinal("latitud")) ? null : reader.GetDecimal(reader.GetOrdinal("latitud")),
-                        Longitud = reader.IsDBNull(reader.GetOrdinal("longitud")) ? null : reader.GetDecimal(reader.GetOrdinal("longitud")),
-                        DireccionCompleta = reader.IsDBNull(reader.GetOrdinal("direccionCompleta")) ? null : reader.GetString(reader.GetOrdinal("direccionCompleta")),
-                        Ciudad = reader.IsDBNull(reader.GetOrdinal("ciudad")) ? null : reader.GetString(reader.GetOrdinal("ciudad")),
-                        Estado = reader.IsDBNull(reader.GetOrdinal("estado")) ? null : reader.GetString(reader.GetOrdinal("estado")),
-                        Pais = reader.IsDBNull(reader.GetOrdinal("pais")) ? null : reader.GetString(reader.GetOrdinal("pais")),
-                        PlaceId = reader.IsDBNull(reader.GetOrdinal("placeId")) ? null : reader.GetString(reader.GetOrdinal("placeId")),
-                        Icono = reader.IsDBNull(reader.GetOrdinal("icono")) ? null : reader.GetString(reader.GetOrdinal("icono")),
-                        ColorIcono = reader.IsDBNull(reader.GetOrdinal("colorIcono")) ? null : reader.GetString(reader.GetOrdinal("colorIcono")),
-                        NivelZoom = reader.IsDBNull(reader.GetOrdinal("nivelZoom")) ? null : reader.GetInt32(reader.GetOrdinal("nivelZoom")),
-                        InfoWindowHTML = reader.IsDBNull(reader.GetOrdinal("infoWindowHTML")) ? null : reader.GetString(reader.GetOrdinal("infoWindowHTML")),
-                        Categoria = reader.IsDBNull(reader.GetOrdinal("categoria")) ? null : reader.GetString(reader.GetOrdinal("categoria")),
-                        Telefono = reader.IsDBNull(reader.GetOrdinal("telefono")) ? null : reader.GetString(reader.GetOrdinal("telefono")),
-                        Email = reader.IsDBNull(reader.GetOrdinal("email")) ? null : reader.GetString(reader.GetOrdinal("email")),
-                        MetadataJSON = reader.IsDBNull(reader.GetOrdinal("metadataJSON")) ? null : reader.GetString(reader.GetOrdinal("metadataJSON")),
-                        Activo = reader.IsDBNull(reader.GetOrdinal("activo")) ? null : reader.GetBoolean(reader.GetOrdinal("activo")),
-                        FechaCreacion = reader.IsDBNull(reader.GetOrdinal("fechaCreacion")) ? null : reader.GetDateTime(reader.GetOrdinal("fechaCreacion")),
-                        FechaModificacion = reader.IsDBNull(reader.GetOrdinal("fechaModificacion")) ? null : reader.GetDateTime(reader.GetOrdinal("fechaModificacion")),
-                        UsuarioCreacion = reader.IsDBNull(reader.GetOrdinal("usuarioCreacion")) ? null : reader.GetString(reader.GetOrdinal("usuarioCreacion")),
-                        UsuarioModificacion = reader.IsDBNull(reader.GetOrdinal("usuarioModificacion")) ? null : reader.GetString(reader.GetOrdinal("usuarioModificacion"))
-                    };
-
+                    var ubicacion = MapReaderToUbicacion(reader);
                     ubicaciones.Add(ubicacion);
                 }
 
