@@ -126,9 +126,10 @@ namespace AdvanceApi.Services
                         _logger.LogDebug("Create de cargo devolvió: {Result}, idCargo: {IdCargo}", result, idCargo);
                         return new { success = true, message = result, idCargo = idCargo };
                     }
-                    catch
+                    catch (Exception ex)
                     {
                         // No es un mensaje de resultado, operación exitosa
+                        _logger.LogDebug(ex, "No se pudo leer columna Result del stored procedure, asumiendo operación exitosa");
                     }
                 }
 
@@ -187,9 +188,10 @@ namespace AdvanceApi.Services
                         
                         return new { success = true, message = result };
                     }
-                    catch
+                    catch (Exception ex)
                     {
                         // No es un mensaje de resultado, operación exitosa
+                        _logger.LogDebug(ex, "No se pudo leer columna Result del stored procedure, asumiendo operación exitosa");
                     }
                 }
 
@@ -245,9 +247,10 @@ namespace AdvanceApi.Services
                         
                         return new { success = true, message = result };
                     }
-                    catch
+                    catch (Exception ex)
                     {
                         // No es un mensaje de resultado, operación exitosa
+                        _logger.LogDebug(ex, "No se pudo leer columna Result del stored procedure, asumiendo operación exitosa");
                     }
                 }
 

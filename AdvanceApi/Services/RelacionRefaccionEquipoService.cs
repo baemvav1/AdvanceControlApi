@@ -156,9 +156,10 @@ namespace AdvanceApi.Services
                         _logger.LogWarning("Creación de relación devolvió: {Result}", result);
                         return new { success = false, message = result };
                     }
-                    catch
+                    catch (Exception ex)
                     {
                         // No es un mensaje de resultado, operación exitosa
+                        _logger.LogDebug(ex, "No se pudo leer columna Result del stored procedure, asumiendo operación exitosa");
                     }
                 }
 
@@ -205,9 +206,10 @@ namespace AdvanceApi.Services
                         _logger.LogWarning("Delete de relación devolvió: {Result}", result);
                         return new { success = false, message = result };
                     }
-                    catch
+                    catch (Exception ex)
                     {
                         // No es un mensaje de resultado, operación exitosa
+                        _logger.LogDebug(ex, "No se pudo leer columna Result del stored procedure, asumiendo operación exitosa");
                     }
                 }
 
@@ -257,9 +259,10 @@ namespace AdvanceApi.Services
                         _logger.LogWarning("Update de nota devolvió: {Result}", result);
                         return new { success = false, message = result };
                     }
-                    catch
+                    catch (Exception ex)
                     {
                         // No es un mensaje de resultado, operación exitosa
+                        _logger.LogDebug(ex, "No se pudo leer columna Result del stored procedure, asumiendo operación exitosa");
                     }
                 }
 
