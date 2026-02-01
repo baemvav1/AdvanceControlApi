@@ -25,6 +25,43 @@ namespace AdvanceApi.Controllers
         }
 
         /// <summary>
+        /// Valida el formato y rango de coordenadas de ubicación
+        /// </summary>
+        private IActionResult? ValidateLocation(string? location)
+        {
+            if (string.IsNullOrWhiteSpace(location))
+                return null;
+
+            var parts = location.Split(',');
+            if (parts.Length != 2 ||
+                !double.TryParse(parts[0].Trim(), out var lat) ||
+                !double.TryParse(parts[1].Trim(), out var lng))
+            {
+                return BadRequest(new { message = "El parámetro 'location' debe estar en formato 'lat,lng'" });
+            }
+
+            if (lat < -90 || lat > 90 || lng < -180 || lng > 180)
+            {
+                return BadRequest(new { message = "Coordenadas inválidas. Lat: -90 a 90, Lng: -180 a 180" });
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Valida el rango del radio de búsqueda
+        /// </summary>
+        private IActionResult? ValidateRadius(int? radius)
+        {
+            if (radius.HasValue && (radius.Value <= 0 || radius.Value > 50000))
+            {
+                return BadRequest(new { message = "El parámetro 'radius' debe estar entre 1 y 50000 metros" });
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Busca lugares por texto
         /// GET /api/GooglePlaces/search?query=restaurant&location=19.4326,-99.1332&radius=5000
         /// </summary>
@@ -45,28 +82,12 @@ namespace AdvanceApi.Controllers
                     return BadRequest(new { message = "El parámetro 'query' es requerido" });
                 }
 
-                // Validar formato de location si se proporciona
-                if (!string.IsNullOrWhiteSpace(location))
-                {
-                    var parts = location.Split(',');
-                    if (parts.Length != 2 || 
-                        !double.TryParse(parts[0].Trim(), out var lat) || 
-                        !double.TryParse(parts[1].Trim(), out var lng))
-                    {
-                        return BadRequest(new { message = "El parámetro 'location' debe estar en formato 'lat,lng'" });
-                    }
+                // Validar formato de location y radius
+                var locationError = ValidateLocation(location);
+                if (locationError != null) return locationError;
 
-                    if (lat < -90 || lat > 90 || lng < -180 || lng > 180)
-                    {
-                        return BadRequest(new { message = "Coordenadas inválidas. Lat: -90 a 90, Lng: -180 a 180" });
-                    }
-                }
-
-                // Validar radius si se proporciona
-                if (radius.HasValue && (radius.Value <= 0 || radius.Value > 50000))
-                {
-                    return BadRequest(new { message = "El parámetro 'radius' debe estar entre 1 y 50000 metros" });
-                }
+                var radiusError = ValidateRadius(radius);
+                if (radiusError != null) return radiusError;
 
                 _logger.LogInformation("Búsqueda de lugares solicitada: {Query}", query);
 
@@ -158,28 +179,12 @@ namespace AdvanceApi.Controllers
                     return BadRequest(new { message = "El parámetro 'input' es requerido" });
                 }
 
-                // Validar formato de location si se proporciona
-                if (!string.IsNullOrWhiteSpace(location))
-                {
-                    var parts = location.Split(',');
-                    if (parts.Length != 2 ||
-                        !double.TryParse(parts[0].Trim(), out var lat) ||
-                        !double.TryParse(parts[1].Trim(), out var lng))
-                    {
-                        return BadRequest(new { message = "El parámetro 'location' debe estar en formato 'lat,lng'" });
-                    }
+                // Validar formato de location y radius
+                var locationError = ValidateLocation(location);
+                if (locationError != null) return locationError;
 
-                    if (lat < -90 || lat > 90 || lng < -180 || lng > 180)
-                    {
-                        return BadRequest(new { message = "Coordenadas inválidas. Lat: -90 a 90, Lng: -180 a 180" });
-                    }
-                }
-
-                // Validar radius si se proporciona
-                if (radius.HasValue && (radius.Value <= 0 || radius.Value > 50000))
-                {
-                    return BadRequest(new { message = "El parámetro 'radius' debe estar entre 1 y 50000 metros" });
-                }
+                var radiusError = ValidateRadius(radius);
+                if (radiusError != null) return radiusError;
 
                 _logger.LogInformation("Autocompletado de lugares solicitado: {Input}", input);
 
