@@ -23,10 +23,12 @@ namespace AdvanceApi.Controllers
         private readonly int _accessTokenMinutes;
         private readonly int _refreshTokenDays;
         private readonly string _refreshSecret;
+        private readonly ILogger<AuthController> _logger;
 
-        public AuthController(DbHelper dbHelper, IConfiguration configuration)
+        public AuthController(DbHelper dbHelper, IConfiguration configuration, ILogger<AuthController> logger)
         {
             _dbHelper = dbHelper;
+            _logger = logger;
             _secretKey = configuration["Jwt:Key"] ?? throw new Exception("No se encontró Jwt:Key en la configuración.");
             _issuer = configuration["Jwt:Issuer"] ?? throw new Exception("No se encontró Jwt:Issuer en la configuración.");
             _audience = configuration["Jwt:Audience"] ?? throw new Exception("No se encontró Jwt:Audience en la configuración.");
@@ -109,6 +111,7 @@ namespace AdvanceApi.Controllers
             }
             catch (SqlException sqlEx)
             {
+                _logger.LogError(sqlEx, "Error de SQL al iniciar sesión para el usuario {Username}", request.Username);
 #if DEBUG
                 return BadRequest(new { message = sqlEx.Message });
 #else
@@ -117,6 +120,7 @@ namespace AdvanceApi.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error inesperado al iniciar sesión para el usuario {Username}", request.Username);
 #if DEBUG
                 return StatusCode(500, new { message = ex.Message });
 #else
@@ -196,6 +200,7 @@ namespace AdvanceApi.Controllers
             }
             catch (SqlException sqlEx)
             {
+                _logger.LogError(sqlEx, "Error de SQL al refrescar token");
 #if DEBUG
                 return BadRequest(new { message = sqlEx.Message });
 #else
@@ -204,6 +209,7 @@ namespace AdvanceApi.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error inesperado al refrescar token");
 #if DEBUG
                 return StatusCode(500, new { message = ex.Message });
 #else
@@ -261,6 +267,7 @@ namespace AdvanceApi.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error al validar token");
 #if DEBUG
                 return StatusCode(500, new { message = ex.Message });
 #else
@@ -297,6 +304,7 @@ namespace AdvanceApi.Controllers
             }
             catch (SqlException sqlEx)
             {
+                _logger.LogError(sqlEx, "Error de SQL al revocar token");
 #if DEBUG
                 return BadRequest(new { message = sqlEx.Message });
 #else
@@ -305,6 +313,7 @@ namespace AdvanceApi.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error inesperado al revocar token");
 #if DEBUG
                 return StatusCode(500, new { message = ex.Message });
 #else

@@ -434,7 +434,9 @@ IdUsuarioAct = reader.IsDBNull(reader.GetOrdinal("id_usuaio_act"))
     : reader.GetInt32(reader.GetOrdinal("id_usuaio_act"))
 ```
 
-**Problema:** `id_usuaio_act` podría ser un typo de `id_usuario_act` (falta 'r').
+**Problema:** `id_usuaio_act` parece ser un typo de `id_usuario_act` (falta 'r' en 'usuario').
+
+**NOTA IMPORTANTE:** Esta columna solo aparece una vez en todo el código. Si la base de datos realmente tiene el typo `id_usuaio_act`, entonces el código es correcto. Si la columna se llama `id_usuario_act`, entonces este es un bug que causa que el campo siempre sea NULL.
 
 **Acción requerida:**
 1. Verificar el nombre real de la columna en la base de datos:
