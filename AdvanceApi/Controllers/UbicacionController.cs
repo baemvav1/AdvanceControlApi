@@ -12,11 +12,13 @@ namespace AdvanceApi.Controllers
     {
         private readonly IUbicacionService _ubicacionService;
         private readonly ILogger<UbicacionController> _logger;
+        private readonly IConfiguration _configuration;
 
-        public UbicacionController(IUbicacionService ubicacionService, ILogger<UbicacionController> logger)
+        public UbicacionController(IUbicacionService ubicacionService, ILogger<UbicacionController> logger, IConfiguration configuration)
         {
             _ubicacionService = ubicacionService ?? throw new ArgumentNullException(nameof(ubicacionService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
         /// <summary>
@@ -44,6 +46,61 @@ namespace AdvanceApi.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error inesperado al obtener ubicaciones");
+#if DEBUG
+                return StatusCode(500, new { message = ex.Message });
+#else
+                return StatusCode(500, new { message = "Error interno del servidor." });
+#endif
+            }
+        }
+
+        /// <summary>
+        /// Obtiene todas las ubicaciones activas junto con la configuración de Google Maps
+        /// GET /api/Ubicacion/with-config
+        /// </summary>
+        /// <returns>Objeto con la configuración del mapa y la lista de ubicaciones activas</returns>
+        [HttpGet("with-config")]
+        public async Task<IActionResult> GetUbicacionesWithConfig()
+        {
+            try
+            {
+                var ubicaciones = await _ubicacionService.GetAllUbicacionesAsync();
+                
+                var apiKey = _configuration["GoogleMaps:ApiKey"];
+                var defaultCenter = _configuration["GoogleMaps:DefaultCenter"];
+                var defaultZoom = _configuration["GoogleMaps:DefaultZoom"];
+
+                if (string.IsNullOrWhiteSpace(apiKey))
+                {
+                    _logger.LogWarning("La clave de API de Google Maps no está configurada");
+                    return StatusCode(500, new { message = "La configuración de Google Maps no está completa" });
+                }
+
+                var mapConfig = new
+                {
+                    apiKey,
+                    defaultCenter,
+                    defaultZoom = !string.IsNullOrWhiteSpace(defaultZoom) ? int.Parse(defaultZoom) : 15
+                };
+
+                return Ok(new
+                {
+                    config = mapConfig,
+                    ubicaciones
+                });
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogError(ex, "Error al obtener ubicaciones con configuración");
+#if DEBUG
+                return StatusCode(500, new { message = ex.Message, innerMessage = ex.InnerException?.Message });
+#else
+                return StatusCode(500, new { message = "Error al acceder a la base de datos." });
+#endif
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error inesperado al obtener ubicaciones con configuración");
 #if DEBUG
                 return StatusCode(500, new { message = ex.Message });
 #else
