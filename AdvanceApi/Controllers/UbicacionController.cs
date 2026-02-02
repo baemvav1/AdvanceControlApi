@@ -73,14 +73,14 @@ namespace AdvanceApi.Controllers
                 if (string.IsNullOrWhiteSpace(apiKey))
                 {
                     _logger.LogWarning("La clave de API de Google Maps no está configurada");
-                    return StatusCode(500, new { message = "La configuración de Google Maps no está completa" });
+                    return StatusCode(503, new { message = "La configuración de Google Maps no está completa" });
                 }
 
                 var mapConfig = new
                 {
                     apiKey,
                     defaultCenter,
-                    defaultZoom = !string.IsNullOrWhiteSpace(defaultZoom) ? int.Parse(defaultZoom) : 15
+                    defaultZoom = int.TryParse(defaultZoom, out var zoom) ? zoom : 15
                 };
 
                 return Ok(new
