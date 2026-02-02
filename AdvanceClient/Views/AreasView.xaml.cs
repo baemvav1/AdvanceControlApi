@@ -25,13 +25,18 @@ namespace AdvanceClient.Views
         private bool _isDrawing;
         private string? _pendingShapeType;
 
-        public AreasView()
+        /// <summary>
+        /// Constructor with dependency injection support
+        /// </summary>
+        /// <param name="loggingService">Optional logging service (defaults to LoggingService if not provided)</param>
+        /// <param name="areaApiService">Optional area API service (defaults to AreaApiService if not provided)</param>
+        public AreasView(ILoggingService? loggingService = null, IAreaApiService? areaApiService = null)
         {
             this.InitializeComponent();
             
-            // Initialize services (in a real app, these would be injected via DI)
-            _loggingService = new LoggingService();
-            _areaApiService = new AreaApiService();
+            // Use injected services or create default implementations
+            _loggingService = loggingService ?? new LoggingService();
+            _areaApiService = areaApiService ?? AreaApiService.Instance;
             
             _currentCoordinates = new List<Coordinate>();
             _isEditMode = false;

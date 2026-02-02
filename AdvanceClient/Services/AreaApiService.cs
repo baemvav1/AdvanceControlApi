@@ -21,23 +21,60 @@ namespace AdvanceClient.Services
     }
 
     /// <summary>
-    /// Implementation of Area API service
+    /// Configuration for the Area API service
+    /// </summary>
+    public static class AreaApiConfiguration
+    {
+        /// <summary>
+        /// Base URL for the Areas API. Configure this at application startup.
+        /// Default is localhost for development. In production, set this to the actual API URL.
+        /// </summary>
+        public static string BaseUrl { get; set; } = "https://localhost:7001/api/Areas";
+    }
+
+    /// <summary>
+    /// Implementation of Area API service using singleton pattern for HttpClient
+    /// to avoid socket exhaustion
     /// </summary>
     public class AreaApiService : IAreaApiService
     {
+        // Static HttpClient to avoid socket exhaustion
+        private static readonly Lazy<HttpClient> _httpClientLazy = new Lazy<HttpClient>(() =>
+        {
+            var handler = new HttpClientHandler();
+            // Allow self-signed certificates in development
+#if DEBUG
+            handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
+#endif
+            return new HttpClient(handler);
+        });
+
+        private static HttpClient HttpClientInstance => _httpClientLazy.Value;
+        
+        /// <summary>
+        /// Singleton instance of AreaApiService
+        /// </summary>
+        public static AreaApiService Instance { get; } = new AreaApiService();
+
         private readonly HttpClient _httpClient;
         private readonly string _baseUrl;
 
+        /// <summary>
+        /// Default constructor using static HttpClient and configured base URL
+        /// </summary>
         public AreaApiService()
         {
-            _httpClient = new HttpClient();
-            _baseUrl = "https://localhost:7001/api/Areas"; // Configure as needed
+            _httpClient = HttpClientInstance;
+            _baseUrl = AreaApiConfiguration.BaseUrl;
         }
 
+        /// <summary>
+        /// Constructor for dependency injection with custom HttpClient and base URL
+        /// </summary>
         public AreaApiService(HttpClient httpClient, string baseUrl)
         {
-            _httpClient = httpClient;
-            _baseUrl = baseUrl;
+            _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            _baseUrl = baseUrl ?? throw new ArgumentNullException(nameof(baseUrl));
         }
 
         public async Task<bool> CreateAreaAsync(AreaSaveData area)
