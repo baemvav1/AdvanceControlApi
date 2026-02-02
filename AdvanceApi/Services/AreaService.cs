@@ -26,6 +26,11 @@ namespace AdvanceApi.Services
         /// <summary>
         /// Agrega un parámetro decimal con tipo explícito para evitar errores de conversión numeric/decimal
         /// </summary>
+        /// <param name="command">El comando SQL al cual agregar el parámetro</param>
+        /// <param name="parameterName">Nombre del parámetro (ej: @centroLatitud)</param>
+        /// <param name="value">Valor decimal nullable a asignar</param>
+        /// <param name="precision">Precisión del decimal (dígitos totales)</param>
+        /// <param name="scale">Escala del decimal (dígitos después del punto decimal)</param>
         private static void AddDecimalParameter(SqlCommand command, string parameterName, decimal? value, byte precision = 18, byte scale = 8)
         {
             var param = command.Parameters.Add(parameterName, SqlDbType.Decimal);
