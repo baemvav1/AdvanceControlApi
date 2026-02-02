@@ -202,7 +202,7 @@ namespace AdvanceApi.Services
         }
 
         /// <summary>
-        /// Crea un nuevo equipo usando el procedimiento almacenado sp_equipo_create
+        /// Crea un nuevo equipo usando el procedimiento almacenado sp_equipo_edit con operacion='create'
         /// </summary>
         public async Task<object> CreateEquipoAsync(EquipoQueryDto query)
         {
@@ -212,50 +212,25 @@ namespace AdvanceApi.Services
             try
             {
                 await using var connection = await _dbHelper.GetOpenConnectionAsync();
-                await using var command = new SqlCommand("sp_equipo_create", connection);
+                await using var command = new SqlCommand("sp_equipo_edit", connection);
                 command.CommandType = CommandType.StoredProcedure;
 
+                command.Parameters.AddWithValue("@operacion", "create");
+                command.Parameters.AddWithValue("@idEquipo", DBNull.Value);
                 command.Parameters.AddWithValue("@marca", (object?)query.Marca ?? DBNull.Value);
                 command.Parameters.AddWithValue("@creado", (object?)query.Creado ?? DBNull.Value);
                 command.Parameters.AddWithValue("@paradas", (object?)query.Paradas ?? DBNull.Value);
                 command.Parameters.AddWithValue("@kilogramos", (object?)query.Kilogramos ?? DBNull.Value);
                 command.Parameters.AddWithValue("@personas", (object?)query.Personas ?? DBNull.Value);
-                command.Parameters.AddWithValue("@descripcion", (object?)query.Descripcion ?? DBNull.Value);
+                command.Parameters.AddWithValue("@descricpion", (object?)query.Descripcion ?? DBNull.Value);
                 command.Parameters.AddWithValue("@identificador", (object?)query.Identificador ?? DBNull.Value);
                 command.Parameters.AddWithValue("@estatus", query.Estatus);
                 command.Parameters.AddWithValue("@idUbicacion", (object?)query.IdUbicacion ?? DBNull.Value);
 
-                await using var reader = await command.ExecuteReaderAsync();
+                await command.ExecuteNonQueryAsync();
 
-                int? newId = null;
-                Equipo? createdEquipo = null;
-
-                // Primer result set: idEquipo
-                if (await reader.ReadAsync())
-                {
-                    newId = reader.GetInt32(reader.GetOrdinal("idEquipo"));
-                }
-
-                // Segundo result set: fila creada
-                if (await reader.NextResultAsync() && await reader.ReadAsync())
-                {
-                    createdEquipo = new Equipo
-                    {
-                        IdEquipo = reader.GetInt32(reader.GetOrdinal("idEquipo")),
-                        Marca = reader.IsDBNull(reader.GetOrdinal("marca")) ? null : reader.GetString(reader.GetOrdinal("marca")),
-                        Creado = reader.IsDBNull(reader.GetOrdinal("creado")) ? null : reader.GetInt32(reader.GetOrdinal("creado")),
-                        Paradas = reader.IsDBNull(reader.GetOrdinal("paradas")) ? null : reader.GetInt32(reader.GetOrdinal("paradas")),
-                        Kilogramos = reader.IsDBNull(reader.GetOrdinal("kilogramos")) ? null : reader.GetInt32(reader.GetOrdinal("kilogramos")),
-                        Personas = reader.IsDBNull(reader.GetOrdinal("personas")) ? null : reader.GetInt32(reader.GetOrdinal("personas")),
-                        Descripcion = reader.IsDBNull(reader.GetOrdinal("descripcion")) ? null : reader.GetString(reader.GetOrdinal("descripcion")),
-                        Identificador = reader.IsDBNull(reader.GetOrdinal("identificador")) ? null : reader.GetString(reader.GetOrdinal("identificador")),
-                        Estatus = reader.IsDBNull(reader.GetOrdinal("estatus")) ? null : reader.GetBoolean(reader.GetOrdinal("estatus")),
-                        IdUbicacion = reader.IsDBNull(reader.GetOrdinal("idUbicacion")) ? null : reader.GetInt32(reader.GetOrdinal("idUbicacion"))
-                    };
-                }
-
-                _logger.LogDebug("Equipo creado con ID {IdEquipo}", newId);
-                return new { success = true, message = "Equipo creado correctamente", idEquipo = newId, equipo = createdEquipo };
+                _logger.LogDebug("Equipo creado correctamente");
+                return new { success = true, message = "Equipo creado correctamente" };
             }
             catch (SqlException sqlEx)
             {
