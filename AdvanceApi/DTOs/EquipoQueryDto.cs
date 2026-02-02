@@ -13,7 +13,7 @@ namespace AdvanceApi.DTOs
         /// <summary>
         /// ID del equipo (requerido para delete y update)
         /// </summary>
-        public int IdEquipo { get; set; } = 0;
+        public int? IdEquipo { get; set; } = 0;
 
         /// <summary>
         /// Marca del equipo (búsqueda parcial en select, actualización en update)

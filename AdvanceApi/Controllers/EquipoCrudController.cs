@@ -23,6 +23,7 @@ namespace AdvanceApi.Controllers
         /// Obtiene equipos según los criterios de búsqueda proporcionados
         /// GET /api/equipo_crud
         /// </summary>
+        /// <param name="idEquipo">Búsqueda parcial por marca</param>
         /// <param name="marca">Búsqueda parcial por marca</param>
         /// <param name="creado">Filtro exacto por año de creación</param>
         /// <param name="paradas">Filtro exacto por número de paradas</param>
@@ -34,6 +35,7 @@ namespace AdvanceApi.Controllers
         /// <returns>Lista de equipos que cumplen con los criterios</returns>
         [HttpGet]
         public async Task<IActionResult> GetEquipos(
+            [FromQuery] int? idEquipo = null,
             [FromQuery] string? marca = null,
             [FromQuery] int? creado = null,
             [FromQuery] int? paradas = null,
@@ -48,7 +50,7 @@ namespace AdvanceApi.Controllers
                 var query = new EquipoQueryDto
                 {
                     Operacion = "select",
-                    IdEquipo = 0,
+                    IdEquipo = idEquipo,
                     Marca = marca,
                     Creado = creado,
                     Paradas = paradas,
