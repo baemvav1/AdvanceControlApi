@@ -29,9 +29,9 @@ namespace AdvanceApi.Services
         /// <param name="command">El comando SQL al cual agregar el parámetro</param>
         /// <param name="parameterName">Nombre del parámetro (ej: @centroLatitud)</param>
         /// <param name="value">Valor decimal nullable a asignar</param>
-        /// <param name="precision">Precisión del decimal (dígitos totales)</param>
+        /// <param name="precision">Precisión del decimal (dígitos totales, máximo 38)</param>
         /// <param name="scale">Escala del decimal (dígitos después del punto decimal)</param>
-        private static void AddDecimalParameter(SqlCommand command, string parameterName, decimal? value, byte precision = 18, byte scale = 8)
+        private static void AddDecimalParameter(SqlCommand command, string parameterName, decimal? value, byte precision = 28, byte scale = 8)
         {
             var param = command.Parameters.Add(parameterName, SqlDbType.Decimal);
             param.Precision = precision;
@@ -272,9 +272,9 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@anchoBorde", (object?)query.AnchoBorde ?? DBNull.Value);
                 command.Parameters.AddWithValue("@activo", (object?)query.Activo ?? DBNull.Value);
                 command.Parameters.AddWithValue("@tipoGeometria", (object?)query.TipoGeometria ?? DBNull.Value);
-                AddDecimalParameter(command, "@centroLatitud", query.CentroLatitud, 18, 8);
-                AddDecimalParameter(command, "@centroLongitud", query.CentroLongitud, 18, 8);
-                AddDecimalParameter(command, "@radio", query.Radio, 18, 8);
+                AddDecimalParameter(command, "@centroLatitud", query.CentroLatitud, 28, 8);
+                AddDecimalParameter(command, "@centroLongitud", query.CentroLongitud, 28, 8);
+                AddDecimalParameter(command, "@radio", query.Radio, 28, 8);
                 command.Parameters.AddWithValue("@etiquetaMostrar", (object?)query.EtiquetaMostrar ?? DBNull.Value);
                 command.Parameters.AddWithValue("@etiquetaTexto", (object?)query.EtiquetaTexto ?? DBNull.Value);
                 command.Parameters.AddWithValue("@nivelZoom", (object?)query.NivelZoom ?? DBNull.Value);
@@ -345,9 +345,9 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@anchoBorde", (object?)query.AnchoBorde ?? DBNull.Value);
                 command.Parameters.AddWithValue("@activo", (object?)query.Activo ?? DBNull.Value);
                 command.Parameters.AddWithValue("@tipoGeometria", (object?)query.TipoGeometria ?? DBNull.Value);
-                AddDecimalParameter(command, "@centroLatitud", query.CentroLatitud, 18, 8);
-                AddDecimalParameter(command, "@centroLongitud", query.CentroLongitud, 18, 8);
-                AddDecimalParameter(command, "@radio", query.Radio, 18, 8);
+                AddDecimalParameter(command, "@centroLatitud", query.CentroLatitud, 28, 8);
+                AddDecimalParameter(command, "@centroLongitud", query.CentroLongitud, 28, 8);
+                AddDecimalParameter(command, "@radio", query.Radio, 28, 8);
                 command.Parameters.AddWithValue("@etiquetaMostrar", (object?)query.EtiquetaMostrar ?? DBNull.Value);
                 command.Parameters.AddWithValue("@etiquetaTexto", (object?)query.EtiquetaTexto ?? DBNull.Value);
                 command.Parameters.AddWithValue("@nivelZoom", (object?)query.NivelZoom ?? DBNull.Value);
@@ -546,8 +546,8 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@anchoBorde", DBNull.Value);
                 command.Parameters.AddWithValue("@activo", DBNull.Value);
                 command.Parameters.AddWithValue("@tipoGeometria", DBNull.Value);
-                AddDecimalParameter(command, "@centroLatitud", latitud, 18, 8);
-                AddDecimalParameter(command, "@centroLongitud", longitud, 18, 8);
+                AddDecimalParameter(command, "@centroLatitud", latitud, 28, 8);
+                AddDecimalParameter(command, "@centroLongitud", longitud, 28, 8);
                 command.Parameters.AddWithValue("@radio", DBNull.Value);
                 command.Parameters.AddWithValue("@etiquetaMostrar", DBNull.Value);
                 command.Parameters.AddWithValue("@etiquetaTexto", DBNull.Value);
