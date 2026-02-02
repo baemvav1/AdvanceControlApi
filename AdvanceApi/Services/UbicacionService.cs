@@ -23,7 +23,11 @@ namespace AdvanceApi.Services
         }
 
         /// <summary>
-        /// Agrega un parámetro decimal con tipo explícito para evitar errores de conversión numeric/decimal
+        /// Agrega un parámetro decimal con tipo explícito para evitar errores de conversión numeric/decimal.
+        /// Nota: Se usa precisión 28 (permitiendo 20 dígitos antes del decimal) para evitar
+        /// ArgumentException en el cliente cuando se reciben valores fuera de rango.
+        /// La validación de rangos válidos (ej: latitud -90 a 90) debe realizarse en el
+        /// procedimiento almacenado o la lógica de negocio.
         /// </summary>
         /// <param name="command">El comando SQL al cual agregar el parámetro</param>
         /// <param name="parameterName">Nombre del parámetro (ej: @latitud)</param>
