@@ -23,6 +23,26 @@ namespace AdvanceApi.Services
         }
 
         /// <summary>
+        /// Agrega un parámetro decimal con tipo explícito para evitar errores de conversión numeric/decimal.
+        /// Nota: Se usa precisión 28 (permitiendo 20 dígitos antes del decimal) para evitar
+        /// ArgumentException en el cliente cuando se reciben valores fuera de rango.
+        /// La validación de rangos válidos (ej: latitud -90 a 90) debe realizarse en el
+        /// procedimiento almacenado o la lógica de negocio.
+        /// </summary>
+        /// <param name="command">El comando SQL al cual agregar el parámetro</param>
+        /// <param name="parameterName">Nombre del parámetro (ej: @latitud)</param>
+        /// <param name="value">Valor decimal nullable a asignar</param>
+        /// <param name="precision">Precisión del decimal (dígitos totales, máximo 38)</param>
+        /// <param name="scale">Escala del decimal (dígitos después del punto decimal)</param>
+        private static void AddDecimalParameter(SqlCommand command, string parameterName, decimal? value, byte precision = 28, byte scale = 8)
+        {
+            var param = command.Parameters.Add(parameterName, SqlDbType.Decimal);
+            param.Precision = precision;
+            param.Scale = scale;
+            param.Value = value.HasValue ? (object)value.Value : DBNull.Value;
+        }
+
+        /// <summary>
         /// Helper method to map a SqlDataReader to a Ubicacion object
         /// </summary>
         private Ubicacion MapReaderToUbicacion(SqlDataReader reader)
@@ -74,8 +94,8 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@idUbicacion", DBNull.Value);
                 command.Parameters.AddWithValue("@nombre", (object?)ubicacion.Nombre ?? DBNull.Value);
                 command.Parameters.AddWithValue("@descripcion", (object?)ubicacion.Descripcion ?? DBNull.Value);
-                command.Parameters.AddWithValue("@latitud", (object?)ubicacion.Latitud ?? DBNull.Value);
-                command.Parameters.AddWithValue("@longitud", (object?)ubicacion.Longitud ?? DBNull.Value);
+                AddDecimalParameter(command, "@latitud", ubicacion.Latitud);
+                AddDecimalParameter(command, "@longitud", ubicacion.Longitud);
                 command.Parameters.AddWithValue("@direccionCompleta", (object?)ubicacion.DireccionCompleta ?? DBNull.Value);
                 command.Parameters.AddWithValue("@ciudad", (object?)ubicacion.Ciudad ?? DBNull.Value);
                 command.Parameters.AddWithValue("@estado", (object?)ubicacion.Estado ?? DBNull.Value);
@@ -356,8 +376,8 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@idUbicacion", (object?)ubicacion.IdUbicacion ?? DBNull.Value);
                 command.Parameters.AddWithValue("@nombre", (object?)ubicacion.Nombre ?? DBNull.Value);
                 command.Parameters.AddWithValue("@descripcion", (object?)ubicacion.Descripcion ?? DBNull.Value);
-                command.Parameters.AddWithValue("@latitud", (object?)ubicacion.Latitud ?? DBNull.Value);
-                command.Parameters.AddWithValue("@longitud", (object?)ubicacion.Longitud ?? DBNull.Value);
+                AddDecimalParameter(command, "@latitud", ubicacion.Latitud);
+                AddDecimalParameter(command, "@longitud", ubicacion.Longitud);
                 command.Parameters.AddWithValue("@direccionCompleta", (object?)ubicacion.DireccionCompleta ?? DBNull.Value);
                 command.Parameters.AddWithValue("@ciudad", (object?)ubicacion.Ciudad ?? DBNull.Value);
                 command.Parameters.AddWithValue("@estado", (object?)ubicacion.Estado ?? DBNull.Value);
