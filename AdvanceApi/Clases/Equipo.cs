@@ -16,5 +16,6 @@ namespace Clases
         public string? Descripcion { get; set; }
         public string? Identificador { get; set; }
         public bool? Estatus { get; set; }
+        public int? IdUbicacion { get; set; }
     }
 }
