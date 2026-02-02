@@ -49,6 +49,7 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@descricpion", (object?)query.Descripcion ?? DBNull.Value);
                 command.Parameters.AddWithValue("@identificador", (object?)query.Identificador ?? DBNull.Value);
                 command.Parameters.AddWithValue("@estatus", query.Estatus);
+                command.Parameters.AddWithValue("@idUbicacion", (object?)query.IdUbicacion ?? DBNull.Value);
 
                 await using var reader = await command.ExecuteReaderAsync();
 
@@ -64,7 +65,8 @@ namespace AdvanceApi.Services
                         Personas = reader.IsDBNull(reader.GetOrdinal("personas")) ? null : reader.GetInt32(reader.GetOrdinal("personas")),
                         Descripcion = reader.IsDBNull(reader.GetOrdinal("descripcion")) ? null : reader.GetString(reader.GetOrdinal("descripcion")),
                         Identificador = reader.IsDBNull(reader.GetOrdinal("identificador")) ? null : reader.GetString(reader.GetOrdinal("identificador")),
-                        Estatus = reader.IsDBNull(reader.GetOrdinal("estatus")) ? null : reader.GetBoolean(reader.GetOrdinal("estatus"))
+                        Estatus = reader.IsDBNull(reader.GetOrdinal("estatus")) ? null : reader.GetBoolean(reader.GetOrdinal("estatus")),
+                        IdUbicacion = reader.IsDBNull(reader.GetOrdinal("idUbicacion")) ? null : reader.GetInt32(reader.GetOrdinal("idUbicacion"))
                     };
 
                     equipos.Add(equipo);
@@ -107,6 +109,7 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@descricpion", DBNull.Value);
                 command.Parameters.AddWithValue("@identificador", DBNull.Value);
                 command.Parameters.AddWithValue("@estatus", true);
+                command.Parameters.AddWithValue("@idUbicacion", DBNull.Value);
 
                 await using var reader = await command.ExecuteReaderAsync();
 
@@ -164,6 +167,7 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@descricpion", (object?)query.Descripcion ?? DBNull.Value);
                 command.Parameters.AddWithValue("@identificador", (object?)query.Identificador ?? DBNull.Value);
                 command.Parameters.AddWithValue("@estatus", query.Estatus);
+                command.Parameters.AddWithValue("@idUbicacion", (object?)query.IdUbicacion ?? DBNull.Value);
 
                 await using var reader = await command.ExecuteReaderAsync();
 
@@ -219,6 +223,7 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@descripcion", (object?)query.Descripcion ?? DBNull.Value);
                 command.Parameters.AddWithValue("@identificador", (object?)query.Identificador ?? DBNull.Value);
                 command.Parameters.AddWithValue("@estatus", query.Estatus);
+                command.Parameters.AddWithValue("@idUbicacion", (object?)query.IdUbicacion ?? DBNull.Value);
 
                 await using var reader = await command.ExecuteReaderAsync();
 
@@ -244,7 +249,8 @@ namespace AdvanceApi.Services
                         Personas = reader.IsDBNull(reader.GetOrdinal("personas")) ? null : reader.GetInt32(reader.GetOrdinal("personas")),
                         Descripcion = reader.IsDBNull(reader.GetOrdinal("descripcion")) ? null : reader.GetString(reader.GetOrdinal("descripcion")),
                         Identificador = reader.IsDBNull(reader.GetOrdinal("identificador")) ? null : reader.GetString(reader.GetOrdinal("identificador")),
-                        Estatus = reader.IsDBNull(reader.GetOrdinal("estatus")) ? null : reader.GetBoolean(reader.GetOrdinal("estatus"))
+                        Estatus = reader.IsDBNull(reader.GetOrdinal("estatus")) ? null : reader.GetBoolean(reader.GetOrdinal("estatus")),
+                        IdUbicacion = reader.IsDBNull(reader.GetOrdinal("idUbicacion")) ? null : reader.GetInt32(reader.GetOrdinal("idUbicacion"))
                     };
                 }
 

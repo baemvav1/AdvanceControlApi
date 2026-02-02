@@ -54,5 +54,10 @@ namespace AdvanceApi.DTOs
         /// Estatus del equipo (por defecto true)
         /// </summary>
         public bool Estatus { get; set; } = true;
+
+        /// <summary>
+        /// ID de la ubicación del equipo
+        /// </summary>
+        public int? IdUbicacion { get; set; }
     }
 }

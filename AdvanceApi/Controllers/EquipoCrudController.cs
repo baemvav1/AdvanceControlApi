@@ -30,6 +30,7 @@ namespace AdvanceApi.Controllers
         /// <param name="personas">Filtro exacto por capacidad de personas</param>
         /// <param name="descripcion">Búsqueda parcial en descripción</param>
         /// <param name="identificador">Búsqueda parcial por identificador</param>
+        /// <param name="idUbicacion">Filtro exacto por ID de ubicación</param>
         /// <returns>Lista de equipos que cumplen con los criterios</returns>
         [HttpGet]
         public async Task<IActionResult> GetEquipos(
@@ -39,7 +40,8 @@ namespace AdvanceApi.Controllers
             [FromQuery] int? kilogramos = null,
             [FromQuery] int? personas = null,
             [FromQuery] string? descripcion = null,
-            [FromQuery] string? identificador = null)
+            [FromQuery] string? identificador = null,
+            [FromQuery] int? idUbicacion = null)
         {
             try
             {
@@ -54,7 +56,8 @@ namespace AdvanceApi.Controllers
                     Personas = personas,
                     Descripcion = descripcion,
                     Identificador = identificador,
-                    Estatus = true
+                    Estatus = true,
+                    IdUbicacion = idUbicacion
                 };
 
                 var equipos = await _equipoService.ExecuteEquipoOperationAsync(query);
@@ -133,6 +136,7 @@ namespace AdvanceApi.Controllers
         /// <param name="personas">Nueva capacidad de personas</param>
         /// <param name="descripcion">Nueva descripción</param>
         /// <param name="identificador">Nuevo identificador</param>
+        /// <param name="idUbicacion">Nuevo ID de ubicación</param>
         /// <returns>Resultado de la operación</returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateEquipo(
@@ -143,7 +147,8 @@ namespace AdvanceApi.Controllers
             [FromQuery] int? kilogramos = null,
             [FromQuery] int? personas = null,
             [FromQuery] string? descripcion = null,
-            [FromQuery] string? identificador = null)
+            [FromQuery] string? identificador = null,
+            [FromQuery] int? idUbicacion = null)
         {
             try
             {
@@ -163,7 +168,8 @@ namespace AdvanceApi.Controllers
                     Personas = personas,
                     Descripcion = descripcion,
                     Identificador = identificador,
-                    Estatus = true
+                    Estatus = true,
+                    IdUbicacion = idUbicacion
                 };
 
                 var result = await _equipoService.UpdateEquipoAsync(query);
@@ -202,6 +208,7 @@ namespace AdvanceApi.Controllers
         /// <param name="descripcion">Descripción del equipo (opcional)</param>
         /// <param name="identificador">Identificador único del equipo (obligatorio)</param>
         /// <param name="estatus">Estatus del equipo (opcional, default true)</param>
+        /// <param name="idUbicacion">ID de ubicación del equipo (opcional)</param>
         /// <returns>Resultado de la operación con el equipo creado</returns>
         [HttpPost]
         public async Task<IActionResult> CreateEquipo(
@@ -212,7 +219,8 @@ namespace AdvanceApi.Controllers
             [FromQuery] int personas = 0,
             [FromQuery] string? descripcion = null,
             [FromQuery] string identificador = "",
-            [FromQuery] bool estatus = true)
+            [FromQuery] bool estatus = true,
+            [FromQuery] int? idUbicacion = null)
         {
             try
             {
@@ -235,7 +243,8 @@ namespace AdvanceApi.Controllers
                     Personas = personas,
                     Descripcion = descripcion,
                     Identificador = identificador,
-                    Estatus = estatus
+                    Estatus = estatus,
+                    IdUbicacion = idUbicacion
                 };
 
                 var result = await _equipoService.CreateEquipoAsync(query);
