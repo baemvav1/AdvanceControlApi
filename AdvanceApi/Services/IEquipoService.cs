@@ -32,7 +32,7 @@ namespace AdvanceApi.Services
         Task<object> UpdateEquipoAsync(EquipoQueryDto query);
 
         /// <summary>
-        /// Crea un nuevo equipo usando el procedimiento almacenado sp_equipo_create
+        /// Crea un nuevo equipo usando el procedimiento almacenado sp_equipo_edit con operacion='create'
         /// </summary>
         /// <param name="query">Datos del equipo a crear</param>
         /// <returns>Resultado de la operación con el ID del equipo creado</returns>
