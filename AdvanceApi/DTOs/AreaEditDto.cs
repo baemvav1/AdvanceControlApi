@@ -17,6 +17,10 @@ namespace AdvanceApi.DTOs
         public decimal? CentroLatitud { get; set; }
         public decimal? CentroLongitud { get; set; }
         public decimal? Radio { get; set; }
+        public decimal? BoundingBoxNE_Lat { get; set; }
+        public decimal? BoundingBoxNE_Lng { get; set; }
+        public decimal? BoundingBoxSW_Lat { get; set; }
+        public decimal? BoundingBoxSW_Lng { get; set; }
         public bool? EtiquetaMostrar { get; set; }
         public string? EtiquetaTexto { get; set; }
         public int? NivelZoom { get; set; }

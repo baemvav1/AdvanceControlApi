@@ -73,6 +73,10 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@centroLatitud", DBNull.Value);
                 command.Parameters.AddWithValue("@centroLongitud", DBNull.Value);
                 command.Parameters.AddWithValue("@radio", DBNull.Value);
+                command.Parameters.AddWithValue("@boundingBoxNE_Lat", DBNull.Value);
+                command.Parameters.AddWithValue("@boundingBoxNE_Lng", DBNull.Value);
+                command.Parameters.AddWithValue("@boundingBoxSW_Lat", DBNull.Value);
+                command.Parameters.AddWithValue("@boundingBoxSW_Lng", DBNull.Value);
                 command.Parameters.AddWithValue("@etiquetaMostrar", DBNull.Value);
                 command.Parameters.AddWithValue("@etiquetaTexto", DBNull.Value);
                 command.Parameters.AddWithValue("@nivelZoom", DBNull.Value);
@@ -158,6 +162,10 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@centroLatitud", DBNull.Value);
                 command.Parameters.AddWithValue("@centroLongitud", DBNull.Value);
                 command.Parameters.AddWithValue("@radio", DBNull.Value);
+                command.Parameters.AddWithValue("@boundingBoxNE_Lat", DBNull.Value);
+                command.Parameters.AddWithValue("@boundingBoxNE_Lng", DBNull.Value);
+                command.Parameters.AddWithValue("@boundingBoxSW_Lat", DBNull.Value);
+                command.Parameters.AddWithValue("@boundingBoxSW_Lng", DBNull.Value);
                 command.Parameters.AddWithValue("@etiquetaMostrar", DBNull.Value);
                 command.Parameters.AddWithValue("@etiquetaTexto", DBNull.Value);
                 command.Parameters.AddWithValue("@nivelZoom", DBNull.Value);
@@ -220,6 +228,10 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@centroLatitud", DBNull.Value);
                 command.Parameters.AddWithValue("@centroLongitud", DBNull.Value);
                 command.Parameters.AddWithValue("@radio", DBNull.Value);
+                command.Parameters.AddWithValue("@boundingBoxNE_Lat", DBNull.Value);
+                command.Parameters.AddWithValue("@boundingBoxNE_Lng", DBNull.Value);
+                command.Parameters.AddWithValue("@boundingBoxSW_Lat", DBNull.Value);
+                command.Parameters.AddWithValue("@boundingBoxSW_Lng", DBNull.Value);
                 command.Parameters.AddWithValue("@etiquetaMostrar", DBNull.Value);
                 command.Parameters.AddWithValue("@etiquetaTexto", DBNull.Value);
                 command.Parameters.AddWithValue("@nivelZoom", DBNull.Value);
@@ -279,6 +291,10 @@ namespace AdvanceApi.Services
                 AddDecimalParameter(command, "@centroLatitud", query.CentroLatitud, 28, 8);
                 AddDecimalParameter(command, "@centroLongitud", query.CentroLongitud, 28, 8);
                 AddDecimalParameter(command, "@radio", query.Radio, 28, 8);
+                AddDecimalParameter(command, "@boundingBoxNE_Lat", query.BoundingBoxNE_Lat, 28, 8);
+                AddDecimalParameter(command, "@boundingBoxNE_Lng", query.BoundingBoxNE_Lng, 28, 8);
+                AddDecimalParameter(command, "@boundingBoxSW_Lat", query.BoundingBoxSW_Lat, 28, 8);
+                AddDecimalParameter(command, "@boundingBoxSW_Lng", query.BoundingBoxSW_Lng, 28, 8);
                 command.Parameters.AddWithValue("@etiquetaMostrar", (object?)query.EtiquetaMostrar ?? DBNull.Value);
                 command.Parameters.AddWithValue("@etiquetaTexto", (object?)query.EtiquetaTexto ?? DBNull.Value);
                 command.Parameters.AddWithValue("@nivelZoom", (object?)query.NivelZoom ?? DBNull.Value);
@@ -352,6 +368,10 @@ namespace AdvanceApi.Services
                 AddDecimalParameter(command, "@centroLatitud", query.CentroLatitud, 28, 8);
                 AddDecimalParameter(command, "@centroLongitud", query.CentroLongitud, 28, 8);
                 AddDecimalParameter(command, "@radio", query.Radio, 28, 8);
+                AddDecimalParameter(command, "@boundingBoxNE_Lat", query.BoundingBoxNE_Lat, 28, 8);
+                AddDecimalParameter(command, "@boundingBoxNE_Lng", query.BoundingBoxNE_Lng, 28, 8);
+                AddDecimalParameter(command, "@boundingBoxSW_Lat", query.BoundingBoxSW_Lat, 28, 8);
+                AddDecimalParameter(command, "@boundingBoxSW_Lng", query.BoundingBoxSW_Lng, 28, 8);
                 command.Parameters.AddWithValue("@etiquetaMostrar", (object?)query.EtiquetaMostrar ?? DBNull.Value);
                 command.Parameters.AddWithValue("@etiquetaTexto", (object?)query.EtiquetaTexto ?? DBNull.Value);
                 command.Parameters.AddWithValue("@nivelZoom", (object?)query.NivelZoom ?? DBNull.Value);
@@ -419,6 +439,10 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@centroLatitud", DBNull.Value);
                 command.Parameters.AddWithValue("@centroLongitud", DBNull.Value);
                 command.Parameters.AddWithValue("@radio", DBNull.Value);
+                command.Parameters.AddWithValue("@boundingBoxNE_Lat", DBNull.Value);
+                command.Parameters.AddWithValue("@boundingBoxNE_Lng", DBNull.Value);
+                command.Parameters.AddWithValue("@boundingBoxSW_Lat", DBNull.Value);
+                command.Parameters.AddWithValue("@boundingBoxSW_Lng", DBNull.Value);
                 command.Parameters.AddWithValue("@etiquetaMostrar", DBNull.Value);
                 command.Parameters.AddWithValue("@etiquetaTexto", DBNull.Value);
                 command.Parameters.AddWithValue("@nivelZoom", DBNull.Value);
@@ -486,6 +510,10 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@centroLatitud", DBNull.Value);
                 command.Parameters.AddWithValue("@centroLongitud", DBNull.Value);
                 command.Parameters.AddWithValue("@radio", DBNull.Value);
+                command.Parameters.AddWithValue("@boundingBoxNE_Lat", DBNull.Value);
+                command.Parameters.AddWithValue("@boundingBoxNE_Lng", DBNull.Value);
+                command.Parameters.AddWithValue("@boundingBoxSW_Lat", DBNull.Value);
+                command.Parameters.AddWithValue("@boundingBoxSW_Lng", DBNull.Value);
                 command.Parameters.AddWithValue("@etiquetaMostrar", DBNull.Value);
                 command.Parameters.AddWithValue("@etiquetaTexto", DBNull.Value);
                 command.Parameters.AddWithValue("@nivelZoom", DBNull.Value);
@@ -553,6 +581,10 @@ namespace AdvanceApi.Services
                 AddDecimalParameter(command, "@centroLatitud", latitud, 28, 8);
                 AddDecimalParameter(command, "@centroLongitud", longitud, 28, 8);
                 command.Parameters.AddWithValue("@radio", DBNull.Value);
+                command.Parameters.AddWithValue("@boundingBoxNE_Lat", DBNull.Value);
+                command.Parameters.AddWithValue("@boundingBoxNE_Lng", DBNull.Value);
+                command.Parameters.AddWithValue("@boundingBoxSW_Lat", DBNull.Value);
+                command.Parameters.AddWithValue("@boundingBoxSW_Lng", DBNull.Value);
                 command.Parameters.AddWithValue("@etiquetaMostrar", DBNull.Value);
                 command.Parameters.AddWithValue("@etiquetaTexto", DBNull.Value);
                 command.Parameters.AddWithValue("@nivelZoom", DBNull.Value);
