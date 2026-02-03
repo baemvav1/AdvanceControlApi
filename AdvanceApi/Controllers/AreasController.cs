@@ -135,24 +135,25 @@ namespace AdvanceApi.Controllers
         /// <summary>
         /// Crea una nueva área
         /// POST /api/Areas
+        /// Recibe valores decimales como strings para evitar problemas de conversión numérica
         /// </summary>
         [HttpPost]
         public async Task<IActionResult> CreateArea(
             [FromQuery] string nombre,
             [FromQuery] string? descripcion = null,
             [FromQuery] string? colorMapa = null,
-            [FromQuery] decimal? opacidad = null,
+            [FromQuery] string? opacidad = null,
             [FromQuery] string? colorBorde = null,
             [FromQuery] int? anchoBorde = null,
             [FromQuery] bool? activo = null,
             [FromQuery] string? tipoGeometria = null,
-            [FromQuery] decimal? centroLatitud = null,
-            [FromQuery] decimal? centroLongitud = null,
-            [FromQuery] decimal? radio = null,
-            [FromQuery] decimal? boundingBoxNE_Lat = null,
-            [FromQuery] decimal? boundingBoxNE_Lng = null,
-            [FromQuery] decimal? boundingBoxSW_Lat = null,
-            [FromQuery] decimal? boundingBoxSW_Lng = null,
+            [FromQuery] string? centroLatitud = null,
+            [FromQuery] string? centroLongitud = null,
+            [FromQuery] string? radio = null,
+            [FromQuery] string? boundingBoxNE_Lat = null,
+            [FromQuery] string? boundingBoxNE_Lng = null,
+            [FromQuery] string? boundingBoxSW_Lat = null,
+            [FromQuery] string? boundingBoxSW_Lng = null,
             [FromQuery] bool? etiquetaMostrar = null,
             [FromQuery] string? etiquetaTexto = null,
             [FromQuery] int? nivelZoom = null,
@@ -169,7 +170,7 @@ namespace AdvanceApi.Controllers
                     return BadRequest(new { message = "El campo 'nombre' es obligatorio." });
                 }
 
-                var query = new AreaEditDto
+                var query = new AreaEditStringDto
                 {
                     Nombre = nombre,
                     Descripcion = descripcion,
@@ -196,7 +197,7 @@ namespace AdvanceApi.Controllers
                     ValidarPoligonoLargo = validarPoligonoLargo
                 };
 
-                var result = await _areaService.CreateAreaAsync(query);
+                var result = await _areaService.CreateAreaFromStringAsync(query);
 
                 return Ok(result);
             }
@@ -223,6 +224,7 @@ namespace AdvanceApi.Controllers
         /// <summary>
         /// Actualiza un área existente
         /// PUT /api/Areas/{id}
+        /// Recibe valores decimales como strings para evitar problemas de conversión numérica
         /// </summary>
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateArea(
@@ -230,18 +232,18 @@ namespace AdvanceApi.Controllers
             [FromQuery] string? nombre = null,
             [FromQuery] string? descripcion = null,
             [FromQuery] string? colorMapa = null,
-            [FromQuery] decimal? opacidad = null,
+            [FromQuery] string? opacidad = null,
             [FromQuery] string? colorBorde = null,
             [FromQuery] int? anchoBorde = null,
             [FromQuery] bool? activo = null,
             [FromQuery] string? tipoGeometria = null,
-            [FromQuery] decimal? centroLatitud = null,
-            [FromQuery] decimal? centroLongitud = null,
-            [FromQuery] decimal? radio = null,
-            [FromQuery] decimal? boundingBoxNE_Lat = null,
-            [FromQuery] decimal? boundingBoxNE_Lng = null,
-            [FromQuery] decimal? boundingBoxSW_Lat = null,
-            [FromQuery] decimal? boundingBoxSW_Lng = null,
+            [FromQuery] string? centroLatitud = null,
+            [FromQuery] string? centroLongitud = null,
+            [FromQuery] string? radio = null,
+            [FromQuery] string? boundingBoxNE_Lat = null,
+            [FromQuery] string? boundingBoxNE_Lng = null,
+            [FromQuery] string? boundingBoxSW_Lat = null,
+            [FromQuery] string? boundingBoxSW_Lng = null,
             [FromQuery] bool? etiquetaMostrar = null,
             [FromQuery] string? etiquetaTexto = null,
             [FromQuery] int? nivelZoom = null,
@@ -258,7 +260,7 @@ namespace AdvanceApi.Controllers
                     return BadRequest(new { message = "Id Inválido" });
                 }
 
-                var query = new AreaEditDto
+                var query = new AreaEditStringDto
                 {
                     IdArea = id,
                     Nombre = nombre,
@@ -286,7 +288,7 @@ namespace AdvanceApi.Controllers
                     ValidarPoligonoLargo = validarPoligonoLargo
                 };
 
-                var result = await _areaService.UpdateAreaAsync(query);
+                var result = await _areaService.UpdateAreaFromStringAsync(query);
 
                 return Ok(result);
             }
@@ -389,21 +391,33 @@ namespace AdvanceApi.Controllers
         /// <summary>
         /// Valida si un punto está dentro de un polígono
         /// GET /api/Areas/validate-point
+        /// Recibe latitud y longitud como strings para evitar problemas de conversión numérica
         /// </summary>
         [HttpGet("validate-point")]
         public async Task<IActionResult> ValidatePointInPolygon(
             [FromQuery] int idArea = 0,
-            [FromQuery] decimal latitud = 0,
-            [FromQuery] decimal longitud = 0)
+            [FromQuery] string latitud = "0",
+            [FromQuery] string longitud = "0")
         {
             try
             {
-                if (latitud < -90 || latitud > 90 || longitud < -180 || longitud > 180)
+                // Validar que las coordenadas sean convertibles a decimal
+                if (!decimal.TryParse(latitud?.Replace(",", "."), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var latDecimal))
+                {
+                    return BadRequest(new { message = "El valor de latitud no es un número válido" });
+                }
+
+                if (!decimal.TryParse(longitud?.Replace(",", "."), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var lngDecimal))
+                {
+                    return BadRequest(new { message = "El valor de longitud no es un número válido" });
+                }
+
+                if (latDecimal < -90 || latDecimal > 90 || lngDecimal < -180 || lngDecimal > 180)
                 {
                     return BadRequest(new { message = "Las coordenadas están fuera del rango válido (-90/90 para latitud, -180/180 para longitud)" });
                 }
 
-                var result = await _areaService.ValidatePointInPolygonAsync(idArea, latitud, longitud);
+                var result = await _areaService.ValidatePointInPolygonFromStringAsync(idArea, latitud, longitud);
 
                 return Ok(result);
             }

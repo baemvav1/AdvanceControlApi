@@ -44,6 +44,26 @@ namespace AdvanceApi.Services
         }
 
         /// <summary>
+        /// Convierte un string a decimal de forma segura.
+        /// Soporta tanto punto como coma como separador decimal.
+        /// </summary>
+        /// <param name="value">Valor en string a convertir</param>
+        /// <returns>Valor decimal nullable, null si el string está vacío o no se puede convertir</returns>
+        private static decimal? ConvertStringToDecimal(string? value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return null;
+
+            // Normalizar el separador decimal (soportar tanto . como ,)
+            var normalizedValue = value.Trim().Replace(",", ".");
+            
+            if (decimal.TryParse(normalizedValue, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var result))
+                return result;
+            
+            return null;
+        }
+
+        /// <summary>
         /// Obtiene áreas usando el procedimiento almacenado sp_area_edit
         /// </summary>
         public async Task<List<Area>> GetAreasAsync(AreaEditDto query)
@@ -621,6 +641,102 @@ namespace AdvanceApi.Services
                 _logger.LogError(ex, "Error inesperado al validar punto en polígono");
                 throw;
             }
+        }
+
+        /// <summary>
+        /// Crea una nueva área convirtiendo los valores string a decimal.
+        /// Recibe valores decimales como strings desde el cliente para evitar problemas de conversión numérica.
+        /// </summary>
+        public async Task<object> CreateAreaFromStringAsync(AreaEditStringDto query)
+        {
+            if (query == null)
+                throw new ArgumentNullException(nameof(query));
+
+            // Convertir el DTO string a DTO decimal
+            var decimalQuery = new AreaEditDto
+            {
+                IdArea = query.IdArea,
+                Nombre = query.Nombre,
+                Descripcion = query.Descripcion,
+                ColorMapa = query.ColorMapa,
+                Opacidad = ConvertStringToDecimal(query.Opacidad),
+                ColorBorde = query.ColorBorde,
+                AnchoBorde = query.AnchoBorde,
+                Activo = query.Activo,
+                TipoGeometria = query.TipoGeometria,
+                CentroLatitud = ConvertStringToDecimal(query.CentroLatitud),
+                CentroLongitud = ConvertStringToDecimal(query.CentroLongitud),
+                Radio = ConvertStringToDecimal(query.Radio),
+                BoundingBoxNE_Lat = ConvertStringToDecimal(query.BoundingBoxNE_Lat),
+                BoundingBoxNE_Lng = ConvertStringToDecimal(query.BoundingBoxNE_Lng),
+                BoundingBoxSW_Lat = ConvertStringToDecimal(query.BoundingBoxSW_Lat),
+                BoundingBoxSW_Lng = ConvertStringToDecimal(query.BoundingBoxSW_Lng),
+                EtiquetaMostrar = query.EtiquetaMostrar,
+                EtiquetaTexto = query.EtiquetaTexto,
+                NivelZoom = query.NivelZoom,
+                MetadataJSON = query.MetadataJSON,
+                UsuarioCreacion = query.UsuarioCreacion,
+                UsuarioModificacion = query.UsuarioModificacion,
+                Coordenadas = query.Coordenadas,
+                AutoCalcularCentro = query.AutoCalcularCentro,
+                ValidarPoligonoLargo = query.ValidarPoligonoLargo
+            };
+
+            return await CreateAreaAsync(decimalQuery);
+        }
+
+        /// <summary>
+        /// Actualiza un área existente convirtiendo los valores string a decimal.
+        /// Recibe valores decimales como strings desde el cliente para evitar problemas de conversión numérica.
+        /// </summary>
+        public async Task<object> UpdateAreaFromStringAsync(AreaEditStringDto query)
+        {
+            if (query == null)
+                throw new ArgumentNullException(nameof(query));
+
+            // Convertir el DTO string a DTO decimal
+            var decimalQuery = new AreaEditDto
+            {
+                IdArea = query.IdArea,
+                Nombre = query.Nombre,
+                Descripcion = query.Descripcion,
+                ColorMapa = query.ColorMapa,
+                Opacidad = ConvertStringToDecimal(query.Opacidad),
+                ColorBorde = query.ColorBorde,
+                AnchoBorde = query.AnchoBorde,
+                Activo = query.Activo,
+                TipoGeometria = query.TipoGeometria,
+                CentroLatitud = ConvertStringToDecimal(query.CentroLatitud),
+                CentroLongitud = ConvertStringToDecimal(query.CentroLongitud),
+                Radio = ConvertStringToDecimal(query.Radio),
+                BoundingBoxNE_Lat = ConvertStringToDecimal(query.BoundingBoxNE_Lat),
+                BoundingBoxNE_Lng = ConvertStringToDecimal(query.BoundingBoxNE_Lng),
+                BoundingBoxSW_Lat = ConvertStringToDecimal(query.BoundingBoxSW_Lat),
+                BoundingBoxSW_Lng = ConvertStringToDecimal(query.BoundingBoxSW_Lng),
+                EtiquetaMostrar = query.EtiquetaMostrar,
+                EtiquetaTexto = query.EtiquetaTexto,
+                NivelZoom = query.NivelZoom,
+                MetadataJSON = query.MetadataJSON,
+                UsuarioCreacion = query.UsuarioCreacion,
+                UsuarioModificacion = query.UsuarioModificacion,
+                Coordenadas = query.Coordenadas,
+                AutoCalcularCentro = query.AutoCalcularCentro,
+                ValidarPoligonoLargo = query.ValidarPoligonoLargo
+            };
+
+            return await UpdateAreaAsync(decimalQuery);
+        }
+
+        /// <summary>
+        /// Valida si un punto está dentro de un polígono, recibiendo coordenadas como strings.
+        /// Convierte las coordenadas string a decimal antes de procesar.
+        /// </summary>
+        public async Task<object> ValidatePointInPolygonFromStringAsync(int idArea, string latitud, string longitud)
+        {
+            var latitudDecimal = ConvertStringToDecimal(latitud) ?? 0m;
+            var longitudDecimal = ConvertStringToDecimal(longitud) ?? 0m;
+
+            return await ValidatePointInPolygonAsync(idArea, latitudDecimal, longitudDecimal);
         }
     }
 }
