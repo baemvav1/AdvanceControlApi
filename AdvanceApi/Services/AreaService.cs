@@ -57,10 +57,39 @@ namespace AdvanceApi.Services
             // Normalizar el separador decimal (soportar tanto . como ,)
             var normalizedValue = value.Trim().Replace(",", ".");
             
-            if (decimal.TryParse(normalizedValue, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var result))
+            // Usar NumberStyles más restrictivo para valores numéricos/coordenadas
+            const System.Globalization.NumberStyles numberStyles = 
+                System.Globalization.NumberStyles.AllowDecimalPoint | 
+                System.Globalization.NumberStyles.AllowLeadingSign;
+            
+            if (decimal.TryParse(normalizedValue, numberStyles, System.Globalization.CultureInfo.InvariantCulture, out var result))
                 return result;
             
             return null;
+        }
+
+        /// <summary>
+        /// Intenta convertir un string a decimal, devolviendo información sobre éxito/falla.
+        /// </summary>
+        /// <param name="value">Valor en string a convertir</param>
+        /// <param name="result">Resultado de la conversión</param>
+        /// <returns>True si la conversión fue exitosa, false si falló</returns>
+        private static bool TryConvertStringToDecimal(string? value, out decimal result)
+        {
+            result = 0m;
+            
+            if (string.IsNullOrWhiteSpace(value))
+                return false;
+
+            // Normalizar el separador decimal (soportar tanto . como ,)
+            var normalizedValue = value.Trim().Replace(",", ".");
+            
+            // Usar NumberStyles más restrictivo para valores numéricos/coordenadas
+            const System.Globalization.NumberStyles numberStyles = 
+                System.Globalization.NumberStyles.AllowDecimalPoint | 
+                System.Globalization.NumberStyles.AllowLeadingSign;
+            
+            return decimal.TryParse(normalizedValue, numberStyles, System.Globalization.CultureInfo.InvariantCulture, out result);
         }
 
         /// <summary>
@@ -733,8 +762,15 @@ namespace AdvanceApi.Services
         /// </summary>
         public async Task<object> ValidatePointInPolygonFromStringAsync(int idArea, string latitud, string longitud)
         {
-            var latitudDecimal = ConvertStringToDecimal(latitud) ?? 0m;
-            var longitudDecimal = ConvertStringToDecimal(longitud) ?? 0m;
+            if (!TryConvertStringToDecimal(latitud, out var latitudDecimal))
+            {
+                return new { success = false, message = "El valor de latitud no es un número válido" };
+            }
+
+            if (!TryConvertStringToDecimal(longitud, out var longitudDecimal))
+            {
+                return new { success = false, message = "El valor de longitud no es un número válido" };
+            }
 
             return await ValidatePointInPolygonAsync(idArea, latitudDecimal, longitudDecimal);
         }

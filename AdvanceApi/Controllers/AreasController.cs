@@ -20,6 +20,28 @@ namespace AdvanceApi.Controllers
         }
 
         /// <summary>
+        /// Intenta convertir un string a decimal de forma segura.
+        /// Soporta tanto punto como coma como separador decimal.
+        /// </summary>
+        private static bool TryParseDecimalString(string? value, out decimal result)
+        {
+            result = 0m;
+            
+            if (string.IsNullOrWhiteSpace(value))
+                return false;
+
+            // Normalizar el separador decimal (soportar tanto . como ,)
+            var normalizedValue = value.Trim().Replace(",", ".");
+            
+            // Usar NumberStyles más restrictivo para valores numéricos/coordenadas
+            const System.Globalization.NumberStyles numberStyles = 
+                System.Globalization.NumberStyles.AllowDecimalPoint | 
+                System.Globalization.NumberStyles.AllowLeadingSign;
+            
+            return decimal.TryParse(normalizedValue, numberStyles, System.Globalization.CultureInfo.InvariantCulture, out result);
+        }
+
+        /// <summary>
         /// Obtiene áreas según los criterios de búsqueda proporcionados
         /// GET /api/Areas
         /// </summary>
@@ -401,13 +423,13 @@ namespace AdvanceApi.Controllers
         {
             try
             {
-                // Validar que las coordenadas sean convertibles a decimal
-                if (!decimal.TryParse(latitud?.Replace(",", "."), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var latDecimal))
+                // Validar que las coordenadas sean convertibles a decimal usando el helper compartido
+                if (!TryParseDecimalString(latitud, out var latDecimal))
                 {
                     return BadRequest(new { message = "El valor de latitud no es un número válido" });
                 }
 
-                if (!decimal.TryParse(longitud?.Replace(",", "."), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var lngDecimal))
+                if (!TryParseDecimalString(longitud, out var lngDecimal))
                 {
                     return BadRequest(new { message = "El valor de longitud no es un número válido" });
                 }
