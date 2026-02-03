@@ -44,6 +44,101 @@ namespace AdvanceApi.Services
         }
 
         /// <summary>
+        /// Convierte un string a decimal nullable.
+        /// Retorna null si el string es null, vacío o no se puede convertir.
+        /// </summary>
+        private static decimal? ParseDecimal(string? value, string fieldName, List<string> errors)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return null;
+
+            // Reemplazar coma por punto para soportar ambos formatos de decimal
+            var normalizedValue = value.Replace(',', '.');
+            
+            if (decimal.TryParse(normalizedValue, System.Globalization.NumberStyles.Any, 
+                System.Globalization.CultureInfo.InvariantCulture, out var result))
+                return result;
+
+            errors.Add($"El campo '{fieldName}' tiene un valor decimal inválido: '{value}'");
+            return null;
+        }
+
+        /// <summary>
+        /// Convierte un string a int nullable.
+        /// Retorna null si el string es null, vacío o no se puede convertir.
+        /// </summary>
+        private static int? ParseInt(string? value, string fieldName, List<string> errors)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return null;
+
+            if (int.TryParse(value, out var result))
+                return result;
+
+            errors.Add($"El campo '{fieldName}' tiene un valor entero inválido: '{value}'");
+            return null;
+        }
+
+        /// <summary>
+        /// Convierte un string a bool nullable.
+        /// Acepta: true/false, 1/0, si/no, yes/no (case insensitive)
+        /// Retorna null si el string es null, vacío o no se puede convertir.
+        /// </summary>
+        private static bool? ParseBool(string? value, string fieldName, List<string> errors)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return null;
+
+            var lowerValue = value.Trim().ToLowerInvariant();
+
+            if (lowerValue == "true" || lowerValue == "1" || lowerValue == "si" || lowerValue == "yes")
+                return true;
+
+            if (lowerValue == "false" || lowerValue == "0" || lowerValue == "no")
+                return false;
+
+            errors.Add($"El campo '{fieldName}' tiene un valor booleano inválido: '{value}'");
+            return null;
+        }
+
+        /// <summary>
+        /// Convierte un AreaEditStringDto a AreaEditDto, realizando las conversiones de tipos necesarias.
+        /// </summary>
+        private AreaEditDto ConvertStringDtoToEditDto(AreaEditStringDto stringDto, out List<string> conversionErrors)
+        {
+            conversionErrors = new List<string>();
+
+            return new AreaEditDto
+            {
+                IdArea = stringDto.IdArea,
+                Nombre = stringDto.Nombre,
+                Descripcion = stringDto.Descripcion,
+                ColorMapa = stringDto.ColorMapa,
+                Opacidad = ParseDecimal(stringDto.Opacidad, "opacidad", conversionErrors),
+                ColorBorde = stringDto.ColorBorde,
+                AnchoBorde = ParseInt(stringDto.AnchoBorde, "anchoBorde", conversionErrors),
+                Activo = ParseBool(stringDto.Activo, "activo", conversionErrors),
+                TipoGeometria = stringDto.TipoGeometria,
+                CentroLatitud = ParseDecimal(stringDto.CentroLatitud, "centroLatitud", conversionErrors),
+                CentroLongitud = ParseDecimal(stringDto.CentroLongitud, "centroLongitud", conversionErrors),
+                Radio = ParseDecimal(stringDto.Radio, "radio", conversionErrors),
+                BoundingBoxNE_Lat = ParseDecimal(stringDto.BoundingBoxNE_Lat, "boundingBoxNE_Lat", conversionErrors),
+                BoundingBoxNE_Lng = ParseDecimal(stringDto.BoundingBoxNE_Lng, "boundingBoxNE_Lng", conversionErrors),
+                BoundingBoxSW_Lat = ParseDecimal(stringDto.BoundingBoxSW_Lat, "boundingBoxSW_Lat", conversionErrors),
+                BoundingBoxSW_Lng = ParseDecimal(stringDto.BoundingBoxSW_Lng, "boundingBoxSW_Lng", conversionErrors),
+                EtiquetaMostrar = ParseBool(stringDto.EtiquetaMostrar, "etiquetaMostrar", conversionErrors),
+                EtiquetaTexto = stringDto.EtiquetaTexto,
+                NivelZoom = ParseInt(stringDto.NivelZoom, "nivelZoom", conversionErrors),
+                MetadataJSON = stringDto.MetadataJSON,
+                UsuarioCreacion = stringDto.UsuarioCreacion,
+                UsuarioModificacion = stringDto.UsuarioModificacion,
+                Coordenadas = stringDto.Coordenadas,
+                AutoCalcularCentro = ParseBool(stringDto.AutoCalcularCentro, "autoCalcularCentro", conversionErrors),
+                ValidarPoligonoLargo = ParseBool(stringDto.ValidarPoligonoLargo, "validarPoligonoLargo", conversionErrors)
+            };
+        }
+
+        /// <summary>
         /// Obtiene áreas usando el procedimiento almacenado sp_area_edit
         /// </summary>
         public async Task<List<Area>> GetAreasAsync(AreaEditDto query)
@@ -342,6 +437,30 @@ namespace AdvanceApi.Services
         }
 
         /// <summary>
+        /// Crea una nueva área recibiendo datos como strings y convirtiendo en el servicio.
+        /// Esto permite que el cliente envíe todos los datos como strings para evitar
+        /// errores de conversión numérica en el cliente.
+        /// </summary>
+        public async Task<object> CreateAreaAsync(AreaEditStringDto query)
+        {
+            if (query == null)
+                throw new ArgumentNullException(nameof(query));
+
+            // Convertir el DTO de strings a DTO con tipos correctos
+            var editDto = ConvertStringDtoToEditDto(query, out var conversionErrors);
+
+            // Si hay errores de conversión, retornarlos
+            if (conversionErrors.Count > 0)
+            {
+                _logger.LogWarning("Errores de conversión al crear área: {Errors}", string.Join(", ", conversionErrors));
+                return new { success = false, message = "Errores de conversión de datos", errors = conversionErrors };
+            }
+
+            // Delegar al método original con tipos correctos
+            return await CreateAreaAsync(editDto);
+        }
+
+        /// <summary>
         /// Actualiza un área por su ID
         /// </summary>
         public async Task<object> UpdateAreaAsync(AreaEditDto query)
@@ -413,6 +532,30 @@ namespace AdvanceApi.Services
                 _logger.LogError(ex, "Error inesperado al actualizar área");
                 throw;
             }
+        }
+
+        /// <summary>
+        /// Actualiza un área existente recibiendo datos como strings y convirtiendo en el servicio.
+        /// Esto permite que el cliente envíe todos los datos como strings para evitar
+        /// errores de conversión numérica en el cliente.
+        /// </summary>
+        public async Task<object> UpdateAreaAsync(AreaEditStringDto query)
+        {
+            if (query == null)
+                throw new ArgumentNullException(nameof(query));
+
+            // Convertir el DTO de strings a DTO con tipos correctos
+            var editDto = ConvertStringDtoToEditDto(query, out var conversionErrors);
+
+            // Si hay errores de conversión, retornarlos
+            if (conversionErrors.Count > 0)
+            {
+                _logger.LogWarning("Errores de conversión al actualizar área: {Errors}", string.Join(", ", conversionErrors));
+                return new { success = false, message = "Errores de conversión de datos", errors = conversionErrors };
+            }
+
+            // Delegar al método original con tipos correctos
+            return await UpdateAreaAsync(editDto);
         }
 
         /// <summary>

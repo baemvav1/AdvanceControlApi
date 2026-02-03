@@ -135,32 +135,34 @@ namespace AdvanceApi.Controllers
         /// <summary>
         /// Crea una nueva área
         /// POST /api/Areas
+        /// Recibe todos los datos como strings (excepto idArea) para evitar errores de conversión numérica en el cliente.
+        /// La conversión a los tipos correctos se realiza en el servicio.
         /// </summary>
         [HttpPost]
         public async Task<IActionResult> CreateArea(
             [FromQuery] string nombre,
             [FromQuery] string? descripcion = null,
             [FromQuery] string? colorMapa = null,
-            [FromQuery] decimal? opacidad = null,
+            [FromQuery] string? opacidad = null,
             [FromQuery] string? colorBorde = null,
-            [FromQuery] int? anchoBorde = null,
-            [FromQuery] bool? activo = null,
+            [FromQuery] string? anchoBorde = null,
+            [FromQuery] string? activo = null,
             [FromQuery] string? tipoGeometria = null,
-            [FromQuery] decimal? centroLatitud = null,
-            [FromQuery] decimal? centroLongitud = null,
-            [FromQuery] decimal? radio = null,
-            [FromQuery] decimal? boundingBoxNE_Lat = null,
-            [FromQuery] decimal? boundingBoxNE_Lng = null,
-            [FromQuery] decimal? boundingBoxSW_Lat = null,
-            [FromQuery] decimal? boundingBoxSW_Lng = null,
-            [FromQuery] bool? etiquetaMostrar = null,
+            [FromQuery] string? centroLatitud = null,
+            [FromQuery] string? centroLongitud = null,
+            [FromQuery] string? radio = null,
+            [FromQuery] string? boundingBoxNE_Lat = null,
+            [FromQuery] string? boundingBoxNE_Lng = null,
+            [FromQuery] string? boundingBoxSW_Lat = null,
+            [FromQuery] string? boundingBoxSW_Lng = null,
+            [FromQuery] string? etiquetaMostrar = null,
             [FromQuery] string? etiquetaTexto = null,
-            [FromQuery] int? nivelZoom = null,
+            [FromQuery] string? nivelZoom = null,
             [FromQuery] string? metadataJSON = null,
             [FromQuery] string? usuarioCreacion = null,
             [FromQuery] string? coordenadas = null,
-            [FromQuery] bool? autoCalcularCentro = null,
-            [FromQuery] bool? validarPoligonoLargo = null)
+            [FromQuery] string? autoCalcularCentro = null,
+            [FromQuery] string? validarPoligonoLargo = null)
         {
             try
             {
@@ -169,7 +171,7 @@ namespace AdvanceApi.Controllers
                     return BadRequest(new { message = "El campo 'nombre' es obligatorio." });
                 }
 
-                var query = new AreaEditDto
+                var query = new AreaEditStringDto
                 {
                     Nombre = nombre,
                     Descripcion = descripcion,
@@ -223,6 +225,8 @@ namespace AdvanceApi.Controllers
         /// <summary>
         /// Actualiza un área existente
         /// PUT /api/Areas/{id}
+        /// Recibe todos los datos como strings (excepto idArea) para evitar errores de conversión numérica en el cliente.
+        /// La conversión a los tipos correctos se realiza en el servicio.
         /// </summary>
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateArea(
@@ -230,26 +234,26 @@ namespace AdvanceApi.Controllers
             [FromQuery] string? nombre = null,
             [FromQuery] string? descripcion = null,
             [FromQuery] string? colorMapa = null,
-            [FromQuery] decimal? opacidad = null,
+            [FromQuery] string? opacidad = null,
             [FromQuery] string? colorBorde = null,
-            [FromQuery] int? anchoBorde = null,
-            [FromQuery] bool? activo = null,
+            [FromQuery] string? anchoBorde = null,
+            [FromQuery] string? activo = null,
             [FromQuery] string? tipoGeometria = null,
-            [FromQuery] decimal? centroLatitud = null,
-            [FromQuery] decimal? centroLongitud = null,
-            [FromQuery] decimal? radio = null,
-            [FromQuery] decimal? boundingBoxNE_Lat = null,
-            [FromQuery] decimal? boundingBoxNE_Lng = null,
-            [FromQuery] decimal? boundingBoxSW_Lat = null,
-            [FromQuery] decimal? boundingBoxSW_Lng = null,
-            [FromQuery] bool? etiquetaMostrar = null,
+            [FromQuery] string? centroLatitud = null,
+            [FromQuery] string? centroLongitud = null,
+            [FromQuery] string? radio = null,
+            [FromQuery] string? boundingBoxNE_Lat = null,
+            [FromQuery] string? boundingBoxNE_Lng = null,
+            [FromQuery] string? boundingBoxSW_Lat = null,
+            [FromQuery] string? boundingBoxSW_Lng = null,
+            [FromQuery] string? etiquetaMostrar = null,
             [FromQuery] string? etiquetaTexto = null,
-            [FromQuery] int? nivelZoom = null,
+            [FromQuery] string? nivelZoom = null,
             [FromQuery] string? metadataJSON = null,
             [FromQuery] string? usuarioModificacion = null,
             [FromQuery] string? coordenadas = null,
-            [FromQuery] bool? autoCalcularCentro = null,
-            [FromQuery] bool? validarPoligonoLargo = null)
+            [FromQuery] string? autoCalcularCentro = null,
+            [FromQuery] string? validarPoligonoLargo = null)
         {
             try
             {
@@ -258,7 +262,7 @@ namespace AdvanceApi.Controllers
                     return BadRequest(new { message = "Id Inválido" });
                 }
 
-                var query = new AreaEditDto
+                var query = new AreaEditStringDto
                 {
                     IdArea = id,
                     Nombre = nombre,

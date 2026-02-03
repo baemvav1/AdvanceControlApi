@@ -29,9 +29,19 @@ namespace AdvanceApi.Services
         Task<object> CreateAreaAsync(AreaEditDto query);
 
         /// <summary>
+        /// Crea una nueva área recibiendo datos como strings y convirtiendo en el servicio
+        /// </summary>
+        Task<object> CreateAreaAsync(AreaEditStringDto query);
+
+        /// <summary>
         /// Actualiza un área existente
         /// </summary>
         Task<object> UpdateAreaAsync(AreaEditDto query);
+
+        /// <summary>
+        /// Actualiza un área existente recibiendo datos como strings y convirtiendo en el servicio
+        /// </summary>
+        Task<object> UpdateAreaAsync(AreaEditStringDto query);
 
         /// <summary>
         /// Elimina (soft delete) un área
