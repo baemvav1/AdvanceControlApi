@@ -47,6 +47,8 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@monto", (object?)query.Monto ?? DBNull.Value);
                 command.Parameters.AddWithValue("@nota", (object?)query.Nota ?? DBNull.Value);
                 command.Parameters.AddWithValue("@idProveedor", (object?)query.IdProveedor ?? DBNull.Value);
+                command.Parameters.AddWithValue("@cantidad", (object?)query.Cantidad ?? DBNull.Value);
+                command.Parameters.AddWithValue("@unitario", (object?)query.Unitario ?? DBNull.Value);
 
                 await using var reader = await command.ExecuteReaderAsync();
 
@@ -62,7 +64,9 @@ namespace AdvanceApi.Services
                         Nota = reader.IsDBNull(reader.GetOrdinal("nota")) ? null : reader.GetString(reader.GetOrdinal("nota")),
                         Proveedor = reader.IsDBNull(reader.GetOrdinal("proveedor")) ? null : reader.GetString(reader.GetOrdinal("proveedor")),
                         IdTipoCargo = reader.IsDBNull(reader.GetOrdinal("idTipoCargo")) ? null : reader.GetInt32(reader.GetOrdinal("idTipoCargo")),
-                        IdRelacionCargo = reader.IsDBNull(reader.GetOrdinal("idRelacionCargo")) ? null : reader.GetInt32(reader.GetOrdinal("idRelacionCargo"))
+                        IdRelacionCargo = reader.IsDBNull(reader.GetOrdinal("idRelacionCargo")) ? null : reader.GetInt32(reader.GetOrdinal("idRelacionCargo")),
+                        Cantidad = reader.IsDBNull(reader.GetOrdinal("cantidad")) ? null : reader.GetDouble(reader.GetOrdinal("cantidad")),
+                        Unitario = reader.IsDBNull(reader.GetOrdinal("unitario")) ? null : reader.GetDouble(reader.GetOrdinal("unitario"))
                     };
 
                     cargos.Add(cargo);
@@ -106,6 +110,8 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@monto", (object?)query.Monto ?? DBNull.Value);
                 command.Parameters.AddWithValue("@nota", (object?)query.Nota ?? DBNull.Value);
                 command.Parameters.AddWithValue("@idProveedor", (object?)query.IdProveedor ?? DBNull.Value);
+                command.Parameters.AddWithValue("@cantidad", (object?)query.Cantidad ?? DBNull.Value);
+                command.Parameters.AddWithValue("@unitario", (object?)query.Unitario ?? DBNull.Value);
 
                 await using var reader = await command.ExecuteReaderAsync();
 
@@ -169,6 +175,8 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@monto", (object?)query.Monto ?? DBNull.Value);
                 command.Parameters.AddWithValue("@nota", (object?)query.Nota ?? DBNull.Value);
                 command.Parameters.AddWithValue("@idProveedor", (object?)query.IdProveedor ?? DBNull.Value);
+                command.Parameters.AddWithValue("@cantidad", (object?)query.Cantidad ?? DBNull.Value);
+                command.Parameters.AddWithValue("@unitario", (object?)query.Unitario ?? DBNull.Value);
 
                 await using var reader = await command.ExecuteReaderAsync();
 
@@ -227,6 +235,8 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@monto", DBNull.Value);
                 command.Parameters.AddWithValue("@nota", DBNull.Value);
                 command.Parameters.AddWithValue("@idProveedor", DBNull.Value);
+                command.Parameters.AddWithValue("@cantidad", DBNull.Value);
+                command.Parameters.AddWithValue("@unitario", DBNull.Value);
 
                 await using var reader = await command.ExecuteReaderAsync();
 

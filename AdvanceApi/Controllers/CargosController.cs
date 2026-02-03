@@ -30,6 +30,8 @@ namespace AdvanceApi.Controllers
         /// <param name="monto">Filtro por monto exacto</param>
         /// <param name="nota">Búsqueda parcial en notas</param>
         /// <param name="idProveedor">Filtro por ID de proveedor</param>
+        /// <param name="cantidad">Filtro por cantidad</param>
+        /// <param name="unitario">Filtro por precio unitario</param>
         /// <returns>Lista de cargos que cumplen con los criterios</returns>
         [HttpGet]
         public async Task<IActionResult> GetCargos(
@@ -39,7 +41,9 @@ namespace AdvanceApi.Controllers
             [FromQuery] int? idRelacionCargo = null,
             [FromQuery] double? monto = null,
             [FromQuery] string? nota = null,
-            [FromQuery] int? idProveedor = null)
+            [FromQuery] int? idProveedor = null,
+            [FromQuery] double? cantidad = null,
+            [FromQuery] double? unitario = null)
         {
             try
             {
@@ -51,7 +55,9 @@ namespace AdvanceApi.Controllers
                     IdRelacionCargo = idRelacionCargo,
                     Monto = monto,
                     Nota = nota,
-                    IdProveedor = idProveedor
+                    IdProveedor = idProveedor,
+                    Cantidad = cantidad,
+                    Unitario = unitario
                 };
 
                 var cargos = await _cargoService.GetCargosAsync(query);
@@ -88,6 +94,8 @@ namespace AdvanceApi.Controllers
         /// <param name="monto">Monto del cargo (obligatorio)</param>
         /// <param name="nota">Nota del cargo (opcional)</param>
         /// <param name="idProveedor">ID del proveedor (opcional)</param>
+        /// <param name="cantidad">Cantidad del cargo (opcional)</param>
+        /// <param name="unitario">Precio unitario del cargo (opcional)</param>
         /// <returns>Resultado de la operación</returns>
         [HttpPost]
         public async Task<IActionResult> CreateCargo(
@@ -96,7 +104,9 @@ namespace AdvanceApi.Controllers
             [FromQuery] int idRelacionCargo,
             [FromQuery] double monto,
             [FromQuery] string? nota = null,
-            [FromQuery] int? idProveedor = null)
+            [FromQuery] int? idProveedor = null,
+            [FromQuery] double? cantidad = null,
+            [FromQuery] double? unitario = null)
         {
             try
             {
@@ -107,7 +117,9 @@ namespace AdvanceApi.Controllers
                     IdRelacionCargo = idRelacionCargo,
                     Monto = monto,
                     Nota = nota,
-                    IdProveedor = idProveedor
+                    IdProveedor = idProveedor,
+                    Cantidad = cantidad,
+                    Unitario = unitario
                 };
 
                 var result = await _cargoService.CreateCargoAsync(query);
@@ -144,6 +156,8 @@ namespace AdvanceApi.Controllers
         /// <param name="monto">Nuevo monto del cargo</param>
         /// <param name="nota">Nueva nota del cargo</param>
         /// <param name="idProveedor">Nuevo ID del proveedor</param>
+        /// <param name="cantidad">Nueva cantidad del cargo</param>
+        /// <param name="unitario">Nuevo precio unitario del cargo</param>
         /// <returns>Resultado de la operación</returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateCargo(
@@ -152,7 +166,9 @@ namespace AdvanceApi.Controllers
             [FromQuery] int? idRelacionCargo = null,
             [FromQuery] double? monto = null,
             [FromQuery] string? nota = null,
-            [FromQuery] int? idProveedor = null)
+            [FromQuery] int? idProveedor = null,
+            [FromQuery] double? cantidad = null,
+            [FromQuery] double? unitario = null)
         {
             try
             {
@@ -168,7 +184,9 @@ namespace AdvanceApi.Controllers
                     IdRelacionCargo = idRelacionCargo,
                     Monto = monto,
                     Nota = nota,
-                    IdProveedor = idProveedor
+                    IdProveedor = idProveedor,
+                    Cantidad = cantidad,
+                    Unitario = unitario
                 };
 
                 var result = await _cargoService.UpdateCargoAsync(query);

@@ -13,5 +13,7 @@ namespace Clases
         public string? DetalleRelacionado { get; set; }
         public string? TipoCargo { get; set; }
         public string? Proveedor { get; set; }
+        public double? Cantidad { get; set; }
+        public double? Unitario { get; set; }
     }
 }
