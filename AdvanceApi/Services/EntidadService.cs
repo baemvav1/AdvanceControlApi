@@ -266,7 +266,7 @@ namespace AdvanceApi.Services
                     
                     if (result == "Success")
                     {
-                        var idEntidad = reader.GetInt32(reader.GetOrdinal("idEquipo"));
+                        var idEntidad = reader.GetInt32(reader.GetOrdinal("idEntidad"));
                         _logger.LogDebug("Entidad creada con ID {IdEntidad}", idEntidad);
                         return new { success = true, message = message, idEntidad = idEntidad };
                     }
