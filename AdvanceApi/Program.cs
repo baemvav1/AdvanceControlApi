@@ -54,6 +54,7 @@ builder.Services.AddScoped<AdvanceApi.Services.ICargoService, AdvanceApi.Service
 builder.Services.AddScoped<AdvanceApi.Services.IServicioService, AdvanceApi.Services.ServicioService>();
 builder.Services.AddScoped<AdvanceApi.Services.IAreaService, AdvanceApi.Services.AreaService>();
 builder.Services.AddScoped<AdvanceApi.Services.IUbicacionService, AdvanceApi.Services.UbicacionService>();
+builder.Services.AddScoped<AdvanceApi.Services.IEntidadService, AdvanceApi.Services.EntidadService>();
 
 // Configure JWT Authentication
 var jwtKey = builder.Configuration["Jwt:Key"] ?? throw new Exception("No se encontró Jwt:Key en la configuración.");
