@@ -119,14 +119,16 @@ namespace AdvanceApi.Services
                             _logger.LogDebug("Estado de cuenta creado con ID: {EstadoCuentaID}", estadoCuentaId);
                             return new { success = true, estadoCuentaId = (int)estadoCuentaId, message = mensaje };
                         }
-                        catch
+                        catch (Exception ex)
                         {
-                            // Might be a warning message with existing ID
+                            // Column doesn't exist - might be a warning message with existing ID
+                            _logger.LogDebug(ex, "EstadoCuentaID column not found, returning warning message");
                             return new { success = false, message = mensaje };
                         }
                     }
-                    catch
+                    catch (Exception ex)
                     {
+                        _logger.LogDebug(ex, "Error reading Mensaje column from stored procedure response");
                         return new { success = false, message = "Error al procesar respuesta" };
                     }
                 }
@@ -181,9 +183,10 @@ namespace AdvanceApi.Services
                             _logger.LogDebug("Depósito creado con ID: {DepositoID}", depositoId);
                             return new { success = true, depositoId = (int)depositoId, message = mensaje };
                         }
-                        catch
+                        catch (Exception ex)
                         {
-                            // Might be a duplicate warning or error message
+                            // Column doesn't exist - might be a duplicate warning or error message
+                            _logger.LogDebug(ex, "DepositoID as decimal not found, checking for existing deposit info");
                             try
                             {
                                 // Check if DescripcionExistente exists (warning case)
@@ -191,14 +194,16 @@ namespace AdvanceApi.Services
                                 var depositoIdExistente = reader.GetInt32(reader.GetOrdinal("DepositoID"));
                                 return new { success = false, depositoId = depositoIdExistente, message = mensaje, descripcionExistente };
                             }
-                            catch
+                            catch (Exception innerEx)
                             {
+                                _logger.LogDebug(innerEx, "DescripcionExistente column not found, returning warning message");
                                 return new { success = false, message = mensaje };
                             }
                         }
                     }
-                    catch
+                    catch (Exception ex)
                     {
+                        _logger.LogDebug(ex, "Error reading Mensaje column from stored procedure response");
                         return new { success = false, message = "Error al procesar respuesta" };
                     }
                 }
