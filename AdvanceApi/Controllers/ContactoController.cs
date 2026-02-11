@@ -227,7 +227,6 @@ namespace AdvanceApi.Controllers
                     IdProveedor = idProveedor,
                     Cargo = cargo,
                     IdCliente = idCliente,
-                    Estatus = estatus
                 };
 
                 var result = await _contactoService.UpdateContactoAsync(query);

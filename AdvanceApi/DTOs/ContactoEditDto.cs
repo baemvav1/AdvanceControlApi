@@ -74,10 +74,5 @@ namespace AdvanceApi.DTOs
         /// ID del cliente asociado
         /// </summary>
         public int? IdCliente { get; set; }
-
-        /// <summary>
-        /// Estatus del contacto
-        /// </summary>
-        public bool? Estatus { get; set; }
     }
 }

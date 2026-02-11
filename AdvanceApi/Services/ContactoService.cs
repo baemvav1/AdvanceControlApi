@@ -53,7 +53,6 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@idProveedor", (object?)query.IdProveedor ?? DBNull.Value);
                 command.Parameters.AddWithValue("@cargo", (object?)query.Cargo ?? DBNull.Value);
                 command.Parameters.AddWithValue("@idCliente", (object?)query.IdCliente ?? DBNull.Value);
-                command.Parameters.AddWithValue("@estatus", (object?)query.Estatus ?? DBNull.Value);
 
                 await using var reader = await command.ExecuteReaderAsync();
 
@@ -88,7 +87,6 @@ namespace AdvanceApi.Services
                         IdProveedor = reader.IsDBNull(reader.GetOrdinal("idProveedor")) ? null : reader.GetInt32(reader.GetOrdinal("idProveedor")),
                         Cargo = reader.IsDBNull(reader.GetOrdinal("cargo")) ? null : reader.GetString(reader.GetOrdinal("cargo")),
                         IdCliente = reader.IsDBNull(reader.GetOrdinal("idCliente")) ? null : reader.GetInt32(reader.GetOrdinal("idCliente")),
-                        Estatus = reader.IsDBNull(reader.GetOrdinal("estatus")) ? null : reader.GetBoolean(reader.GetOrdinal("estatus"))
                     };
 
                     contactos.Add(contacto);
@@ -138,7 +136,6 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@idProveedor", (object?)query.IdProveedor ?? DBNull.Value);
                 command.Parameters.AddWithValue("@cargo", (object?)query.Cargo ?? DBNull.Value);
                 command.Parameters.AddWithValue("@idCliente", (object?)query.IdCliente ?? DBNull.Value);
-                command.Parameters.AddWithValue("@estatus", (object?)query.Estatus ?? DBNull.Value);
 
                 await using var reader = await command.ExecuteReaderAsync();
 
@@ -216,7 +213,6 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@idProveedor", (object?)query.IdProveedor ?? DBNull.Value);
                 command.Parameters.AddWithValue("@cargo", (object?)query.Cargo ?? DBNull.Value);
                 command.Parameters.AddWithValue("@idCliente", (object?)query.IdCliente ?? DBNull.Value);
-                command.Parameters.AddWithValue("@estatus", (object?)query.Estatus ?? DBNull.Value);
 
                 await using var reader = await command.ExecuteReaderAsync();
 
@@ -281,7 +277,6 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@idProveedor", DBNull.Value);
                 command.Parameters.AddWithValue("@cargo", DBNull.Value);
                 command.Parameters.AddWithValue("@idCliente", DBNull.Value);
-                command.Parameters.AddWithValue("@estatus", DBNull.Value);
 
                 await using var reader = await command.ExecuteReaderAsync();
 
