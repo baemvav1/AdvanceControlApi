@@ -61,42 +61,32 @@ namespace AdvanceApi.Controllers
         /// Crea un nuevo impuesto de movimiento
         /// POST /api/impuesto_comision/impuestos
         /// </summary>
-        /// <param name="idMovimiento">ID del movimiento (obligatorio)</param>
-        /// <param name="tipoImpuesto">Tipo de impuesto (obligatorio)</param>
-        /// <param name="monto">Monto del impuesto (obligatorio)</param>
-        /// <param name="rfc">RFC (opcional)</param>
+        /// <param name="dto">Datos del impuesto a crear</param>
         /// <returns>Resultado de la operación con el ID del impuesto creado</returns>
         [HttpPost("impuestos")]
-        public async Task<IActionResult> CreateImpuestoMovimiento(
-            [FromQuery] int idMovimiento,
-            [FromQuery] string tipoImpuesto,
-            [FromQuery] decimal monto,
-            [FromQuery] string? rfc = null)
+        public async Task<IActionResult> CreateImpuestoMovimiento([FromBody] ImpuestoMovimientoDto dto)
         {
             try
             {
-                if (idMovimiento <= 0)
+                if (dto == null)
+                {
+                    return BadRequest(new { message = "El cuerpo de la solicitud es requerido." });
+                }
+
+                if (!dto.IdMovimiento.HasValue || dto.IdMovimiento.Value <= 0)
                 {
                     return BadRequest(new { message = "El campo 'idMovimiento' es obligatorio y debe ser mayor a 0." });
                 }
 
-                if (string.IsNullOrWhiteSpace(tipoImpuesto))
+                if (string.IsNullOrWhiteSpace(dto.TipoImpuesto))
                 {
                     return BadRequest(new { message = "El campo 'tipoImpuesto' es obligatorio." });
                 }
 
-                if (monto <= 0)
+                if (!dto.Monto.HasValue || dto.Monto.Value <= 0)
                 {
                     return BadRequest(new { message = "El campo 'monto' debe ser mayor a 0." });
                 }
-
-                var dto = new ImpuestoMovimientoDto
-                {
-                    IdMovimiento = idMovimiento,
-                    TipoImpuesto = tipoImpuesto,
-                    Monto = monto,
-                    Rfc = rfc
-                };
 
                 var result = await _impuestoComisionService.CrearImpuestoMovimientoAsync(dto);
 
@@ -168,45 +158,32 @@ namespace AdvanceApi.Controllers
         /// Crea una nueva comisión bancaria
         /// POST /api/impuesto_comision/comisiones
         /// </summary>
-        /// <param name="idMovimiento">ID del movimiento (obligatorio)</param>
-        /// <param name="tipoComision">Tipo de comisión (obligatorio)</param>
-        /// <param name="monto">Monto de la comisión (obligatorio)</param>
-        /// <param name="iva">IVA (opcional)</param>
-        /// <param name="referencia">Referencia (opcional)</param>
+        /// <param name="dto">Datos de la comisión a crear</param>
         /// <returns>Resultado de la operación con el ID de la comisión creada</returns>
         [HttpPost("comisiones")]
-        public async Task<IActionResult> CreateComisionBancaria(
-            [FromQuery] int idMovimiento,
-            [FromQuery] string tipoComision,
-            [FromQuery] decimal monto,
-            [FromQuery] decimal? iva = null,
-            [FromQuery] string? referencia = null)
+        public async Task<IActionResult> CreateComisionBancaria([FromBody] ComisionBancariaDto dto)
         {
             try
             {
-                if (idMovimiento <= 0)
+                if (dto == null)
+                {
+                    return BadRequest(new { message = "El cuerpo de la solicitud es requerido." });
+                }
+
+                if (!dto.IdMovimiento.HasValue || dto.IdMovimiento.Value <= 0)
                 {
                     return BadRequest(new { message = "El campo 'idMovimiento' es obligatorio y debe ser mayor a 0." });
                 }
 
-                if (string.IsNullOrWhiteSpace(tipoComision))
+                if (string.IsNullOrWhiteSpace(dto.TipoComision))
                 {
                     return BadRequest(new { message = "El campo 'tipoComision' es obligatorio." });
                 }
 
-                if (monto <= 0)
+                if (!dto.Monto.HasValue || dto.Monto.Value <= 0)
                 {
                     return BadRequest(new { message = "El campo 'monto' debe ser mayor a 0." });
                 }
-
-                var dto = new ComisionBancariaDto
-                {
-                    IdMovimiento = idMovimiento,
-                    TipoComision = tipoComision,
-                    Monto = monto,
-                    Iva = iva,
-                    Referencia = referencia
-                };
 
                 var result = await _impuestoComisionService.CrearComisionBancariaAsync(dto);
 
