@@ -40,7 +40,7 @@ namespace AdvanceApi.Services
 
                 // Configurar parámetros del procedimiento almacenado
                 command.Parameters.AddWithValue("@idMovimiento", dto.IdMovimiento);
-                command.Parameters.AddWithValue("@tipoTransferencia", (object?)dto.TipoTransferencia ?? DBNull.Value);
+                command.Parameters.AddWithValue("@tipoTransferencia", dto.TipoTransferencia);
                 command.Parameters.AddWithValue("@bancoClave", (object?)dto.BancoClave ?? DBNull.Value);
                 command.Parameters.AddWithValue("@bancoNombre", (object?)dto.BancoNombre ?? DBNull.Value);
                 command.Parameters.AddWithValue("@cuentaOrigen", (object?)dto.CuentaOrigen ?? DBNull.Value);
@@ -185,7 +185,7 @@ namespace AdvanceApi.Services
                     {
                         IdTransferencia = reader.GetInt32(idTransferenciaOrdinal),
                         IdMovimiento = reader.GetInt32(idMovimientoOrdinal),
-                        TipoTransferencia = reader.IsDBNull(tipoTransferenciaOrdinal) ? string.Empty : reader.GetString(tipoTransferenciaOrdinal),
+                        TipoTransferencia = reader.GetString(tipoTransferenciaOrdinal),
                         BancoClave = reader.IsDBNull(bancoClaveOrdinal) ? null : reader.GetString(bancoClaveOrdinal),
                         BancoNombre = reader.IsDBNull(bancoNombreOrdinal) ? null : reader.GetString(bancoNombreOrdinal),
                         CuentaOrigen = reader.IsDBNull(cuentaOrigenOrdinal) ? null : reader.GetString(cuentaOrigenOrdinal),
