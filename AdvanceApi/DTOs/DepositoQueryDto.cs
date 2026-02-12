@@ -5,7 +5,6 @@ namespace AdvanceApi.DTOs
     /// </summary>
     public class DepositoQueryDto
     {
-        public int? IdDeposito { get; set; }
         public int? IdMovimiento { get; set; }
         public string? TipoDeposito { get; set; }
         public string? Referencia { get; set; }
