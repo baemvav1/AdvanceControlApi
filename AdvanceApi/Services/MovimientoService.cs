@@ -67,9 +67,10 @@ namespace AdvanceApi.Services
                         idMovimiento = reader.GetInt32(reader.GetOrdinal("idMovimiento"));
                         mensaje = reader.GetString(reader.GetOrdinal("Mensaje"));
                     }
-                    catch
+                    catch (Exception ex)
                     {
                         // Si no se pueden leer los campos, usar el parámetro de salida
+                        _logger.LogDebug(ex, "No se pudieron leer los campos del resultado, usando parámetro de salida");
                     }
                 }
 
@@ -133,9 +134,10 @@ namespace AdvanceApi.Services
                     {
                         mensaje = reader.GetString(reader.GetOrdinal("Mensaje"));
                     }
-                    catch
+                    catch (Exception ex)
                     {
                         // Si no se puede leer el mensaje, usar el mensaje por defecto
+                        _logger.LogDebug(ex, "No se pudo leer el mensaje del resultado, usando mensaje por defecto");
                     }
                 }
 
