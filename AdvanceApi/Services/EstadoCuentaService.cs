@@ -230,13 +230,7 @@ namespace AdvanceApi.Services
         /// </summary>
         public async Task<EstadoCuentaCompletoDto> ConsultarEstadoCuentaCompletoAsync(int idEstadoCuenta)
         {
-            var resultado = new EstadoCuentaCompletoDto
-            {
-                Movimientos = new List<Movimiento>(),
-                TransferenciasSPEI = new List<TransferenciaSPEI>(),
-                Comisiones = new List<ComisionBancaria>(),
-                Impuestos = new List<ImpuestoMovimiento>()
-            };
+            var resultado = new EstadoCuentaCompletoDto();
 
             try
             {
@@ -276,6 +270,7 @@ namespace AdvanceApi.Services
                 // Segundo conjunto de resultados: Movimientos
                 if (await reader.NextResultAsync())
                 {
+                    resultado.Movimientos = new List<Movimiento>();
                     while (await reader.ReadAsync())
                     {
                         var movimiento = new Movimiento
@@ -297,6 +292,7 @@ namespace AdvanceApi.Services
                 // Tercer conjunto de resultados: Transferencias SPEI
                 if (await reader.NextResultAsync())
                 {
+                    resultado.TransferenciasSPEI = new List<TransferenciaSPEI>();
                     while (await reader.ReadAsync())
                     {
                         var transferencia = new TransferenciaSPEI
@@ -324,6 +320,7 @@ namespace AdvanceApi.Services
                 // Cuarto conjunto de resultados: Comisiones
                 if (await reader.NextResultAsync())
                 {
+                    resultado.Comisiones = new List<ComisionBancaria>();
                     while (await reader.ReadAsync())
                     {
                         var comision = new ComisionBancaria
@@ -345,6 +342,7 @@ namespace AdvanceApi.Services
                 // Quinto conjunto de resultados: Impuestos
                 if (await reader.NextResultAsync())
                 {
+                    resultado.Impuestos = new List<ImpuestoMovimiento>();
                     while (await reader.ReadAsync())
                     {
                         var impuesto = new ImpuestoMovimiento
@@ -362,8 +360,15 @@ namespace AdvanceApi.Services
                     }
                 }
 
+                // Validar que se encontró un estado de cuenta
+                if (resultado.EstadoCuenta == null)
+                {
+                    _logger.LogWarning("No se encontró estado de cuenta con ID: {IdEstadoCuenta}", idEstadoCuenta);
+                    return resultado;
+                }
+
                 _logger.LogDebug("Estado de cuenta completo consultado. ID: {IdEstadoCuenta}, Movimientos: {CantidadMovimientos}, Transferencias SPEI: {CantidadSPEI}, Comisiones: {CantidadComisiones}, Impuestos: {CantidadImpuestos}", 
-                    idEstadoCuenta, resultado.Movimientos.Count, resultado.TransferenciasSPEI.Count, resultado.Comisiones.Count, resultado.Impuestos.Count);
+                    idEstadoCuenta, resultado.Movimientos?.Count ?? 0, resultado.TransferenciasSPEI?.Count ?? 0, resultado.Comisiones?.Count ?? 0, resultado.Impuestos?.Count ?? 0);
 
                 return resultado;
             }
