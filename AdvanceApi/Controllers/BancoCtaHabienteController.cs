@@ -135,8 +135,8 @@ namespace AdvanceApi.Controllers
         /// Crea una nueva cuenta habiente
         /// POST /api/BancoCtaHabiente/cuentahabiente
         /// </summary>
-        /// <param name="nombre">Nombre del cuenta habiente (obligatorio)</param>
-        /// <param name="rfc">RFC del cuenta habiente (obligatorio)</param>
+        /// <param name="nombre">Nombre de la cuenta habiente (obligatorio)</param>
+        /// <param name="rfc">RFC de la cuenta habiente (obligatorio)</param>
         /// <param name="numeroCuenta">Número de cuenta (obligatorio)</param>
         /// <param name="direccion">Dirección</param>
         /// <returns>Resultado de la operación</returns>
@@ -202,7 +202,7 @@ namespace AdvanceApi.Controllers
         /// </summary>
         /// <param name="idCuentaHabiente">ID de la cuenta habiente</param>
         /// <param name="numeroCuenta">Número de cuenta</param>
-        /// <param name="rfc">RFC del cuenta habiente</param>
+        /// <param name="rfc">RFC de la cuenta habiente</param>
         /// <returns>Lista de cuentas habiente que cumplen con los criterios</returns>
         [HttpGet("cuentahabiente")]
         public async Task<IActionResult> GetCuentasHabiente(

@@ -42,12 +42,6 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@rfc", banco.Rfc);
                 command.Parameters.AddWithValue("@nombreSucursal", (object?)banco.NombreSucursal ?? DBNull.Value);
                 command.Parameters.AddWithValue("@direccion", (object?)banco.Direccion ?? DBNull.Value);
-                
-                var idBancoParam = new SqlParameter("@idBanco", SqlDbType.Int)
-                {
-                    Direction = ParameterDirection.Output
-                };
-                command.Parameters.Add(idBancoParam);
 
                 await using var reader = await command.ExecuteReaderAsync();
 
@@ -150,12 +144,6 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@rfc", cuentaHabiente.Rfc);
                 command.Parameters.AddWithValue("@numeroCuenta", cuentaHabiente.NumeroCuenta);
                 command.Parameters.AddWithValue("@direccion", (object?)cuentaHabiente.Direccion ?? DBNull.Value);
-                
-                var idCuentaHabienteParam = new SqlParameter("@idCuentaHabiente", SqlDbType.Int)
-                {
-                    Direction = ParameterDirection.Output
-                };
-                command.Parameters.Add(idCuentaHabienteParam);
 
                 await using var reader = await command.ExecuteReaderAsync();
 
