@@ -13,7 +13,7 @@ namespace AdvanceApi.Services
         /// <summary>
         /// Crea una nueva transferencia SPEI usando el procedimiento almacenado sp_CrearTransferenciaSPEI
         /// </summary>
-        Task<object> CrearTransferenciaSPEIAsync(TransferenciaSPEICreateDto dto);
+        Task<CrearTransferenciaSPEIResult> CrearTransferenciaSPEIAsync(TransferenciaSPEICreateDto dto);
 
         /// <summary>
         /// Consulta transferencias SPEI según los criterios especificados usando el procedimiento almacenado sp_ConsultarTransferenciasSPEI

@@ -27,7 +27,7 @@ namespace AdvanceApi.Services
         /// <summary>
         /// Crea una nueva transferencia SPEI usando el procedimiento almacenado sp_CrearTransferenciaSPEI
         /// </summary>
-        public async Task<object> CrearTransferenciaSPEIAsync(TransferenciaSPEICreateDto dto)
+        public async Task<CrearTransferenciaSPEIResult> CrearTransferenciaSPEIAsync(TransferenciaSPEICreateDto dto)
         {
             if (dto == null)
                 throw new ArgumentNullException(nameof(dto));
@@ -51,7 +51,7 @@ namespace AdvanceApi.Services
                 command.Parameters.AddWithValue("@rfcDestinatario", (object?)dto.RfcDestinatario ?? DBNull.Value);
                 command.Parameters.AddWithValue("@claveRastreo", (object?)dto.ClaveRastreo ?? DBNull.Value);
                 command.Parameters.AddWithValue("@concepto", (object?)dto.Concepto ?? DBNull.Value);
-                command.Parameters.AddWithValue("@hora", dto.Hora ?? (object)DBNull.Value);
+                command.Parameters.AddWithValue("@hora", (object?)dto.Hora ?? DBNull.Value);
                 command.Parameters.AddWithValue("@monto", dto.Monto);
 
                 // Parámetro de salida para el ID
@@ -89,7 +89,12 @@ namespace AdvanceApi.Services
                 }
 
                 _logger.LogDebug("Transferencia SPEI creada con ID: {IdTransferencia}", idTransferencia);
-                return new { success = true, idTransferencia, message = mensaje };
+                return new CrearTransferenciaSPEIResult 
+                { 
+                    Success = true, 
+                    IdTransferencia = idTransferencia, 
+                    Message = mensaje 
+                };
             }
             catch (SqlException sqlEx)
             {
