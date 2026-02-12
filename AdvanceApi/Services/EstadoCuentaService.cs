@@ -224,5 +224,159 @@ namespace AdvanceApi.Services
                 throw;
             }
         }
+
+        /// <summary>
+        /// Consulta el estado de cuenta completo con todos sus datos relacionados usando sp_ConsultarEstadoCuentaCompleto
+        /// </summary>
+        public async Task<EstadoCuentaCompletoDto> ConsultarEstadoCuentaCompletoAsync(int idEstadoCuenta)
+        {
+            var resultado = new EstadoCuentaCompletoDto
+            {
+                Movimientos = new List<Movimiento>(),
+                TransferenciasSPEI = new List<TransferenciaSPEI>(),
+                Comisiones = new List<ComisionBancaria>(),
+                Impuestos = new List<ImpuestoMovimiento>()
+            };
+
+            try
+            {
+                await using var connection = await _dbHelper.GetOpenConnectionAsync();
+                await using var command = new SqlCommand("sp_ConsultarEstadoCuentaCompleto", connection);
+                command.CommandType = CommandType.StoredProcedure;
+
+                // Configurar parámetro del procedimiento almacenado
+                command.Parameters.AddWithValue("@idEstadoCuenta", idEstadoCuenta);
+
+                await using var reader = await command.ExecuteReaderAsync();
+
+                // Primer conjunto de resultados: Estado de Cuenta
+                if (await reader.ReadAsync())
+                {
+                    resultado.EstadoCuenta = new EstadoCuenta
+                    {
+                        IdEstadoCuenta = reader.GetInt32(reader.GetOrdinal("idEstadoCuenta")),
+                        NumeroCuenta = reader.IsDBNull(reader.GetOrdinal("numeroCuenta")) ? null : reader.GetString(reader.GetOrdinal("numeroCuenta")),
+                        Clabe = reader.IsDBNull(reader.GetOrdinal("clabe")) ? null : reader.GetString(reader.GetOrdinal("clabe")),
+                        TipoCuenta = reader.IsDBNull(reader.GetOrdinal("tipoCuenta")) ? null : reader.GetString(reader.GetOrdinal("tipoCuenta")),
+                        TipoMoneda = reader.IsDBNull(reader.GetOrdinal("tipoMoneda")) ? null : reader.GetString(reader.GetOrdinal("tipoMoneda")),
+                        FechaInicio = reader.IsDBNull(reader.GetOrdinal("fechaInicio")) ? null : reader.GetDateTime(reader.GetOrdinal("fechaInicio")),
+                        FechaFin = reader.IsDBNull(reader.GetOrdinal("fechaFin")) ? null : reader.GetDateTime(reader.GetOrdinal("fechaFin")),
+                        FechaCorte = reader.IsDBNull(reader.GetOrdinal("fechaCorte")) ? null : reader.GetDateTime(reader.GetOrdinal("fechaCorte")),
+                        SaldoInicial = reader.IsDBNull(reader.GetOrdinal("saldoInicial")) ? null : reader.GetDecimal(reader.GetOrdinal("saldoInicial")),
+                        TotalCargos = reader.IsDBNull(reader.GetOrdinal("totalCargos")) ? null : reader.GetDecimal(reader.GetOrdinal("totalCargos")),
+                        TotalAbonos = reader.IsDBNull(reader.GetOrdinal("totalAbonos")) ? null : reader.GetDecimal(reader.GetOrdinal("totalAbonos")),
+                        SaldoFinal = reader.IsDBNull(reader.GetOrdinal("saldoFinal")) ? null : reader.GetDecimal(reader.GetOrdinal("saldoFinal")),
+                        TotalComisiones = reader.IsDBNull(reader.GetOrdinal("totalComisiones")) ? null : reader.GetDecimal(reader.GetOrdinal("totalComisiones")),
+                        TotalISR = reader.IsDBNull(reader.GetOrdinal("totalISR")) ? null : reader.GetDecimal(reader.GetOrdinal("totalISR")),
+                        TotalIVA = reader.IsDBNull(reader.GetOrdinal("totalIVA")) ? null : reader.GetDecimal(reader.GetOrdinal("totalIVA")),
+                        FechaCarga = reader.IsDBNull(reader.GetOrdinal("fechaCarga")) ? null : reader.GetDateTime(reader.GetOrdinal("fechaCarga"))
+                    };
+                }
+
+                // Segundo conjunto de resultados: Movimientos
+                if (await reader.NextResultAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        var movimiento = new Movimiento
+                        {
+                            IdMovimiento = reader.GetInt32(reader.GetOrdinal("idMovimiento")),
+                            Fecha = reader.GetDateTime(reader.GetOrdinal("fecha")),
+                            Descripcion = reader.IsDBNull(reader.GetOrdinal("descripcion")) ? null : reader.GetString(reader.GetOrdinal("descripcion")),
+                            Referencia = reader.IsDBNull(reader.GetOrdinal("referencia")) ? null : reader.GetString(reader.GetOrdinal("referencia")),
+                            Cargo = reader.IsDBNull(reader.GetOrdinal("cargo")) ? null : reader.GetDecimal(reader.GetOrdinal("cargo")),
+                            Abono = reader.IsDBNull(reader.GetOrdinal("abono")) ? null : reader.GetDecimal(reader.GetOrdinal("abono")),
+                            Saldo = reader.GetDecimal(reader.GetOrdinal("saldo")),
+                            TipoOperacion = reader.IsDBNull(reader.GetOrdinal("tipoOperacion")) ? null : reader.GetString(reader.GetOrdinal("tipoOperacion"))
+                        };
+
+                        resultado.Movimientos.Add(movimiento);
+                    }
+                }
+
+                // Tercer conjunto de resultados: Transferencias SPEI
+                if (await reader.NextResultAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        var transferencia = new TransferenciaSPEI
+                        {
+                            IdTransferencia = reader.GetInt32(reader.GetOrdinal("idTransferencia")),
+                            IdMovimiento = reader.GetInt32(reader.GetOrdinal("idMovimiento")),
+                            TipoTransferencia = reader.GetString(reader.GetOrdinal("tipoTransferencia")),
+                            BancoClave = reader.IsDBNull(reader.GetOrdinal("bancoClave")) ? null : reader.GetString(reader.GetOrdinal("bancoClave")),
+                            BancoNombre = reader.IsDBNull(reader.GetOrdinal("bancoNombre")) ? null : reader.GetString(reader.GetOrdinal("bancoNombre")),
+                            CuentaOrigen = reader.IsDBNull(reader.GetOrdinal("cuentaOrigen")) ? null : reader.GetString(reader.GetOrdinal("cuentaOrigen")),
+                            CuentaDestino = reader.IsDBNull(reader.GetOrdinal("cuentaDestino")) ? null : reader.GetString(reader.GetOrdinal("cuentaDestino")),
+                            NombreEmisor = reader.IsDBNull(reader.GetOrdinal("nombreEmisor")) ? null : reader.GetString(reader.GetOrdinal("nombreEmisor")),
+                            NombreDestinatario = reader.IsDBNull(reader.GetOrdinal("nombreDestinatario")) ? null : reader.GetString(reader.GetOrdinal("nombreDestinatario")),
+                            RfcEmisor = reader.IsDBNull(reader.GetOrdinal("rfcEmisor")) ? null : reader.GetString(reader.GetOrdinal("rfcEmisor")),
+                            RfcDestinatario = reader.IsDBNull(reader.GetOrdinal("rfcDestinatario")) ? null : reader.GetString(reader.GetOrdinal("rfcDestinatario")),
+                            ClaveRastreo = reader.IsDBNull(reader.GetOrdinal("claveRastreo")) ? null : reader.GetString(reader.GetOrdinal("claveRastreo")),
+                            Concepto = reader.IsDBNull(reader.GetOrdinal("concepto")) ? null : reader.GetString(reader.GetOrdinal("concepto")),
+                            Monto = reader.GetDecimal(reader.GetOrdinal("monto"))
+                        };
+
+                        resultado.TransferenciasSPEI.Add(transferencia);
+                    }
+                }
+
+                // Cuarto conjunto de resultados: Comisiones
+                if (await reader.NextResultAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        var comision = new ComisionBancaria
+                        {
+                            IdComision = reader.GetInt32(reader.GetOrdinal("idComision")),
+                            IdMovimiento = reader.GetInt32(reader.GetOrdinal("idMovimiento")),
+                            TipoComision = reader.IsDBNull(reader.GetOrdinal("tipoComision")) ? null : reader.GetString(reader.GetOrdinal("tipoComision")),
+                            Monto = reader.GetDecimal(reader.GetOrdinal("monto")),
+                            Iva = reader.IsDBNull(reader.GetOrdinal("iva")) ? null : reader.GetDecimal(reader.GetOrdinal("iva")),
+                            Referencia = reader.IsDBNull(reader.GetOrdinal("referencia")) ? null : reader.GetString(reader.GetOrdinal("referencia")),
+                            Fecha = reader.IsDBNull(reader.GetOrdinal("fecha")) ? null : reader.GetDateTime(reader.GetOrdinal("fecha")),
+                            Descripcion = reader.IsDBNull(reader.GetOrdinal("descripcion")) ? null : reader.GetString(reader.GetOrdinal("descripcion"))
+                        };
+
+                        resultado.Comisiones.Add(comision);
+                    }
+                }
+
+                // Quinto conjunto de resultados: Impuestos
+                if (await reader.NextResultAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        var impuesto = new ImpuestoMovimiento
+                        {
+                            IdImpuesto = reader.GetInt32(reader.GetOrdinal("idImpuesto")),
+                            IdMovimiento = reader.GetInt32(reader.GetOrdinal("idMovimiento")),
+                            TipoImpuesto = reader.IsDBNull(reader.GetOrdinal("tipoImpuesto")) ? null : reader.GetString(reader.GetOrdinal("tipoImpuesto")),
+                            Rfc = reader.IsDBNull(reader.GetOrdinal("rfc")) ? null : reader.GetString(reader.GetOrdinal("rfc")),
+                            Monto = reader.GetDecimal(reader.GetOrdinal("monto")),
+                            Fecha = reader.IsDBNull(reader.GetOrdinal("fecha")) ? null : reader.GetDateTime(reader.GetOrdinal("fecha")),
+                            Descripcion = reader.IsDBNull(reader.GetOrdinal("descripcion")) ? null : reader.GetString(reader.GetOrdinal("descripcion"))
+                        };
+
+                        resultado.Impuestos.Add(impuesto);
+                    }
+                }
+
+                _logger.LogDebug("Estado de cuenta completo consultado. ID: {IdEstadoCuenta}, Movimientos: {CantidadMovimientos}, Transferencias SPEI: {CantidadSPEI}, Comisiones: {CantidadComisiones}, Impuestos: {CantidadImpuestos}", 
+                    idEstadoCuenta, resultado.Movimientos.Count, resultado.TransferenciasSPEI.Count, resultado.Comisiones.Count, resultado.Impuestos.Count);
+
+                return resultado;
+            }
+            catch (SqlException sqlEx)
+            {
+                _logger.LogError(sqlEx, "Error SQL al consultar estado de cuenta completo. IdEstadoCuenta: {IdEstadoCuenta}, SqlError: {Message}", idEstadoCuenta, sqlEx.Message);
+                throw new InvalidOperationException("Error al consultar estado de cuenta completo en la base de datos", sqlEx);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error inesperado al consultar estado de cuenta completo. IdEstadoCuenta: {IdEstadoCuenta}", idEstadoCuenta);
+                throw;
+            }
+        }
     }
 }

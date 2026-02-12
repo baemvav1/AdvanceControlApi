@@ -238,5 +238,50 @@ namespace AdvanceApi.Controllers
 #endif
             }
         }
+
+        /// <summary>
+        /// Consulta el estado de cuenta completo con todos sus datos relacionados
+        /// GET /api/estadocuenta/edoCuentaConsulta
+        /// </summary>
+        /// <param name="idEstadoCuenta">ID del estado de cuenta a consultar (obligatorio)</param>
+        /// <returns>Estado de cuenta completo con movimientos, transferencias SPEI, comisiones e impuestos</returns>
+        [HttpGet("edoCuentaConsulta")]
+        public async Task<IActionResult> EdoCuentaConsulta([FromQuery] int idEstadoCuenta)
+        {
+            try
+            {
+                if (idEstadoCuenta <= 0)
+                {
+                    return BadRequest(new { message = "El parámetro 'idEstadoCuenta' es obligatorio y debe ser mayor a 0." });
+                }
+
+                var estadoCuentaCompleto = await _estadoCuentaService.ConsultarEstadoCuentaCompletoAsync(idEstadoCuenta);
+
+                if (estadoCuentaCompleto.EstadoCuenta == null)
+                {
+                    return NotFound(new { message = $"No se encontró un estado de cuenta con el ID {idEstadoCuenta}." });
+                }
+
+                return Ok(estadoCuentaCompleto);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogError(ex, "Error al obtener estado de cuenta completo");
+#if DEBUG
+                return StatusCode(500, new { message = ex.Message, innerMessage = ex.InnerException?.Message });
+#else
+                return StatusCode(500, new { message = "Error al acceder a la base de datos." });
+#endif
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error inesperado al obtener estado de cuenta completo");
+#if DEBUG
+                return StatusCode(500, new { message = ex.Message });
+#else
+                return StatusCode(500, new { message = "Error interno del servidor." });
+#endif
+            }
+        }
     }
 }
