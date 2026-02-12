@@ -8,6 +8,10 @@ namespace AdvanceApi.Services
 {
     public class EstadoCuentaProcedimientosService : IEstadoCuentaProcedimientosService
     {
+        // Los procedimientos en ProcedimientosEstadoCuenta.sql declaran DECIMAL(18,2)
+        private const byte PrecisionDecimalDefault = 18;
+        private const byte EscalaDecimalDefault = 2;
+
         private static readonly HashSet<string> ProcedimientosPermitidos = new(StringComparer.OrdinalIgnoreCase)
         {
             "sp_CrearEstadoCuenta",
@@ -75,7 +79,7 @@ namespace AdvanceApi.Services
                     {
                         var nombreParametro = parametro.Key.StartsWith("@") ? parametro.Key : $"@{parametro.Key}";
                         var valor = ConvertirValorParametro(parametro.Value);
-                        command.Parameters.AddWithValue(nombreParametro, valor ?? DBNull.Value);
+                        AgregarParametro(command, nombreParametro, valor);
                     }
                 }
 
@@ -90,7 +94,7 @@ namespace AdvanceApi.Services
                     var filas = new List<Dictionary<string, object?>>();
                     while (await reader.ReadAsync())
                     {
-                        var fila = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
+                        var fila = new Dictionary<string, object?>();
                         for (var i = 0; i < reader.FieldCount; i++)
                         {
                             fila[reader.GetName(i)] = reader.IsDBNull(i) ? null : reader.GetValue(i);
@@ -109,7 +113,7 @@ namespace AdvanceApi.Services
             catch (SqlException sqlEx)
             {
                 _logger.LogError(sqlEx, "Error SQL al ejecutar el procedimiento {Procedimiento}", procedimiento);
-                throw new InvalidOperationException("Error al ejecutar el procedimiento almacenado.", sqlEx);
+                throw new InvalidOperationException($"Error al ejecutar el procedimiento almacenado '{procedimiento}'.", sqlEx);
             }
             catch (Exception ex)
             {
@@ -131,15 +135,16 @@ namespace AdvanceApi.Services
                     case JsonValueKind.Undefined:
                         return DBNull.Value;
                     case JsonValueKind.Number:
-                        if (element.TryGetInt64(out var enteroLargo)) return enteroLargo;
+                        // Se prioriza decimal para conservar precisión en valores monetarios
                         if (element.TryGetDecimal(out var decimalValue)) return decimalValue;
-                        if (element.TryGetDouble(out var doble)) return doble;
-                        break;
+                        if (element.TryGetInt64(out var longValue)) return longValue;
+                        if (element.TryGetDouble(out var doubleValue)) return doubleValue;
+                        return element.GetRawText();
                     case JsonValueKind.True:
                     case JsonValueKind.False:
                         return element.GetBoolean();
                     case JsonValueKind.String:
-                        if (element.TryGetDateTime(out var fecha)) return fecha;
+                        if (element.TryGetDateTime(out var dateValue)) return dateValue;
                         return element.GetString();
                     case JsonValueKind.Array:
                     case JsonValueKind.Object:
@@ -147,7 +152,36 @@ namespace AdvanceApi.Services
                 }
             }
 
-            return valor;
+            return valor ?? DBNull.Value;
+        }
+
+        private static void AgregarParametro(SqlCommand command, string nombre, object? valor)
+        {
+            var safeValue = valor ?? DBNull.Value;
+            var parametro = command.Parameters.Add(nombre, InferirTipoSql(safeValue));
+            parametro.Value = safeValue;
+
+            if (safeValue is decimal)
+            {
+                parametro.Precision = PrecisionDecimalDefault;
+                parametro.Scale = EscalaDecimalDefault;
+            }
+        }
+
+        private static SqlDbType InferirTipoSql(object valor)
+        {
+            return valor switch
+            {
+                DBNull => SqlDbType.Variant,
+                long => SqlDbType.BigInt,
+                int => SqlDbType.Int,
+                decimal => SqlDbType.Decimal,
+                double => SqlDbType.Float,
+                float => SqlDbType.Real,
+                bool => SqlDbType.Bit,
+                DateTime => SqlDbType.DateTime2,
+                _ => SqlDbType.NVarChar
+            };
         }
     }
 }

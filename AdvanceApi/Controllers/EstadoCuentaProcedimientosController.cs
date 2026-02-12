@@ -29,9 +29,9 @@ namespace AdvanceApi.Controllers
         [HttpPost("ejecutar")]
         public async Task<IActionResult> Ejecutar([FromBody] ProcedimientoEstadoCuentaRequest request)
         {
-            if (request == null || string.IsNullOrWhiteSpace(request.Procedimiento))
+            if (request == null)
             {
-                return BadRequest(new { message = "Debe indicar el procedimiento a ejecutar." });
+                return BadRequest(new { message = "La solicitud no puede ser nula." });
             }
 
             try
@@ -46,12 +46,9 @@ namespace AdvanceApi.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error inesperado al ejecutar el procedimiento {Procedimiento}", request.Procedimiento);
-#if DEBUG
-                return StatusCode(500, new { message = ex.Message });
-#else
-                return StatusCode(500, new { message = "Error interno al ejecutar el procedimiento." });
-#endif
+                var errorId = Guid.NewGuid();
+                _logger.LogError(ex, "Error inesperado al ejecutar el procedimiento {Procedimiento}. ErrorId: {ErrorId}", request.Procedimiento, errorId);
+                return StatusCode(500, new { message = "Error interno al ejecutar el procedimiento.", errorId });
             }
         }
     }
