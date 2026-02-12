@@ -40,7 +40,7 @@ namespace AdvanceApi.Services
 
                 // Configurar parámetros del procedimiento almacenado
                 command.Parameters.AddWithValue("@idMovimiento", dto.IdMovimiento);
-                command.Parameters.AddWithValue("@tipoTransferencia", (object?)dto.TipoTransferencia ?? DBNull.Value);
+                command.Parameters.AddWithValue("@tipoTransferencia", string.IsNullOrEmpty(dto.TipoTransferencia) ? DBNull.Value : dto.TipoTransferencia);
                 command.Parameters.AddWithValue("@bancoClave", (object?)dto.BancoClave ?? DBNull.Value);
                 command.Parameters.AddWithValue("@bancoNombre", (object?)dto.BancoNombre ?? DBNull.Value);
                 command.Parameters.AddWithValue("@cuentaOrigen", (object?)dto.CuentaOrigen ?? DBNull.Value);
@@ -123,13 +123,13 @@ namespace AdvanceApi.Services
                 command.CommandType = CommandType.StoredProcedure;
 
                 // Configurar parámetros del procedimiento almacenado
-                command.Parameters.AddWithValue("@idMovimiento", query.IdMovimiento ?? (object)DBNull.Value);
+                command.Parameters.AddWithValue("@idMovimiento", (object?)query.IdMovimiento ?? DBNull.Value);
                 command.Parameters.AddWithValue("@tipoTransferencia", (object?)query.TipoTransferencia ?? DBNull.Value);
                 command.Parameters.AddWithValue("@claveRastreo", (object?)query.ClaveRastreo ?? DBNull.Value);
                 command.Parameters.AddWithValue("@rfcEmisor", (object?)query.RfcEmisor ?? DBNull.Value);
                 command.Parameters.AddWithValue("@rfcDestinatario", (object?)query.RfcDestinatario ?? DBNull.Value);
-                command.Parameters.AddWithValue("@fechaInicio", query.FechaInicio ?? (object)DBNull.Value);
-                command.Parameters.AddWithValue("@fechaFin", query.FechaFin ?? (object)DBNull.Value);
+                command.Parameters.AddWithValue("@fechaInicio", (object?)query.FechaInicio ?? DBNull.Value);
+                command.Parameters.AddWithValue("@fechaFin", (object?)query.FechaFin ?? DBNull.Value);
 
                 await using var reader = await command.ExecuteReaderAsync();
 
