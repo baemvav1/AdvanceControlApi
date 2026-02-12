@@ -73,10 +73,10 @@ namespace AdvanceApi.Services
                         idTransferencia = reader.GetInt32(reader.GetOrdinal("idTransferencia"));
                         mensaje = reader.GetString(reader.GetOrdinal("Mensaje"));
                     }
-                    catch (Exception ex)
+                    catch (IndexOutOfRangeException ex)
                     {
-                        // Si no se pueden leer los campos, usar el parámetro de salida
-                        _logger.LogDebug(ex, "No se pudieron leer los campos del resultado, usando parámetro de salida");
+                        // Si no se encuentran las columnas esperadas, usar el parámetro de salida
+                        _logger.LogDebug(ex, "Las columnas esperadas no están en el resultado, usando parámetro de salida");
                     }
                 }
 

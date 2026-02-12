@@ -1,3 +1,4 @@
+using AdvanceApi.Constants;
 using AdvanceApi.DTOs;
 using AdvanceApi.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -45,9 +46,9 @@ namespace AdvanceApi.Controllers
                     return BadRequest(new { message = "El campo 'tipoTransferencia' es obligatorio." });
                 }
 
-                if (dto.TipoTransferencia != "ENVIADA" && dto.TipoTransferencia != "RECIBIDA")
+                if (dto.TipoTransferencia != TransferenciaSPEIConstants.TipoEnviada && dto.TipoTransferencia != TransferenciaSPEIConstants.TipoRecibida)
                 {
-                    return BadRequest(new { message = "El tipo de transferencia debe ser ENVIADA o RECIBIDA." });
+                    return BadRequest(new { message = $"El tipo de transferencia debe ser {TransferenciaSPEIConstants.TipoEnviada} o {TransferenciaSPEIConstants.TipoRecibida}." });
                 }
 
                 if (dto.Monto <= 0)
