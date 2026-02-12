@@ -33,5 +33,12 @@ namespace AdvanceApi.Services
         /// <param name="fechaFin">Fecha fin del período (opcional)</param>
         /// <returns>Lista de estados de cuenta que cumplen con los criterios</returns>
         Task<List<EstadoCuenta>> ConsultarEstadoCuentaAsync(int? idEstadoCuenta = null, string? numeroCuenta = null, DateTime? fechaInicio = null, DateTime? fechaFin = null);
+
+        /// <summary>
+        /// Consulta el estado de cuenta completo con todos sus datos relacionados usando sp_ConsultarEstadoCuentaCompleto
+        /// </summary>
+        /// <param name="idEstadoCuenta">ID del estado de cuenta</param>
+        /// <returns>Estado de cuenta completo con movimientos, transferencias SPEI, comisiones e impuestos</returns>
+        Task<EstadoCuentaCompletoDto> ConsultarEstadoCuentaCompletoAsync(int idEstadoCuenta);
     }
 }
