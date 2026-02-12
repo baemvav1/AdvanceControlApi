@@ -135,27 +135,71 @@ namespace AdvanceApi.Services
 
                 var transferencias = new List<TransferenciaSPEI>();
 
+                // Cache ordinal positions for better performance
+                int idTransferenciaOrdinal = -1;
+                int idMovimientoOrdinal = -1;
+                int tipoTransferenciaOrdinal = -1;
+                int bancoClaveOrdinal = -1;
+                int bancoNombreOrdinal = -1;
+                int cuentaOrigenOrdinal = -1;
+                int cuentaDestinoOrdinal = -1;
+                int nombreEmisorOrdinal = -1;
+                int nombreDestinatarioOrdinal = -1;
+                int rfcEmisorOrdinal = -1;
+                int rfcDestinatarioOrdinal = -1;
+                int claveRastreoOrdinal = -1;
+                int conceptoOrdinal = -1;
+                int horaOrdinal = -1;
+                int montoOrdinal = -1;
+                int fechaOrdinal = -1;
+                int referenciaOrdinal = -1;
+
+                bool ordinalsInitialized = false;
+
                 while (await reader.ReadAsync())
                 {
+                    // Initialize ordinals on first row
+                    if (!ordinalsInitialized)
+                    {
+                        idTransferenciaOrdinal = reader.GetOrdinal("idTransferencia");
+                        idMovimientoOrdinal = reader.GetOrdinal("idMovimiento");
+                        tipoTransferenciaOrdinal = reader.GetOrdinal("tipoTransferencia");
+                        bancoClaveOrdinal = reader.GetOrdinal("bancoClave");
+                        bancoNombreOrdinal = reader.GetOrdinal("bancoNombre");
+                        cuentaOrigenOrdinal = reader.GetOrdinal("cuentaOrigen");
+                        cuentaDestinoOrdinal = reader.GetOrdinal("cuentaDestino");
+                        nombreEmisorOrdinal = reader.GetOrdinal("nombreEmisor");
+                        nombreDestinatarioOrdinal = reader.GetOrdinal("nombreDestinatario");
+                        rfcEmisorOrdinal = reader.GetOrdinal("rfcEmisor");
+                        rfcDestinatarioOrdinal = reader.GetOrdinal("rfcDestinatario");
+                        claveRastreoOrdinal = reader.GetOrdinal("claveRastreo");
+                        conceptoOrdinal = reader.GetOrdinal("concepto");
+                        horaOrdinal = reader.GetOrdinal("hora");
+                        montoOrdinal = reader.GetOrdinal("monto");
+                        fechaOrdinal = reader.GetOrdinal("fecha");
+                        referenciaOrdinal = reader.GetOrdinal("referencia");
+                        ordinalsInitialized = true;
+                    }
+
                     var transferencia = new TransferenciaSPEI
                     {
-                        IdTransferencia = reader.GetInt32(reader.GetOrdinal("idTransferencia")),
-                        IdMovimiento = reader.GetInt32(reader.GetOrdinal("idMovimiento")),
-                        TipoTransferencia = reader.IsDBNull(reader.GetOrdinal("tipoTransferencia")) ? string.Empty : reader.GetString(reader.GetOrdinal("tipoTransferencia")),
-                        BancoClave = reader.IsDBNull(reader.GetOrdinal("bancoClave")) ? null : reader.GetString(reader.GetOrdinal("bancoClave")),
-                        BancoNombre = reader.IsDBNull(reader.GetOrdinal("bancoNombre")) ? null : reader.GetString(reader.GetOrdinal("bancoNombre")),
-                        CuentaOrigen = reader.IsDBNull(reader.GetOrdinal("cuentaOrigen")) ? null : reader.GetString(reader.GetOrdinal("cuentaOrigen")),
-                        CuentaDestino = reader.IsDBNull(reader.GetOrdinal("cuentaDestino")) ? null : reader.GetString(reader.GetOrdinal("cuentaDestino")),
-                        NombreEmisor = reader.IsDBNull(reader.GetOrdinal("nombreEmisor")) ? null : reader.GetString(reader.GetOrdinal("nombreEmisor")),
-                        NombreDestinatario = reader.IsDBNull(reader.GetOrdinal("nombreDestinatario")) ? null : reader.GetString(reader.GetOrdinal("nombreDestinatario")),
-                        RfcEmisor = reader.IsDBNull(reader.GetOrdinal("rfcEmisor")) ? null : reader.GetString(reader.GetOrdinal("rfcEmisor")),
-                        RfcDestinatario = reader.IsDBNull(reader.GetOrdinal("rfcDestinatario")) ? null : reader.GetString(reader.GetOrdinal("rfcDestinatario")),
-                        ClaveRastreo = reader.IsDBNull(reader.GetOrdinal("claveRastreo")) ? null : reader.GetString(reader.GetOrdinal("claveRastreo")),
-                        Concepto = reader.IsDBNull(reader.GetOrdinal("concepto")) ? null : reader.GetString(reader.GetOrdinal("concepto")),
-                        Hora = reader.IsDBNull(reader.GetOrdinal("hora")) ? null : reader.GetTimeSpan(reader.GetOrdinal("hora")),
-                        Monto = reader.GetDecimal(reader.GetOrdinal("monto")),
-                        Fecha = reader.IsDBNull(reader.GetOrdinal("fecha")) ? null : reader.GetDateTime(reader.GetOrdinal("fecha")),
-                        Referencia = reader.IsDBNull(reader.GetOrdinal("referencia")) ? null : reader.GetString(reader.GetOrdinal("referencia"))
+                        IdTransferencia = reader.GetInt32(idTransferenciaOrdinal),
+                        IdMovimiento = reader.GetInt32(idMovimientoOrdinal),
+                        TipoTransferencia = reader.IsDBNull(tipoTransferenciaOrdinal) ? string.Empty : reader.GetString(tipoTransferenciaOrdinal),
+                        BancoClave = reader.IsDBNull(bancoClaveOrdinal) ? null : reader.GetString(bancoClaveOrdinal),
+                        BancoNombre = reader.IsDBNull(bancoNombreOrdinal) ? null : reader.GetString(bancoNombreOrdinal),
+                        CuentaOrigen = reader.IsDBNull(cuentaOrigenOrdinal) ? null : reader.GetString(cuentaOrigenOrdinal),
+                        CuentaDestino = reader.IsDBNull(cuentaDestinoOrdinal) ? null : reader.GetString(cuentaDestinoOrdinal),
+                        NombreEmisor = reader.IsDBNull(nombreEmisorOrdinal) ? null : reader.GetString(nombreEmisorOrdinal),
+                        NombreDestinatario = reader.IsDBNull(nombreDestinatarioOrdinal) ? null : reader.GetString(nombreDestinatarioOrdinal),
+                        RfcEmisor = reader.IsDBNull(rfcEmisorOrdinal) ? null : reader.GetString(rfcEmisorOrdinal),
+                        RfcDestinatario = reader.IsDBNull(rfcDestinatarioOrdinal) ? null : reader.GetString(rfcDestinatarioOrdinal),
+                        ClaveRastreo = reader.IsDBNull(claveRastreoOrdinal) ? null : reader.GetString(claveRastreoOrdinal),
+                        Concepto = reader.IsDBNull(conceptoOrdinal) ? null : reader.GetString(conceptoOrdinal),
+                        Hora = reader.IsDBNull(horaOrdinal) ? null : reader.GetTimeSpan(horaOrdinal),
+                        Monto = reader.GetDecimal(montoOrdinal),
+                        Fecha = reader.IsDBNull(fechaOrdinal) ? null : reader.GetDateTime(fechaOrdinal),
+                        Referencia = reader.IsDBNull(referenciaOrdinal) ? null : reader.GetString(referenciaOrdinal)
                     };
 
                     transferencias.Add(transferencia);
