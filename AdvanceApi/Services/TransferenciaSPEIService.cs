@@ -40,7 +40,7 @@ namespace AdvanceApi.Services
 
                 // Configurar parámetros del procedimiento almacenado
                 command.Parameters.AddWithValue("@idMovimiento", dto.IdMovimiento);
-                command.Parameters.AddWithValue("@tipoTransferencia", string.IsNullOrEmpty(dto.TipoTransferencia) ? DBNull.Value : dto.TipoTransferencia);
+                command.Parameters.AddWithValue("@tipoTransferencia", (object?)dto.TipoTransferencia ?? DBNull.Value);
                 command.Parameters.AddWithValue("@bancoClave", (object?)dto.BancoClave ?? DBNull.Value);
                 command.Parameters.AddWithValue("@bancoNombre", (object?)dto.BancoNombre ?? DBNull.Value);
                 command.Parameters.AddWithValue("@cuentaOrigen", (object?)dto.CuentaOrigen ?? DBNull.Value);
@@ -141,7 +141,7 @@ namespace AdvanceApi.Services
                     {
                         IdTransferencia = reader.GetInt32(reader.GetOrdinal("idTransferencia")),
                         IdMovimiento = reader.GetInt32(reader.GetOrdinal("idMovimiento")),
-                        TipoTransferencia = reader.GetString(reader.GetOrdinal("tipoTransferencia")),
+                        TipoTransferencia = reader.IsDBNull(reader.GetOrdinal("tipoTransferencia")) ? string.Empty : reader.GetString(reader.GetOrdinal("tipoTransferencia")),
                         BancoClave = reader.IsDBNull(reader.GetOrdinal("bancoClave")) ? null : reader.GetString(reader.GetOrdinal("bancoClave")),
                         BancoNombre = reader.IsDBNull(reader.GetOrdinal("bancoNombre")) ? null : reader.GetString(reader.GetOrdinal("bancoNombre")),
                         CuentaOrigen = reader.IsDBNull(reader.GetOrdinal("cuentaOrigen")) ? null : reader.GetString(reader.GetOrdinal("cuentaOrigen")),
